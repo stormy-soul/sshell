@@ -1,0 +1,55 @@
+{
+    "bar": {
+        "enabled": true,
+        "position": "top",
+        "height": 40,
+        "margin": 10,
+        "padding": 5,
+
+        // Modules
+        "left": [
+            { "module": "Workspaces", "enabled": true },
+            { "module": "Launcher", "enabled": true }
+        ],
+        "center": [
+            { "module": "Clock", "enabled": true }
+        ],
+        "right": [
+            { "module": "SystemTray", "enabled": true },
+            { "module": "Volume", "enabled": true },
+            { "module": "Network", "enabled": true },
+            { "module": "Battery", "enabled": true }
+        ]
+    },
+
+    // Control Center
+    "controlCenter": {
+        "enabled": true,
+        "width": 400,
+        "position": "right"
+    },
+
+    // Notifications
+    "notifications": {
+        "enabled": true,
+        "position": "top-right",
+        "maxNotifications": 5,
+        "timeout": 5000
+    },
+
+    // Launcher
+    "launcher": {
+        "enabled": true,
+        "width": 600,
+        "height": 500,
+        "fuzzy": true
+    },
+
+    // Theme
+    "theme": {
+        "accent": "#a6e3a1",
+        "cornerRadius": 12,
+        "animationDuration": 200,
+        "useSystemTheme": true
+    }
+}
