@@ -1,7 +1,10 @@
 pragma Singleton
+import QtQuick
 import Quickshell.Hyprland
 
-Hyprland {
-    // This is a simple wrapper around Quickshell's Hyprland service
-    // Add any custom functionality here if needed
+QtObject {
+    readonly property var instance: Hyprland
+    
+    readonly property var workspaces: Hyprland.workspaces
+    readonly property var activeWindow: Hyprland.focusedMonitor.activeWindow
 }

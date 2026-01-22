@@ -126,7 +126,7 @@ Rectangle {
                     hoverEnabled: true
 
                     onClicked: {
-                        Process {
+                        Process: {
                             command: [parent.parent.exec]
                             running: true
                         }

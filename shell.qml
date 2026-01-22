@@ -1,6 +1,12 @@
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import "./components/bar"
+import "./components/controlcenter"
+import "./components/launcher"
+import "./components/notifications"
+import "./services"
+import "./theme"
 
 ShellRoot {
     id: root

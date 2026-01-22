@@ -11,7 +11,7 @@ FloatingWindow {
 
     property string position: Config.notifications.position || "top-right"
 
-    anchor {
+    anchors {
         top: position.startsWith("top")
         bottom: position.startsWith("bottom")
         left: position.endsWith("left")
