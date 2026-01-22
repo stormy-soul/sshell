@@ -48,7 +48,7 @@
     // Theme
     "theme": {
         "accent": "#a6e3a1",
-        "cornerRadius": 12,
+        "cornerRadius": 10,
         "animationDuration": 200,
         "useSystemTheme": true
     }

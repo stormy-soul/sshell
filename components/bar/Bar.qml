@@ -1,0 +1,79 @@
+import QtQuick
+import Quickshell
+
+Rectangle {
+    id: bar
+    color: Theme.background
+    radius: Theme.cornerRadius
+
+    Rectangle {
+        anchors.fill: parent
+        color: "transparent"
+        border.color: Theme.border
+        border.width: 1
+        radius: parent.radius
+        opacity: 0.3
+    }
+
+    Row {
+        id: leftModules
+        anchors {
+            left: parent.left
+            leftMargin: Theme.padding
+            verticalCenter: parent.verticalCenter
+        }
+        spacing: Theme.gap
+
+        Repeater {
+            model: Config.bar.left || []
+
+            Loader {
+                property var moduleData: modelData
+                active: modelData.enabled
+                source: modelData.enabled ? Qt.resolvedUrl(`modules/${modelData.module}.qml`) : ""
+
+                onStatusChanged: {
+                    if (status === Loader.Error) {
+                        console.warn(`Failed to load module: ${modelData.module}`)
+                    }
+                }
+            }
+        }
+    }
+
+    Row {
+        id: centerModules
+        anchors.centerIn: parent
+        spacing: Theme.gap
+
+        Repeater {
+            model: Config.bar.center || []
+
+            Loader {
+                property var moduleData: modelData
+                active: modelData.enabled
+                source: modelData.enabled ? Qt.resolvedUrl(`modules/${modelData.module}.qml`) : ""
+            }
+        }
+    }
+
+    Row {
+        id: rightModules
+        anchors {
+            right: parent.right
+            rightMargin: Theme.padding
+            verticalCenter: parent.verticalCenter
+        }
+        spacing: Theme.gap
+
+        Repeater {
+            model: Config.bar.right || []
+
+            Loader {
+                property var moduleData: modelData
+                active: modelData.enabled
+                source: modelData.enabled ? Qt.resolvedUrl(`modules/${modelData.module}.qml`) : ""
+            }
+        }
+    }
+}
