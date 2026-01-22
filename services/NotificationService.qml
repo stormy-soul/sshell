@@ -2,36 +2,37 @@ pragma Singleton
 import QtQuick
 
 QtObject {
-    id: service
+    id: root
     
     property var notifications: []
-    
-    signal notificationAdded(var notification)
-    signal notificationClosed(int id)
 
-    function addNotification(title, body, icon) {
-        let notification = {
-            "id": Date.now(),
-            "title": title,
-            "body": body,
-            "icon": icon || "",
-            "timestamp": new Date()
-        }
-
-        let temp = notifications.slice()
-        temp.push(notification)
-        notifications = temp
+    function push(title, body) {
+        console.log("NotificationService received:", title)
         
-        notificationAdded(notification)
-
-        let notifId = notification.id
-        Qt.callLater(function() {
-            closeNotification(notifId)
-        }, Config.options.notifications.timeout)
+        const newNotif = {
+            id: Date.now().toString(),
+            title: title,
+            body: body
+        }
+        
+        let list = root.notifications
+        list.push(newNotif)
+        root.notifications = list
+        
+        dismissTimer.createObject(root, { notifId: newNotif.id })
+    }
+    
+    function close(id) {
+        root.notifications = root.notifications.filter(n => n.id !== id)
     }
 
-    function closeNotification(id) {
-        notifications = notifications.filter(n => n.id !== id)
-        notificationClosed(id)
+    property Component dismissTimer: Timer {
+        property string notifId
+        interval: 5000
+        running: true
+        onTriggered: {
+            root.close(notifId)
+            destroy()
+        }
     }
 }

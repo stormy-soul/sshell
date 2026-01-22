@@ -12,10 +12,17 @@ Scope {
     property alias notifications: configAdapter.notifications
     property alias launcher: configAdapter.launcher
     property alias theme: configAdapter.theme
+    property alias workspaces: configAdapter.workspaces
 
     property bool ready: false
     property var parsedConfig: ({})
     property string filePath: Qt.resolvedUrl("../config.jsonc")
+
+    property bool launcherVisible: false
+    
+    function toggleLauncher() {
+        launcherVisible = !launcherVisible
+    }
 
     property FileView configFile: FileView {
         path: root.filePath
@@ -69,7 +76,6 @@ Scope {
         function applyText(source) {
             console.log("DEBUG:", source, "filePath ->", root.filePath)
             var fileText = getFileText()
-            console.log("DEBUG: text type:", typeof fileText, "length:", (fileText ? fileText.length : 0))
 
             var defaults = {
                 bar: {
@@ -112,7 +118,7 @@ Scope {
             }
 
             if (!fileText || fileText.length === 0) {
-                console.warn("⚠ Config file appears empty (or couldn't be read). Applying defaults.")
+                console.warn("Config file appears empty (or couldn't be read). Applying defaults.")
                 root.parsedConfig = {}
                 try {
                     configAdapter.data = JSON.parse(JSON.stringify(defaults))
@@ -122,7 +128,6 @@ Scope {
             }
 
             try {
-                console.log("DEBUG: text snippet:", (fileText.length > 200 ? fileText.slice(0,200) + "..." : fileText))
                 var cleanJson = fileText.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '')
                 var user = JSON.parse(cleanJson)
 
@@ -137,11 +142,9 @@ Scope {
                 }
 
                 root.ready = true
-                console.log("✓ Config parsed successfully (from " + source + ")")
-                console.log("  Accent color:", root.parsedConfig.theme && root.parsedConfig.theme.accentColor)
-                console.log("  Bar left modules:", root.parsedConfig.bar && root.parsedConfig.bar.left && root.parsedConfig.bar.left.length)
+                console.log("Config parsed successfully (from " + source + ")")
             } catch (e) {
-                console.error("✗ Failed to parse config (from " + source + "):", e)
+                console.error("Failed to parse config (from " + source + "):", e)
                 root.parsedConfig = {}
                 try { configAdapter.data = JSON.parse(JSON.stringify(defaults)) } catch(e){}
                 root.ready = true
@@ -152,19 +155,20 @@ Scope {
         onTextChanged: applyText("onTextChanged")
 
         onLoadFailed: function(error) {
-            console.warn("⚠ FileView failed to load config:", error)
+            console.warn("FileView failed to load config:", error)
             root.parsedConfig = {}
             try { configAdapter.data = {} } catch(e) {}
             root.ready = true
         }
 
         Component.onCompleted: {
-            console.log("FileView component completed; filePath =", root.filePath)
+            console.log("FileView component completed; filePath ->", root.filePath)
         }
     }
 
     property JsonAdapter configAdapter: JsonAdapter {
         id: configAdapter
+
         property JsonObject bar: JsonObject {
             property bool enabled: true
             property string position: "top"
@@ -174,6 +178,10 @@ Scope {
             property var left: [ { "module": "Workspaces", "enabled": true }, { "module": "Launcher", "enabled": true } ]
             property var center: [ { "module": "Clock", "enabled": true } ]
             property var right: []
+        }
+
+        property JsonObject workspaces: JsonObject {
+            property var persistent: [1, 2, 3, 4, 5] 
         }
 
         property JsonObject controlCenter: JsonObject {

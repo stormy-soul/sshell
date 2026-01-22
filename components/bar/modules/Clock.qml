@@ -5,48 +5,36 @@ import "../../../theme"
 
 Rectangle {
     id: clockModule
-    width: timeText.width + Theme.padding * 2
-    height: parent.height - Theme.paddingSmall
+
+    implicitWidth: row.implicitWidth + Theme.padding * 2
+    implicitHeight: parent.height - Theme.paddingSmall
+
     radius: Theme.cornerRadiusSmall
     color: "transparent"
     
-    property string timeFormat: "hh:mm"
-    property string dateFormat: "MMM dd"
-    
-    Timer {
-        interval: 1000
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            let now = new Date()
-            timeText.text = Qt.formatTime(now, clockModule.timeFormat)
-            dateText.text = Qt.formatDate(now, clockModule.dateFormat)
-        }
-    }
-    
-    Column {
-        anchors.centerIn: parent
-        spacing: 0
-        
+    Row {
+        id: row
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: Theme.padding
+
         Text {
-            id: timeText
+            text: Qt.formatTime(Clock.now, "hh:mm")
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSize
             font.weight: Font.Medium
             color: Theme.text
-            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
-        
+
         Text {
-            id: dateText
+            text: Qt.formatDate(Clock.now, "MMM dd")
             font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSizeSmall
+            font.pixelSize: Theme.fontSize
             color: Theme.textSecondary
-            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
     }
-    
+
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true

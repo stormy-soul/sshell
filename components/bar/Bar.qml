@@ -1,81 +1,57 @@
 import QtQuick
-import Quickshell
-
-import "../../services"
 import "../../theme"
+import "../../services"
 
 Rectangle {
     id: bar
     color: Theme.background
     radius: Theme.cornerRadius
+    opacity: 0.9
 
-    Rectangle {
-        anchors.fill: parent
-        color: "transparent"
-        border.color: Theme.border
-        border.width: 1
-        radius: parent.radius
-        opacity: 0.3
-    }
+    anchors.fill: parent
 
     Row {
-        id: leftModules
-        anchors {
-            left: parent.left
-            leftMargin: Theme.padding
-            verticalCenter: parent.verticalCenter
-        }
-        spacing: Theme.gap
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: Config.bar.padding
+        spacing: Config.bar.padding
 
         Repeater {
             model: Config.bar.left
-
             Loader {
-                required property var modelData
+                anchors.verticalCenter: parent.verticalCenter
+                source: "modules/" + modelData.module + ".qml"
                 active: modelData.enabled
-                source: modelData.enabled ? Qt.resolvedUrl(`modules/${modelData.module}.qml`) : ""
-
-                onStatusChanged: {
-                    if (status === Loader.Error) {
-                        console.warn(`Failed to load module: ${modelData.module}`)
-                    }
-                }
             }
         }
     }
 
     Row {
-        id: centerModules
         anchors.centerIn: parent
-        spacing: Theme.gap
+        spacing: Config.bar.padding
 
         Repeater {
             model: Config.bar.center
-
             Loader {
-                required property var modelData
+                anchors.verticalCenter: parent.verticalCenter
+                source: "modules/" + modelData.module + ".qml"
                 active: modelData.enabled
-                source: modelData.enabled ? Qt.resolvedUrl(`modules/${modelData.module}.qml`) : ""
             }
         }
     }
 
     Row {
-        id: rightModules
-        anchors {
-            right: parent.right
-            rightMargin: Theme.padding
-            verticalCenter: parent.verticalCenter
-        }
-        spacing: Theme.gap
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        anchors.rightMargin: Config.bar.padding
+        spacing: Config.bar.padding
 
         Repeater {
             model: Config.bar.right
-
             Loader {
-                required property var modelData
+                anchors.verticalCenter: parent.verticalCenter
+                source: "modules/" + modelData.module + ".qml"
                 active: modelData.enabled
-                source: modelData.enabled ? Qt.resolvedUrl(`modules/${modelData.module}.qml`) : ""
             }
         }
     }

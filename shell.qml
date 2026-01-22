@@ -87,7 +87,7 @@ ShellRoot {
 
         FloatingWindow {
             id: launcherWindow
-            visible: false
+            visible: Config.launcherVisible
             
             implicitWidth: Config.launcher.width
             implicitHeight: Config.launcher.height

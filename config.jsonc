@@ -6,30 +6,31 @@
         "margin": 10,
         "padding": 5,
 
-        // Modules
         "left": [
-            { "module": "Workspaces", "enabled": true },
-            { "module": "Launcher", "enabled": true }
+            { "module": "Launcher", "enabled": true },
+            { "module": "Workspaces", "enabled": true }
         ],
         "center": [
             { "module": "Clock", "enabled": true }
         ],
         "right": [
+            { "module": "Battery", "enabled": true },
             { "module": "SystemTray", "enabled": true },
             { "module": "Volume", "enabled": false },
-            { "module": "Network", "enabled": false },
-            { "module": "Battery", "enabled": false }
+            { "module": "Network", "enabled": false }
         ]
     },
 
-    // Control Center
+    "workspaces": {
+        "persistent": [1, 2, 3, 4]
+    },
+
     "controlCenter": {
         "enabled": true,
         "width": 400,
         "position": "right"
     },
 
-    // Notifications
     "notifications": {
         "enabled": true,
         "position": "top-right",
@@ -37,7 +38,6 @@
         "timeout": 5000
     },
 
-    // Launcher
     "launcher": {
         "enabled": true,
         "width": 600,
@@ -45,7 +45,6 @@
         "fuzzy": true
     },
 
-    // Theme
     "theme": {
         "accentColor": "#a6e3a1",
         "cornerRadius": 10,

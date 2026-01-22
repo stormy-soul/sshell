@@ -1,34 +1,29 @@
 import QtQuick
-
-import "../../../services"
 import "../../../theme"
+import "../../../services"
 
 Rectangle {
-    id: launcherButton
     width: 32
-    height: parent.height - Theme.paddingSmall
+    height: 32
+    color: "transparent"
     radius: Theme.cornerRadiusSmall
-    color: mouseArea.containsMouse ? Theme.accent : Theme.surface
-    
-    Behavior on color {
-        ColorAnimation { duration: Theme.animationDurationFast }
-    }
-    
+
     Text {
         anchors.centerIn: parent
-        text: "󰀻" // Grid icon
+        text: "" // Arch Logo or use "󰣇"
         font.family: Theme.fontFamily
-        font.pixelSize: Theme.fontSizeLarge
-        color: Theme.text
+        font.pixelSize: 18
+        color: hoverArea.containsMouse ? Theme.accent : Theme.text
     }
-    
+
     MouseArea {
-        id: mouseArea
+        id: hoverArea
         anchors.fill: parent
         hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
         
         onClicked: {
-            launcherWindow.visible = !launcherWindow.visible
+            Config.toggleLauncher()
         }
     }
 }
