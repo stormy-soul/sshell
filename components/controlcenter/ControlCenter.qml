@@ -1,5 +1,8 @@
 import QtQuick
 
+import "../../services"
+import "../../theme"
+
 Rectangle {
     id: controlCenter
     color: Theme.background

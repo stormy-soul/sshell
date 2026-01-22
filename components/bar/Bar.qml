@@ -1,6 +1,9 @@
 import QtQuick
 import Quickshell
 
+import "../../services"
+import "../../theme"
+
 Rectangle {
     id: bar
     color: Theme.background

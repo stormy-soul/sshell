@@ -1,6 +1,9 @@
 import QtQuick
 import Quickshell.Hyprland
 
+import "../../services"
+import "../../theme"
+
 Row {
     id: workspaces
     spacing: Theme.paddingSmall

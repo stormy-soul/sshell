@@ -1,5 +1,8 @@
 import QtQuick
 
+import "../../services"
+import "../../theme"
+
 Rectangle {
     id: launcherButton
     width: 32

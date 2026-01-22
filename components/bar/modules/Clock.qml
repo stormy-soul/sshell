@@ -1,5 +1,8 @@
 import QtQuick
 
+import "../../services"
+import "../../theme"
+
 Rectangle {
     id: clockModule
     width: timeText.width + Theme.padding * 2

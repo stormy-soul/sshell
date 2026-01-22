@@ -1,6 +1,9 @@
 import QtQuick
 import Quickshell.Io
 
+import "../../services"
+import "../../theme"
+
 Rectangle {
     id: launcher
     color: Theme.background

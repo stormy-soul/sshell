@@ -1,6 +1,8 @@
 pragma Singleton
 import QtQuick
 
+import "../services"
+
 QtObject {
     id: theme
 

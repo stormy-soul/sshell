@@ -1,7 +1,9 @@
 import QtQuick
 import Quickshell
+import "../../services"
+import "../../theme"
 
-FloatingWindow {
+PanelWindow {
     id: popupsWindow
     
     width: 350
@@ -9,6 +11,7 @@ FloatingWindow {
     screen: Quickshell.screens[0]
     color: "transparent"
 
+    exclusionMode: ExclusionMode.Ignore
     property string position: Config.notifications.position || "top-right"
 
     anchors {

@@ -1,19 +1,21 @@
 import Quickshell
 import Quickshell.Io
 import QtQuick
+
+import "./theme"
+import "./services" 
 import "./components/bar"
 import "./components/controlcenter"
 import "./components/launcher"
 import "./components/notifications"
-import "./services"
-import "./theme"
 
 ShellRoot {
     id: root
 
+    // 1. Config Loader
     Process {
         id: configLoader
-        command: ["cat", Quickshell.env("HOME") + "/.config/quickshell/config.jsonc"]
+        command: ["cat", Quickshell.env("HOME") + "/Documents/Projects/sshell/config.jsonc"]
         running: true
         
         onExited: {
@@ -29,34 +31,14 @@ ShellRoot {
         }
     }
 
-    Singleton {
-        id: _Config
-
-        property var bar: ({})
-        property var controlCenter: ({})
-        property var notifications: ({})
-        property var launcher: ({})
-        property var theme: ({})
-        property bool loaded: false
-
-        function loadConfig(config) {
-            bar = config.bar || {}
-            controlCenter = config.controlCenter || {}
-            notifications = config.notifications || {}
-            launcher = config.launcher || {}
-            theme = config.theme || {}
-            loaded = true
-        }
-    }
-
-    // Bar windows
     Variants {
         model: Quickshell.screens
 
         PanelWindow {
             id: barWindow
-            property var screenInfo: modelData
-            screen: modelData
+            property var screenInfo: modelData 
+            screen: screenInfo 
+            
             height: Config.bar.height || 40
 
             anchors {
@@ -65,7 +47,7 @@ ShellRoot {
                 left: true
                 right: true
             }
-
+            
             margins {
                 top: Config.bar.position === "top" ? (Config.bar.margin || 10) : 0
                 bottom: Config.bar.position === "bottom" ? (Config.bar.margin || 10) : 0
@@ -80,27 +62,29 @@ ShellRoot {
         }
     }
 
-    // Control Center
     LazyLoader {
         id: controlCenterLoader
         active: Config.loaded && Config.controlCenter.enabled
 
-        FloatingWindow {
+        PanelWindow {
             id: controlCenterWindow
             visible: false
             width: Config.controlCenter.width || 400
             height: 600
             screen: Quickshell.screens[0]
+            
+            exclusionMode: ExclusionMode.Ignore 
 
-            anchor {
+            anchors {
                 right: Config.controlCenter.position === "right"
                 left: Config.controlCenter.position === "left"
                 top: true
-
-                adjustment {
-                    x: Config.controlCenter.position === "right" ? -20 : 20
-                    y: (Config.bar.height || 40) + (Config.bar.margin || 10) + 20
-                }
+            }
+            
+            margins {
+                top: (Config.bar.height || 40) + (Config.bar.margin || 10) + 20
+                right: Config.controlCenter.position === "right" ? 20 : 0
+                left: Config.controlCenter.position === "left" ? 20 : 0
             }
 
             ControlCenter {
@@ -109,7 +93,6 @@ ShellRoot {
         }
     }
 
-    // App Launcher
     LazyLoader {
         id: launcherLoader
         active: Config.loaded && Config.launcher.enabled
@@ -121,10 +104,8 @@ ShellRoot {
             height: Config.launcher.height || 500
             screen: Quickshell.screens[0]
 
-            anchor {
-                horizontalCenter: true
-                verticalCenter: true
-            }
+            //x: (screen.width - width) / 2
+            //y: (screen.height - height) / 2
 
             AppLauncher {
                 anchors.fill: parent
@@ -133,7 +114,6 @@ ShellRoot {
         }
     }
 
-    // Notifications
     NotificationPopups {
         visible: Config.loaded && Config.notifications.enabled
     }
