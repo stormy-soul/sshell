@@ -11,7 +11,6 @@ Rectangle {
 
     Rectangle {
         anchors.fill: parent
-        color: "transparent"
         border.color: Theme.border
         border.width: 1
         radius: parent.radius
@@ -28,10 +27,10 @@ Rectangle {
         spacing: Theme.gap
 
         Repeater {
-            model: Config.bar.left || []
+            model: Config.options.bar.left
 
             Loader {
-                property var moduleData: modelData
+                required property var modelData
                 active: modelData.enabled
                 source: modelData.enabled ? Qt.resolvedUrl(`modules/${modelData.module}.qml`) : ""
 
@@ -50,10 +49,10 @@ Rectangle {
         spacing: Theme.gap
 
         Repeater {
-            model: Config.bar.center || []
+            model: Config.options.bar.center
 
             Loader {
-                property var moduleData: modelData
+                required property var modelData
                 active: modelData.enabled
                 source: modelData.enabled ? Qt.resolvedUrl(`modules/${modelData.module}.qml`) : ""
             }
@@ -70,10 +69,10 @@ Rectangle {
         spacing: Theme.gap
 
         Repeater {
-            model: Config.bar.right || []
+            model: Config.options.bar.right
 
             Loader {
-                property var moduleData: modelData
+                required property var modelData
                 active: modelData.enabled
                 source: modelData.enabled ? Qt.resolvedUrl(`modules/${modelData.module}.qml`) : ""
             }

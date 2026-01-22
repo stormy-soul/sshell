@@ -1,7 +1,7 @@
 import QtQuick
 
-import "../../services"
-import "../../theme"
+import "../../../services"
+import "../../../theme"
 
 Rectangle {
     id: clockModule

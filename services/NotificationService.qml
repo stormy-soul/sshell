@@ -24,11 +24,10 @@ QtObject {
         
         notificationAdded(notification)
 
-        // Auto-dismiss after timeout
         let notifId = notification.id
         Qt.callLater(function() {
             closeNotification(notifId)
-        }, Config.notifications.timeout || 5000)
+        }, Config.options.notifications.timeout)
     }
 
     function closeNotification(id) {

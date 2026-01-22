@@ -1,8 +1,8 @@
 import QtQuick
 import Quickshell.Hyprland
 
-import "../../services"
-import "../../theme"
+import "../../../services"
+import "../../../theme"
 
 Row {
     id: workspaces
@@ -19,8 +19,8 @@ Row {
             radius: Theme.cornerRadiusSmall
             
             property bool isActive: Hyprland.focusedWorkspace ? Hyprland.focusedWorkspace.id === modelData.id : false
-            property bool hasWindows: modelData.windows.length > 0
-            
+            property bool hasWindows: (modelData.clients || []).length > 0              
+    
             color: {
                 if (isActive) return Theme.accent
                 if (hasWindows) return Theme.surface

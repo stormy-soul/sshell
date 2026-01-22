@@ -129,10 +129,11 @@ Rectangle {
                     hoverEnabled: true
 
                     onClicked: {
-                        Process: {
-                            command: [parent.parent.exec]
-                            running: true
-                        }
+                        var proc = Qt.createQmlObject(
+                            'import Quickshell.Io; Process { command: ["' + exec + '"]; running: true }',
+                            launcher,
+                            "dynamicProcess"
+                        )
                         launcher.launchApp()
                     }
                 }
