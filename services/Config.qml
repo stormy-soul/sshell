@@ -15,22 +15,40 @@ Scope {
     property FileView configFile: FileView {
         path: root.filePath
 
+        Component.onCompleted: {
+            console.log("Loading config from:", root.filePath)
+            
+            Qt.callLater(function() {
+                if (text && text.length > 0) {
+                    try {
+                        let cleanJson = text.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '')
+                        root.parsedConfig = JSON.parse(cleanJson)
+                        root.ready = true
+                        console.log("✓ Config loaded successfully!")
+                        console.log("  Accent color:", root.parsedConfig.theme?.accentColor)
+                        console.log("  Bar left modules:", root.parsedConfig.bar?.left?.length || 0)
+                    } catch (e) {
+                        console.error("✗ Failed to parse config:", e)
+                        root.ready = true
+                    }
+                } else {
+                    console.warn("⚠ Config file is empty, using defaults")
+                    root.ready = true
+                }
+            })
+        }
+        
         onTextChanged: {
-            if (!text || text.length === 0) return
+            if (!text || text.length === 0 || root.ready) return
 
             try {
                 let cleanJson = text.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '')
                 root.parsedConfig = JSON.parse(cleanJson)
                 root.ready = true
-                console.log("✓ Config loaded successfully!")
-                console.log("  Bar modules from file:", JSON.stringify(root.parsedConfig.bar?.left || []))
+                console.log("✓ Config loaded via onTextChanged!")
             } catch (e) {
                 console.error("✗ Failed to parse config:", e)
             }
-        }
-
-        Component.onCompleted: {
-            console.log("Loading config from:", root.filePath)
         }
     }
     
