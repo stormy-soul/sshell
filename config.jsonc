@@ -16,8 +16,8 @@
         ],
         "right": [
             { "module": "SystemTray", "enabled": true },
-            { "module": "Volume", "enabled": true },
-            { "module": "Network", "enabled": true },
+            { "module": "Volume", "enabled": false },
+            { "module": "Network", "enabled": false },
             { "module": "Battery", "enabled": false }
         ]
     },
@@ -47,7 +47,7 @@
 
     // Theme
     "theme": {
-        "accent": "#a6e3a1",
+        "accentColor": "#a6e3a1",
         "cornerRadius": 10,
         "animationDuration": 200,
         "useSystemTheme": true
