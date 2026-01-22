@@ -22,26 +22,26 @@ ShellRoot {
             property var screenInfo: modelData 
             screen: screenInfo 
             
-            implicitHeight: Config.options.bar.height
+            implicitHeight: Config.bar.height
             color: "transparent"
 
             anchors {
-                top: Config.options.bar.position === "top"
-                bottom: Config.options.bar.position === "bottom"
+                top: Config.bar.position === "top"
+                bottom: Config.bar.position === "bottom"
                 left: true
                 right: true
             }
              
             margins {
-                top: Config.options.bar.position === "top" ? Config.options.bar.margin : 0
-                bottom: Config.options.bar.position === "bottom" ? Config.options.bar.margin : 0
-                left: Config.options.bar.margin
-                right: Config.options.bar.margin
+                top: Config.bar.position === "top" ? Config.bar.margin : 0
+                bottom: Config.bar.position === "bottom" ? Config.bar.margin : 0
+                left: Config.bar.margin
+                right: Config.bar.margin
             }
 
             Bar {
                 anchors.fill: parent
-                visible: Config.ready && Config.options.bar.enabled
+                visible: Config.ready && Config.bar.enabled
             }
         }
     }
@@ -49,13 +49,13 @@ ShellRoot {
     // Control Center
     LazyLoader {
         id: controlCenterLoader
-        active: Config.ready && Config.options.controlCenter.enabled
+        active: Config.ready && Config.controlCenter.enabled
 
         PanelWindow {
             id: controlCenterWindow
             visible: false
             
-            implicitWidth: Config.options.controlCenter.width
+            implicitWidth: Config.controlCenter.width
             implicitHeight: 600
             
             screen: Quickshell.screens[0]
@@ -63,15 +63,15 @@ ShellRoot {
             exclusionMode: ExclusionMode.Ignore 
 
             anchors {
-                right: Config.options.controlCenter.position === "right"
-                left: Config.options.controlCenter.position === "left"
+                right: Config.controlCenter.position === "right"
+                left: Config.controlCenter.position === "left"
                 top: true
             }
             
             margins {
-                top: Config.options.bar.height + Config.options.bar.margin + 20
-                right: Config.options.controlCenter.position === "right" ? 20 : 0
-                left: Config.options.controlCenter.position === "left" ? 20 : 0
+                top: Config.bar.height + Config.bar.margin + 20
+                right: Config.controlCenter.position === "right" ? 20 : 0
+                left: Config.controlCenter.position === "left" ? 20 : 0
             }
 
             ControlCenter {
@@ -83,14 +83,14 @@ ShellRoot {
     // App Launcher
     LazyLoader {
         id: launcherLoader
-        active: Config.ready && Config.options.launcher.enabled
+        active: Config.ready && Config.launcher.enabled
 
         FloatingWindow {
             id: launcherWindow
             visible: false
             
-            implicitWidth: Config.options.launcher.width
-            implicitHeight: Config.options.launcher.height
+            implicitWidth: Config.launcher.width
+            implicitHeight: Config.launcher.height
             
             screen: Quickshell.screens[0]
 
@@ -103,6 +103,6 @@ ShellRoot {
 
     // Notifications
     NotificationPopups {
-        visible: Config.ready && Config.options.notifications.enabled
+        visible: Config.ready && Config.notifications.enabled
     }
 }

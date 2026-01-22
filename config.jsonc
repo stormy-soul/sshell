@@ -18,7 +18,7 @@
             { "module": "SystemTray", "enabled": true },
             { "module": "Volume", "enabled": true },
             { "module": "Network", "enabled": true },
-            { "module": "Battery", "enabled": true }
+            { "module": "Battery", "enabled": false }
         ]
     },
 

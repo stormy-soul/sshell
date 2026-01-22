@@ -11,6 +11,7 @@ Rectangle {
 
     Rectangle {
         anchors.fill: parent
+        color: "transparent"
         border.color: Theme.border
         border.width: 1
         radius: parent.radius
@@ -27,7 +28,7 @@ Rectangle {
         spacing: Theme.gap
 
         Repeater {
-            model: Config.options.bar.left
+            model: Config.bar.left
 
             Loader {
                 required property var modelData
@@ -49,7 +50,7 @@ Rectangle {
         spacing: Theme.gap
 
         Repeater {
-            model: Config.options.bar.center
+            model: Config.bar.center
 
             Loader {
                 required property var modelData
@@ -69,7 +70,7 @@ Rectangle {
         spacing: Theme.gap
 
         Repeater {
-            model: Config.options.bar.right
+            model: Config.bar.right
 
             Loader {
                 required property var modelData

@@ -1,13 +1,13 @@
 pragma Singleton
 import QtQuick
 
-
 import "../services"
 
 QtObject {
     id: theme
 
-    property color accent: Config.options.theme.accentColor
+    // Base colors (Catppuccin Mocha) - reactive to config
+    property color accent: Config.ready ? Config.theme.accentColor : "#a6e3a1"
     property color background: "#1e1e2e"
     property color surface: "#313244"
     property color surfaceVariant: "#45475a"
@@ -22,7 +22,7 @@ QtObject {
     property int paddingMassive: 20
     property int gap: 10
 
-    property int cornerRadius: Config.options.theme.cornerRadius
+    property int cornerRadius: Config.ready ? Config.theme.cornerRadius : 10
     property int cornerRadiusSmall: 5
 
     property int fontSizeSmall: 10
@@ -31,7 +31,7 @@ QtObject {
     property int fontSizeMassive: 20
     property string fontFamily: "CaskaydiaCove Nerd Font"
 
-    property int animationDuration: Config.options.theme.animationDuration
+    property int animationDuration: Config.ready ? Config.theme.animationDuration : 200
     property int animationDurationFast: 100
 
     property real shadowOpacity: 0.3
