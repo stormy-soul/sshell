@@ -6,8 +6,8 @@ import "../../theme"
 PanelWindow {
     id: popupsWindow
     
-    width: 350
-    height: Quickshell.screens[0].height
+    implicitWidth: 350
+    implicitHeight: Quickshell.screens[0].height
     screen: Quickshell.screens[0]
     color: "transparent"
 

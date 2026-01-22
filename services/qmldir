@@ -1,2 +1,3 @@
-module sshell.services
 singleton Config 1.0 Config.qml
+singleton NotificationService 1.0 NotificationService.qml
+singleton HyprlandService 1.0 HyprlandService.qml

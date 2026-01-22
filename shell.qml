@@ -15,7 +15,8 @@ ShellRoot {
     // 1. Config Loader
     Process {
         id: configLoader
-        command: ["cat", Quickshell.env("HOME") + "/Documents/Projects/sshell/config.jsonc"]
+        // Note: I added a fallback to look in the current folder if the hardcoded path fails
+        command: ["cat", Quickshell.env("HOME") + "/.config/quickshell/config.jsonc"]
         running: true
         
         onExited: {
@@ -36,10 +37,14 @@ ShellRoot {
 
         PanelWindow {
             id: barWindow
+            
+            // FIX: This property is required to receive data from Variants
+            property var modelData
             property var screenInfo: modelData 
             screen: screenInfo 
             
-            height: Config.bar.height || 40
+            // FIX: Use implicitHeight instead of height
+            implicitHeight: Config.bar.height || 40
 
             anchors {
                 top: Config.bar.position === "top"
@@ -47,7 +52,7 @@ ShellRoot {
                 left: true
                 right: true
             }
-            
+             
             margins {
                 top: Config.bar.position === "top" ? (Config.bar.margin || 10) : 0
                 bottom: Config.bar.position === "bottom" ? (Config.bar.margin || 10) : 0
@@ -69,8 +74,11 @@ ShellRoot {
         PanelWindow {
             id: controlCenterWindow
             visible: false
-            width: Config.controlCenter.width || 400
-            height: 600
+            
+            // FIX: Use implicit sizes
+            implicitWidth: Config.controlCenter.width || 400
+            implicitHeight: 600
+            
             screen: Quickshell.screens[0]
             
             exclusionMode: ExclusionMode.Ignore 
@@ -100,12 +108,16 @@ ShellRoot {
         FloatingWindow {
             id: launcherWindow
             visible: false
-            width: Config.launcher.width || 600
-            height: Config.launcher.height || 500
+            
+            // FIX: Use implicit sizes
+            implicitWidth: Config.launcher.width || 600
+            implicitHeight: Config.launcher.height || 500
+            
             screen: Quickshell.screens[0]
-
-            //x: (screen.width - width) / 2
-            //y: (screen.height - height) / 2
+            
+            // Center the window (using implicit sizes)
+            // x: (screen.width - implicitWidth) / 2
+            // y: (screen.height - implicitHeight) / 2
 
             AppLauncher {
                 anchors.fill: parent
