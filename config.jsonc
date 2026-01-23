@@ -5,46 +5,67 @@
         "height": 40,
         "margin": 10,
         "padding": 5,
-
         "left": [
-            { "module": "Launcher", "enabled": true },
-            { "module": "Workspaces", "enabled": true }
+            {
+                "module": "Launcher",
+                "enabled": true
+            },
+            {
+                "module": "Workspaces",
+                "enabled": true
+            }
         ],
         "center": [
-            { "module": "Clock", "enabled": true }
+            {
+                "module": "Clock",
+                "enabled": true
+            }
         ],
         "right": [
-            { "module": "Battery", "enabled": true },
-            { "module": "SystemTray", "enabled": true },
-            { "module": "Volume", "enabled": false },
-            { "module": "Network", "enabled": false }
+            {
+                "module": "Battery",
+                "enabled": true
+            },
+            {
+                "module": "SystemTray",
+                "enabled": true
+            },
+            {
+                "module": "Volume",
+                "enabled": false
+            },
+            {
+                "module": "Network",
+                "enabled": false
+            }
         ]
     },
-
     "workspaces": {
-        "persistent": [1, 2, 3, 4]
+        "persistent": [
+            1,
+            2,
+            3,
+            4
+        ]
     },
-
     "controlCenter": {
         "enabled": true,
         "width": 400,
         "position": "right"
     },
-
     "notifications": {
         "enabled": true,
         "position": "top-right",
         "maxNotifications": 5,
         "timeout": 5000
     },
-
     "launcher": {
         "enabled": true,
         "width": 600,
         "height": 500,
+        "grid": true,
         "fuzzy": true
     },
-
     "theme": {
         "accentColor": "#a6e3a1",
         "cornerRadius": 10,

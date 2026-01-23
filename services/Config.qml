@@ -18,11 +18,6 @@ Scope {
     property var parsedConfig: ({})
     property string filePath: Qt.resolvedUrl("../config.jsonc")
 
-    property bool launcherVisible: false
-    
-    function toggleLauncher() {
-        launcherVisible = !launcherVisible
-    }
 
     property FileView configFile: FileView {
         path: root.filePath
@@ -90,7 +85,7 @@ Scope {
                 },
                 controlCenter: { enabled: true, width: 400, position: "right" },
                 notifications: { enabled: true, position: "top-right", maxNotifications: 5, timeout: 5000 },
-                launcher: { enabled: true, width: 600, height: 500, fuzzy: true },
+                launcher: { enabled: true, width: 600, height: 500, fuzzy: true, grid: true },
                 theme: { accentColor: "#a6e3a1", cornerRadius: 10, animationDuration: 200, useSystemTheme: true }
             }
 
@@ -202,6 +197,7 @@ Scope {
             property int width: 600
             property int height: 500
             property bool fuzzy: true
+            property bool grid: true
         }
 
         property JsonObject theme: JsonObject {

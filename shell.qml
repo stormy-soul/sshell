@@ -9,6 +9,7 @@ import "./components/controlcenter"
 import "./components/launcher"
 import "./components/notifications"
 
+
 ShellRoot {
     id: root
 
@@ -87,12 +88,19 @@ ShellRoot {
 
         FloatingWindow {
             id: launcherWindow
-            visible: Config.launcherVisible
+            visible: ModuleLoader.launcherVisible
             
             implicitWidth: Config.launcher.width
             implicitHeight: Config.launcher.height
             
             screen: Quickshell.screens[0]
+            
+            // Reload apps when launcher opens
+            onVisibleChanged: {
+                if (visible) {
+                    AppService.reload()
+                }
+            }
 
             AppLauncher {
                 anchors.fill: parent

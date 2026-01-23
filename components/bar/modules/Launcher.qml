@@ -1,6 +1,9 @@
 import QtQuick
 import "../../../theme"
 import "../../../services"
+import "../../common"
+import "../"
+
 
 Rectangle {
     width: 32
@@ -8,11 +11,10 @@ Rectangle {
     color: "transparent"
     radius: Theme.cornerRadiusSmall
 
-    Text {
+    Icon {
         anchors.centerIn: parent
-        text: "" // Arch Logo or use "󰣇"
-        font.family: Theme.fontFamily
-        font.pixelSize: 18
+        source: "" 
+        size: 18
         color: hoverArea.containsMouse ? Theme.accent : Theme.text
     }
 
@@ -23,7 +25,7 @@ Rectangle {
         cursorShape: Qt.PointingHandCursor
         
         onClicked: {
-            Config.toggleLauncher()
+            ModuleLoader.toggleLauncher()
         }
     }
 }
