@@ -21,8 +21,9 @@ Singleton {
         readonly property int barPadding: 5
         
         readonly property int launcherWidth: 600
+        readonly property int launcherInitialHeight: 32
         readonly property int searchBarWidth: 400
-        readonly property int searchBarHeight: 45
+        readonly property int searchBarHeight: 40
         readonly property int searchBarRadius: 22
         readonly property int searchIconSize: 24
         
@@ -45,6 +46,9 @@ Singleton {
         readonly property color surfaceVariant: "#45475a"
         readonly property color surfaceHover: "#3a3d4d"
         
+        // Input field background (darker than surface)
+        readonly property color inputBackground: "#252536"
+        
         readonly property color text: "#cdd6f4"
         readonly property color textSecondary: "#a6adc8"
         readonly property color textDisabled: "#6c7086"
@@ -53,6 +57,15 @@ Singleton {
         readonly property color accentHover: '#698bc0'
         readonly property color primary: "#89b4fa"
         readonly property color colOnPrimary: '#1e1e20'
+        
+        // Accent-based highlight colors for selections/hover
+        readonly property color highlightBg: Qt.rgba(accent.r, accent.g, accent.b, 0.15)
+        readonly property color highlightBgHover: Qt.rgba(accent.r, accent.g, accent.b, 0.25)
+        readonly property color highlightBgActive: Qt.rgba(accent.r, accent.g, accent.b, 0.35)
+        
+        // Search icon shape background
+        readonly property color iconShapeBg: Qt.rgba(accent.r, accent.g, accent.b, 0.2)
+        readonly property color iconShapeFg: accent
         
         readonly property color border: "#585b70"
         readonly property color borderLight: "#6c7086"

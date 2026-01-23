@@ -23,18 +23,33 @@ Item {
         anchors {
             horizontalCenter: parent.horizontalCenter
             top: parent.top
-            topMargin: Appearance.sizes.paddingLarge
+            topMargin: Appearance.sizes.elevationMargin
         }
         
-        implicitWidth: contentColumn.width + (showResults ? Appearance.sizes.paddingLarge * 2 : 0)
-        implicitHeight: searchBar.height + (showResults ? separator.height + resultsList.height + Appearance.sizes.paddingLarge * 2 : 0)
+        implicitWidth: contentColumn.width + Appearance.sizes.paddingLarge * 2
+        implicitHeight: {
+            if (showResults) {
+                return contentColumn.implicitHeight + Appearance.sizes.paddingLarge * 2
+            } else {
+                return Math.max(Appearance.sizes.launcherInitialHeight, searchBar.height + Appearance.sizes.paddingLarge * 2)
+            }
+        }
         
         readonly property bool showResults: LauncherSearch.query !== ""
         
-        color: Appearance.colors.background
-        radius: searchBar.height / 2
+        // Almost transparent background
+        color: Qt.rgba(
+            Appearance.colors.background.r,
+            Appearance.colors.background.g,
+            Appearance.colors.background.b,
+            0.85
+        )
+        radius: Appearance.sizes.searchBarHeight / 2 + Appearance.sizes.paddingLarge
         border.color: Appearance.colors.border
         border.width: 1
+        
+        // Clip to prevent results from overflowing
+        clip: true
         
         Behavior on implicitHeight {
             NumberAnimation {
@@ -46,17 +61,16 @@ Item {
         Column {
             id: contentColumn
             anchors {
-                top: parent.top
                 horizontalCenter: parent.horizontalCenter
+                verticalCenter: searchWidget.showResults ? undefined : parent.verticalCenter
+                top: searchWidget.showResults ? parent.top : undefined
                 topMargin: searchWidget.showResults ? Appearance.sizes.paddingLarge : 0
-                bottomMargin: searchWidget.showResults ? Appearance.sizes.paddingLarge : 0
             }
-            width: Appearance.sizes.searchBarWidth + Appearance.sizes.paddingLarge * 2
+            width: searchBar.implicitWidth
             spacing: Appearance.sizes.padding
             
             SearchBar {
                 id: searchBar
-                width: parent.width
                 resultsList: resultsList
                 
                 onAccepted: {
@@ -81,8 +95,13 @@ Item {
             ListView {
                 id: resultsList
                 width: parent.width
-                height: contentHeight > Appearance.sizes.resultListMaxHeight ? Appearance.sizes.resultListMaxHeight : contentHeight
-                clip: contentHeight > Appearance.sizes.resultListMaxHeight
+                // Proper height calculation with clamping
+                height: Math.min(
+                    contentHeight + topMargin + bottomMargin,
+                    Appearance.sizes.resultListMaxHeight
+                )
+                // Always clip to prevent overflow
+                clip: true
                 spacing: Appearance.sizes.paddingSmall
                 visible: searchWidget.showResults
                 topMargin: Appearance.sizes.paddingSmall
@@ -123,6 +142,7 @@ Item {
                     required property int index
                     entry: modelData
                     highlighted: ListView.isCurrentItem
+                    width: resultsList.width
                 }
                 
                 Text {

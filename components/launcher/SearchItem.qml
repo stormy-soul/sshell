@@ -9,18 +9,35 @@ Rectangle {
     required property var entry
     property bool highlighted: false
     readonly property bool isValid: entry && typeof entry === "object"
+    
+    property int horizontalMargin: Appearance.sizes.padding
 
     width: ListView.view ? ListView.view.width : 300
     height: Appearance.sizes.resultItemHeight
-    radius: Appearance.sizes.cornerRadiusSmall
-    color: highlighted ? Appearance.colors.accent + "20" : (mouseArea.containsMouse ? Appearance.colors.surface : "transparent")
+    radius: Appearance.sizes.cornerRadius
+    
+    color: {
+        if (highlighted) return Appearance.colors.highlightBg
+        if (mouseArea.containsMouse) return Appearance.colors.highlightBgHover
+        return "transparent"
+    }
     
     visible: isValid 
+    
+    Behavior on color {
+        ColorAnimation {
+            duration: Appearance.animation.durationFast
+            easing.type: Appearance.animation.easingDefault
+        }
+    }
 
     Row {
         anchors.fill: parent
-        anchors.margins: Appearance.sizes.padding
-        spacing: Appearance.sizes.padding
+        anchors.leftMargin: root.horizontalMargin
+        anchors.rightMargin: root.horizontalMargin
+        anchors.topMargin: Appearance.sizes.padding
+        anchors.bottomMargin: Appearance.sizes.padding
+        spacing: Appearance.sizes.paddingLarge
         visible: root.isValid
         
         Loader {
@@ -35,7 +52,7 @@ Rectangle {
                 id: materialIconComponent
                 MaterialSymbol {
                     size: Appearance.sizes.resultIconSize
-                    color: Appearance.colors.accent
+                    color: root.highlighted ? Appearance.colors.accent : Appearance.colors.text
                     text: root.isValid ? entry.icon : ""
                     fill: 1
                 }
@@ -46,13 +63,12 @@ Rectangle {
                 Icon {
                     source: root.isValid ? entry.icon : ""
                     size: Appearance.sizes.resultIconSize
-                    color: Appearance.colors.accent
                 }
             }
         }
         
         Column {
-            width: parent.width - 48
+            width: parent.width - Appearance.sizes.resultIconSize - parent.spacing - root.horizontalMargin * 2
             anchors.verticalCenter: parent.verticalCenter
             spacing: 2
             
