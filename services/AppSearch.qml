@@ -1,37 +1,26 @@
 pragma Singleton
 import QtQuick
 import Quickshell
+import Quickshell.Services.SystemTray
 
 Singleton {
     id: root
+
+    readonly property var allApps: Array.from(DesktopEntries.applications.values)
     
-    // Get all desktop entries from Quickshell
-    readonly property var allApps: {
-        var apps = []
-        // Ensure DesktopEntries is available
-        if (typeof DesktopEntries === "undefined") return []
-        
-        var entries = DesktopEntries.applications
-        
-        // Convert map values to array
-        for (var key in entries) {
-            if (entries.hasOwnProperty(key)) {
-                apps.push(entries[key])
-            }
-        }
-        
-        return apps
+    Component.onCompleted: {
+        console.log("AppSearch: Loaded", allApps.length, "applications")
     }
     
-    // Simple fuzzy search
     function fuzzyQuery(searchText) {
+        console.log("AppSearch: fuzzyQuery called with:", searchText)
+        
         if (!searchText || searchText.length === 0) {
-            // Return all apps sorted by name (Safe Sort)
-            return allApps.sort(function(a, b) {
-                var nameA = (a.name || "").toLowerCase()
-                var nameB = (b.name || "").toLowerCase()
-                return nameA.localeCompare(nameB)
+            var sorted = allApps.sort(function(a, b) {
+                return a.name.localeCompare(b.name)
             }).slice(0, 50) 
+            console.log("AppSearch: Returning", sorted.length, "apps (all)")
+            return sorted
         }
         
         var query = searchText.toLowerCase()
@@ -39,28 +28,18 @@ Singleton {
         
         for (var i = 0; i < allApps.length; i++) {
             var app = allApps[i]
-            
-            // FIX: Safely handle null properties using (val || "")
-            var name = (app.name || "").toLowerCase()
-            var desc = (app.description || "").toLowerCase()
-            var keywords = (app.keywords || []).join(" ").toLowerCase()
-            var exec = (app.exec || "").toLowerCase()
-            
+            var name = app.name.toLowerCase()
             var score = 0
             
-            // Exact match at start = highest score
             if (name.startsWith(query)) {
                 score = 1000
             }
-            // Contains query in name = medium score
             else if (name.includes(query)) {
                 score = 500
             }
-            // Contains query in description/keywords/exec = low score
-            else if (desc.includes(query) || keywords.includes(query) || exec.includes(query)) {
+            else if (fuzzyMatch(query, name)) {
                 score = 100
             }
-            // (Optional) Fuzzy match could go here
             
             if (score > 0) {
                 results.push({
@@ -70,14 +49,24 @@ Singleton {
             }
         }
         
-        // Sort by score descending
         results.sort(function(a, b) {
             return b.score - a.score
         })
         
-        // Return apps (limit to 20 results)
-        return results.slice(0, 20).map(function(r) {
+        var finalResults = results.slice(0, 20).map(function(r) {
             return r.app
         })
+        console.log("AppSearch: Returning", finalResults.length, "apps for query:", searchText)
+        return finalResults
+    }
+    
+    function fuzzyMatch(query, text) {
+        var queryIdx = 0
+        for (var i = 0; i < text.length && queryIdx < query.length; i++) {
+            if (text[i] === query[queryIdx]) {
+                queryIdx++
+            }
+        }
+        return queryIdx === query.length
     }
 }

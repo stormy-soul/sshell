@@ -1,36 +1,31 @@
 import QtQuick
-import "../../theme"
+import "../../settings"
 import "../../services"
 import "../common"
 
 Rectangle {
     id: root
     
-    // Allow entry to be null/undefined without crashing
     required property var entry
-    
-    // Safety check: is the entry valid?
+    property bool highlighted: false
     readonly property bool isValid: entry && typeof entry === "object"
 
     width: ListView.view ? ListView.view.width : 300
-    height: 56
-    radius: Theme.cornerRadiusSmall
-    color: (mouseArea.containsMouse || (entry && entry.active)) ? Theme.surface : "transparent"
+    height: Appearance.sizes.resultItemHeight
+    radius: Appearance.sizes.cornerRadiusSmall
+    color: highlighted ? Appearance.colors.accent + "20" : (mouseArea.containsMouse ? Appearance.colors.surface : "transparent")
     
-    // Don't render content if invalid
     visible: isValid 
 
     Row {
         anchors.fill: parent
-        anchors.margins: Theme.padding
-        spacing: Theme.padding
+        anchors.margins: Appearance.sizes.padding
+        spacing: Appearance.sizes.padding
         visible: root.isValid
         
-        // Icon Loader
         Loader {
             anchors.verticalCenter: parent.verticalCenter
             
-            // Safe access to iconType
             sourceComponent: {
                 if (!root.isValid) return undefined
                 return (entry.iconType === "material") ? materialIconComponent : systemIconComponent
@@ -39,8 +34,8 @@ Rectangle {
             Component {
                 id: materialIconComponent
                 MaterialSymbol {
-                    size: 32
-                    color: Theme.accent
+                    size: Appearance.sizes.resultIconSize
+                    color: Appearance.colors.accent
                     text: root.isValid ? entry.icon : ""
                     fill: 1
                 }
@@ -50,34 +45,31 @@ Rectangle {
                 id: systemIconComponent
                 Icon {
                     source: root.isValid ? entry.icon : ""
-                    size: 32
-                    color: Theme.accent
+                    size: Appearance.sizes.resultIconSize
+                    color: Appearance.colors.accent
                 }
             }
         }
         
-        // Text Column
         Column {
             width: parent.width - 48
             anchors.verticalCenter: parent.verticalCenter
             spacing: 2
             
             Text {
-                // Safe access to name
                 text: root.isValid ? (entry.name || "") : ""
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.fontSize
-                color: Theme.text
+                font.family: Appearance.font.family.main
+                font.pixelSize: Appearance.font.pixelSize.normal
+                color: Appearance.colors.text
                 elide: Text.ElideRight
                 width: parent.width
             }
             
             Text {
-                // Safe access to description
                 text: root.isValid ? (entry.description || "") : ""
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.fontSizeSmall
-                color: Theme.textSecondary
+                font.family: Appearance.font.family.main
+                font.pixelSize: Appearance.font.pixelSize.small
+                color: Appearance.colors.textSecondary
                 elide: Text.ElideRight
                 width: parent.width
                 visible: text.length > 0
@@ -94,10 +86,7 @@ Rectangle {
         onClicked: {
             if (root.isValid && entry.execute) {
                 entry.execute()
-                // Close launcher (Use simple visibility check if ModuleLoader unavailable)
-                if (root.ListView.view && root.ListView.view.parent && root.ListView.view.parent.parent) {
-                     // Try to find the window to close it, or rely on execute side effects
-                }
+                ModuleLoader.launcherVisible = false
             }
         }
     }

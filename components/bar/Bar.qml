@@ -1,11 +1,11 @@
 import QtQuick
-import "../../theme"
+import "../../settings"
 import "../../services"
 
 Rectangle {
     id: bar
-    color: Theme.background
-    radius: Theme.cornerRadius
+    color: Appearance.colors.background
+    radius: Appearance.sizes.cornerRadius
     opacity: 0.9
 
     anchors.fill: parent
@@ -13,8 +13,8 @@ Rectangle {
     Row {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: Config.bar.padding
-        spacing: Config.bar.padding
+        anchors.leftMargin: Appearance.sizes.padding
+        spacing: Appearance.sizes.padding
 
         Repeater {
             model: Config.bar.left
@@ -28,7 +28,7 @@ Rectangle {
 
     Row {
         anchors.centerIn: parent
-        spacing: Config.bar.padding
+        spacing: Appearance.sizes.padding
 
         Repeater {
             model: Config.bar.center
@@ -43,8 +43,8 @@ Rectangle {
     Row {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: Config.bar.padding
-        spacing: Config.bar.padding
+        anchors.rightMargin: Appearance.sizes.padding
+        spacing: Appearance.sizes.padding
 
         Repeater {
             model: Config.bar.right

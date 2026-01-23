@@ -1,5 +1,6 @@
 import QtQuick
-import "../../../theme"
+import "../../../settings"
+import "../../../services"
 
 Rectangle {
     implicitWidth: row.implicitWidth
@@ -9,13 +10,13 @@ Rectangle {
     Row {
         id: row
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Theme.padding
+        spacing: Appearance.sizes.padding
 
         Text {
             text: " " 
-            color: Theme.accent
+            color: Appearance.colors.accent
             verticalAlignment: Text.AlignVCenter
-            font.pixelSize: Theme.fontSize
+            font.pixelSize: Appearance.sizes.fontSize
         }
     }
 }

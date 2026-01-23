@@ -1,0 +1,8 @@
+Icon 1.0 common/Icon.qml
+MaterialSymbol 1.0 common/MaterialSymbol.qml
+
+Bar 1.0 bar/Bar.qml
+
+AppLauncher 1.0 launcher/AppLauncher.qml
+SearchBar 1.0 launcher/SearchBar.qml
+SearchItem 1.0 launcher/SearchItem.qml

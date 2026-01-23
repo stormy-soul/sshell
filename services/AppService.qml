@@ -12,14 +12,11 @@ Scope {
     property int totalDirs: 2
     
     readonly property var appDirs: Directories.appDirs
-    
-    // Process instances will be created dynamically in loadApps()
-    
+        
     Component.onCompleted: {
         loadApps()
     }
     
-    // Reload apps (can be called when launcher opens)
     function reload() {
         loadApps()
     }
@@ -178,8 +175,6 @@ Scope {
             var dirPath = Directories.systemIconDirs[i]
             for (var j = 0; j < extensions.length; j++) {
                 var fullPath = dirPath + iconName + extensions[j]
-                // Note: We can't check file existence in QML, so we return the path
-                // and let the Icon component handle fallback
                 if (extensions[j] === ".svg" || extensions[j] === ".png") {
                     return "file://" + fullPath
                 }

@@ -1,0 +1,3 @@
+module sshell
+singleton Appearance 1.0 Appearance.qml
+singleton Config 1.0 Config.qml

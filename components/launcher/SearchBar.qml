@@ -1,13 +1,15 @@
 import QtQuick
-import "../../theme"
+import "../../components"
+import "../../settings"
 import "../../services"
-import "../common"
 
 Row {
     id: root
-    spacing: Theme.padding
+    spacing: Appearance.sizes.padding
+    leftPadding: Appearance.sizes.paddingLarge
     
     property alias searchText: searchInput.text
+    property ListView resultsList: null  
     
     signal accepted()
     
@@ -15,11 +17,17 @@ Row {
         searchInput.forceActiveFocus()
     }
     
-    // Icon that changes based on search mode
+    Keys.onDownPressed: {
+        if (resultsList && resultsList.count > 0) {
+            resultsList.forceActiveFocus()
+            resultsList.currentIndex = 0
+        }
+    }
+    
     MaterialSymbol {
         anchors.verticalCenter: parent.verticalCenter
-        size: Theme.fontSizeLarge
-        color: Theme.accent
+        size: Appearance.sizes.searchIconSize
+        color: Appearance.colors.accent
         text: {
             if (LauncherSearch.searchMode === 1) return "apps"
             if (LauncherSearch.searchMode === 2) return "calculate"
@@ -28,30 +36,20 @@ Row {
         fill: 1
     }
     
-    // Search input
     Rectangle {
-        width: 400
-        height: 40
-        radius: Theme.cornerRadiusSmall
-        color: Theme.surface
-        border.color: searchInput.activeFocus ? Theme.accent : Theme.border
-        border.width: 1
-        
-        Behavior on width {
-            enabled: searchInput.text !== ""
-            NumberAnimation {
-                duration: Theme.animationDuration
-                easing.type: Easing.OutCubic
-            }
-        }
+        width: Appearance.sizes.searchBarWidth
+        height: Appearance.sizes.searchBarHeight
+        radius: Appearance.sizes.searchBarRadius
+        color: "transparent"
+        border.width: 0
         
         TextInput {
             id: searchInput
             anchors.fill: parent
-            anchors.margins: Theme.padding
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSize
-            color: Theme.text
+            anchors.rightMargin: Appearance.sizes.paddingLarge
+            font.family: Appearance.font.family.main
+            font.pixelSize: Appearance.font.pixelSize.normal
+            color: Appearance.colors.text
             verticalAlignment: TextInput.AlignVCenter
             selectByMouse: true
             focus: true
@@ -66,7 +64,7 @@ Row {
                 visible: parent.text.length === 0
                 text: "Search apps, calculate..."
                 font: parent.font
-                color: Theme.textSecondary
+                color: Appearance.colors.textSecondary
                 anchors.verticalCenter: parent.verticalCenter
             }
         }

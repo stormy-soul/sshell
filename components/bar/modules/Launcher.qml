@@ -1,24 +1,23 @@
 import QtQuick
-import "../../../theme"
+import "../../../settings"
 import "../../../services"
 import "../../common"
-import "../"
-
 
 Rectangle {
-    width: 32
-    height: 32
+    id: launcherButton
+    width: Appearance.sizes.barHeight
+    height: Appearance.sizes.barHeight
     color: "transparent"
-    radius: Theme.cornerRadiusSmall
-
+    radius: Appearance.sizes.cornerRadiusSmall
+    
     MaterialSymbol {
         anchors.centerIn: parent
         text: "apps"
         size: 18
-        color: hoverArea.containsMouse ? Theme.accent : Theme.text
+        color: hoverArea.containsMouse ? Appearance.colors.accent : Appearance.colors.text
         fill: hoverArea.containsMouse ? 1 : 0
     }
-
+    
     MouseArea {
         id: hoverArea
         anchors.fill: parent
@@ -26,7 +25,7 @@ Rectangle {
         cursorShape: Qt.PointingHandCursor
         
         onClicked: {
-            ModuleLoader.toggleLauncher()
+            ModuleLoader.launcherVisible = !ModuleLoader.launcherVisible
         }
     }
 }

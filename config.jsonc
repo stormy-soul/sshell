@@ -61,7 +61,7 @@
     },
     "launcher": {
         "enabled": true,
-        "width": 600,
+        "width": 400,
         "height": 500
     },
     "theme": {

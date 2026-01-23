@@ -1,9 +1,9 @@
 import QtQuick
-import "../../../theme"
+import "../../../settings"
 import "../../../services"
 
 Row {
-    spacing: Theme.padding
+    spacing: Appearance.sizes.padding
     anchors.verticalCenter: parent.verticalCenter
 
     Rectangle {
@@ -15,8 +15,8 @@ Row {
         Text {
             anchors.centerIn: parent
             text: "" 
-            color: testArea.containsMouse ? Theme.accent : Theme.text
-            font.pixelSize: Theme.fontSizeLarge
+            color: testArea.containsMouse ? Appearance.colors.accent : Appearance.colors.text
+            font.pixelSize: Appearance.sizes.fontSizeLarge
         }
 
         MouseArea {

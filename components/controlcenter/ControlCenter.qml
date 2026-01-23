@@ -1,50 +1,46 @@
 import QtQuick
-
+import "../../settings"
 import "../../services"
-import "../../theme"
 
 Rectangle {
     id: controlCenter
-    color: Theme.background
-    radius: Theme.cornerRadius
-    border.color: Theme.border
+    color: Appearance.colors.background
+    radius: Appearance.sizes.cornerRadius
+    border.color: Appearance.colors.border
     border.width: 1
 
     Column {
         anchors.fill: parent
-        anchors.margins: Theme.paddingLarge
-        spacing: Theme.paddingLarge
+        anchors.margins: Appearance.sizes.paddingLarge
+        spacing: Appearance.sizes.paddingLarge
 
-        // Header
         Row {
             width: parent.width
-            spacing: Theme.padding
+            spacing: Appearance.sizes.padding
 
             Text {
                 text: "Control Center"
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.fontSizeMassive
+                font.family: Appearance.font.family.main
+                font.pixelSize: Appearance.font.pixelSize.massive
                 font.weight: Font.Bold
-                color: Theme.text
+                color: Appearance.colors.text
                 verticalAlignment: Text.AlignVCenter
             }
 
-            Item {
-                width: parent.width - 200
-            }
+            Item { width: parent.width - 200 }
 
             Rectangle {
                 width: 32
                 height: 32
-                radius: Theme.cornerRadiusSmall
-                color: closeMouseArea.containsMouse ? Theme.surface : "transparent"
+                radius: Appearance.sizes.cornerRadiusSmall
+                color: closeMouseArea.containsMouse ? Appearance.colors.surface : "transparent"
 
                 Text {
                     anchors.centerIn: parent
                     text: "󰅖"
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.fontSize
-                    color: Theme.text
+                    font.family: Appearance.font.family.nerd
+                    font.pixelSize: Appearance.font.pixelSize.normal
+                    color: Appearance.colors.text
                 }
 
                 MouseArea {
@@ -56,42 +52,38 @@ Rectangle {
             }
         }
 
-        // Quick Settings Cards
         Column {
             width: parent.width
-            spacing: Theme.padding
+            spacing: Appearance.sizes.padding
 
-            // Volume Card
             Rectangle {
                 width: parent.width
                 height: 80
-                radius: Theme.cornerRadiusSmall
-                color: Theme.surface
+                radius: Appearance.sizes.cornerRadiusSmall
+                color: Appearance.colors.surface
 
                 Column {
                     anchors.fill: parent
-                    anchors.margins: Theme.padding
-                    spacing: Theme.paddingSmall
+                    anchors.margins: Appearance.sizes.padding
+                    spacing: Appearance.sizes.paddingSmall
 
                     Row {
                         width: parent.width
 
                         Text {
                             text: "󰕾 Volume"
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSize
-                            color: Theme.text
+                            font.family: Appearance.font.family.nerd
+                            font.pixelSize: Appearance.font.pixelSize.normal
+                            color: Appearance.colors.text
                         }
 
-                        Item {
-                            width: parent.width - 150
-                        }
+                        Item { width: parent.width - 150 }
 
                         Text {
                             text: "50%"
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSizeSmall
-                            color: Theme.textSecondary
+                            font.family: Appearance.font.family.main
+                            font.pixelSize: Appearance.font.pixelSize.small
+                            color: Appearance.colors.textSecondary
                         }
                     }
 
@@ -99,35 +91,34 @@ Rectangle {
                         width: parent.width
                         height: 4
                         radius: 2
-                        color: Theme.surfaceVariant
+                        color: Appearance.colors.surfaceVariant
 
                         Rectangle {
                             width: parent.width * 0.5
                             height: parent.height
                             radius: parent.radius
-                            color: Theme.accent
+                            color: Appearance.colors.accent
                         }
                     }
                 }
             }
 
-            // Network Card
             Rectangle {
                 width: parent.width
                 height: 60
-                radius: Theme.cornerRadiusSmall
-                color: Theme.surface
+                radius: Appearance.sizes.cornerRadiusSmall
+                color: Appearance.colors.surface
 
                 Row {
                     anchors.fill: parent
-                    anchors.margins: Theme.padding
-                    spacing: Theme.padding
+                    anchors.margins: Appearance.sizes.padding
+                    spacing: Appearance.sizes.padding
 
                     Text {
                         text: "󰖩"
-                        font.family: Theme.fontFamily
-                        font.pixelSize: Theme.fontSizeLarge
-                        color: Theme.accent
+                        font.family: Appearance.font.family.nerd
+                        font.pixelSize: Appearance.font.pixelSize.large
+                        color: Appearance.colors.accent
                         verticalAlignment: Text.AlignVCenter
                     }
 
@@ -136,38 +127,37 @@ Rectangle {
 
                         Text {
                             text: "WiFi"
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSize
-                            color: Theme.text
+                            font.family: Appearance.font.family.main
+                            font.pixelSize: Appearance.font.pixelSize.normal
+                            color: Appearance.colors.text
                         }
 
                         Text {
                             text: "Connected"
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSizeSmall
-                            color: Theme.textSecondary
+                            font.family: Appearance.font.family.main
+                            font.pixelSize: Appearance.font.pixelSize.small
+                            color: Appearance.colors.textSecondary
                         }
                     }
                 }
             }
 
-            // Bluetooth Card
             Rectangle {
                 width: parent.width
                 height: 60
-                radius: Theme.cornerRadiusSmall
-                color: Theme.surface
+                radius: Appearance.sizes.cornerRadiusSmall
+                color: Appearance.colors.surface
 
                 Row {
                     anchors.fill: parent
-                    anchors.margins: Theme.padding
-                    spacing: Theme.padding
+                    anchors.margins: Appearance.sizes.padding
+                    spacing: Appearance.sizes.padding
 
                     Text {
                         text: "󰂯"
-                        font.family: Theme.fontFamily
-                        font.pixelSize: Theme.fontSizeLarge
-                        color: Theme.textSecondary
+                        font.family: Appearance.font.family.nerd
+                        font.pixelSize: Appearance.font.pixelSize.large
+                        color: Appearance.colors.textSecondary
                         verticalAlignment: Text.AlignVCenter
                     }
 
@@ -176,16 +166,16 @@ Rectangle {
 
                         Text {
                             text: "Bluetooth"
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSize
-                            color: Theme.text
+                            font.family: Appearance.font.family.main
+                            font.pixelSize: Appearance.font.pixelSize.normal
+                            color: Appearance.colors.text
                         }
 
                         Text {
                             text: "Off"
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSizeSmall
-                            color: Theme.textSecondary
+                            font.family: Appearance.font.family.main
+                            font.pixelSize: Appearance.font.pixelSize.small
+                            color: Appearance.colors.textSecondary
                         }
                     }
                 }

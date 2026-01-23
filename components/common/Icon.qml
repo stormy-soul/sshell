@@ -1,6 +1,7 @@
 import QtQuick
+import Quickshell
 import QtQuick.Effects
-import "../../theme"
+import "../../settings"
 import "../../services"
 
 Item {
@@ -8,25 +9,37 @@ Item {
     
     property string source: ""
     property int size: 24
-    property color color: Theme.text
+    property color color: Appearance.colors.text
     property bool tint: false
     
     implicitWidth: size
     implicitHeight: size
     
-    // Check what type of icon this is
-    readonly property bool isImage: source.includes("/") || source.includes(".")
-    readonly property bool isMaterialDesign: !isImage && source.length > 0 && !isNerdFont(source)
-    readonly property string resolvedSource: isMaterialDesign ? resolveMaterialDesignIcon(source) : source
+    readonly property bool isFilePath: source.startsWith("/") || source.startsWith("file://")
+    readonly property bool isMaterialDesign: !isFilePath && source.length > 0 && !isNerdFont(source) && isMaterialIconName(source)
     
-    // Check if source is a NerdFont character (typically Unicode characters)
+    readonly property string resolvedSource: {
+        if (isFilePath) return source
+        if (isMaterialDesign) return resolveMaterialDesignIcon(source)
+        var systemPath = Quickshell.iconPath(source)
+        if (systemPath && systemPath.length > 0) return systemPath
+        return ""
+    }
+    
     function isNerdFont(str) {
         if (str.length === 0) return false
-        // NerdFont icons are typically single Unicode characters or very short strings
         if (str.length > 10) return false
-        // Check if it contains typical icon hex codes or special characters
         var code = str.charCodeAt(0)
         return code > 0xE000 || str.includes("󰀀") || str.includes("") || str.includes("")
+    }
+    
+    function isMaterialIconName(str) {
+        if (str.length > 20) return false
+        if (str.includes(".") || str.includes("-")) return false
+        if (!/^[a-z_0-9]+$/.test(str)) return false
+        var knownIcons = ["search", "apps", "calculate", "close", "menu", "settings", "home", "add", "remove", "edit", "delete", "check", "error", "warning", "info"]
+        if (knownIcons.indexOf(str) !== -1) return true
+        return str.length <= 12 && !str.includes("_")
     }
     
     function resolveMaterialDesignIcon(iconName) {
@@ -37,40 +50,35 @@ Item {
             iconType = Config.theme.icons
         }
         
-        // Use Directories service for consistent path resolution
         if (typeof Directories !== 'undefined') {
             return Directories.getMaterialIconUrl(iconName, iconType)
         }
         
-        // Fallback if Directories service not available
-        console.warn("Icon: Directories service not available, using fallback path resolution")
+        console.warn("Icon: Directories service not available")
         return ""
     }
     
-    // Text icon (NerdFont)
     Text {
         id: textIcon
-        visible: !root.isImage && !root.isMaterialDesign
+        visible: !root.isFilePath && !root.isMaterialDesign && root.isNerdFont(root.source) && root.resolvedSource.length === 0
         anchors.centerIn: parent
         text: root.source
-        font.family: Theme.fontFamily
+        font.family: Appearance.font.family.nerd
         font.pixelSize: root.size
         color: root.tint ? root.color : root.color
     }
     
-    // Image icon (file paths and Material Design icons)
     Image {
         id: imageIcon
-        visible: root.isImage || root.isMaterialDesign
+        visible: root.resolvedSource.length > 0
         anchors.fill: parent
-        source: root.isImage ? root.source : root.resolvedSource
+        source: root.resolvedSource
         fillMode: Image.PreserveAspectFit
         sourceSize: Qt.size(root.size * 2, root.size * 2)
         smooth: true
         asynchronous: true
         cache: true
         
-        // Fallback when image fails to load
         onStatusChanged: {
             if (status === Image.Error) {
                 console.warn("Icon: Failed to load image:", source)
@@ -80,27 +88,21 @@ Item {
         }
     }
     
-    // Grayscale + Color tint effect for images
     MultiEffect {
-        visible: (root.isImage || root.isMaterialDesign) && root.tint && imageIcon.status === Image.Ready
+        visible: (root.isFilePath || root.isMaterialDesign) && root.tint && imageIcon.status === Image.Ready
         anchors.fill: imageIcon
         source: imageIcon
-        
-        // Grayscale
         saturation: -1.0
-        
-        // Color overlay
         colorizationColor: root.color
         colorization: 1.0
     }
     
-    // Fallback icon (when image fails to load)
     Text {
         id: fallbackIcon
         visible: false
         anchors.centerIn: parent
-        text: "󰀻"  // Default app icon
-        font.family: Theme.fontFamily
+        text: "󰀻"  
+        font.family: Appearance.font.family.nerd
         font.pixelSize: root.size
         color: root.color
     }

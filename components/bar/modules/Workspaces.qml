@@ -1,12 +1,11 @@
 import QtQuick
 import Quickshell.Hyprland
-
+import "../../../settings"
 import "../../../services"
-import "../../../theme"
 
 Row {
     id: workspaces
-    spacing: Theme.padding
+    spacing: Appearance.sizes.padding
 
     function getSortedWorkspaceIds() {
         var _trigger = Hyprland.workspaces.length 
@@ -37,30 +36,30 @@ Row {
 
             height: (Config.bar.height || 40) - (workspaces.spacing * 2)
             width: height
-            radius: Theme.cornerRadiusSmall
+            radius: Appearance.sizes.cornerRadiusSmall
             
             property bool isFocused: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
             property bool hasWindows: activeWsObject ? (activeWsObject.clients.length > 0) : false
             property bool existsInHyprland: activeWsObject !== null             
     
             color: {
-                if (isFocused) return Theme.accent || "#a6e3a1"
-                if (hasWindows) return Theme.surface || "#313244"
-                if (existsInHyprland) return Theme.surface || "#313244"
+                if (isFocused) return Appearance.colors.accent
+                if (hasWindows) return Appearance.colors.surface
+                if (existsInHyprland) return Appearance.colors.surface
                 return "transparent" 
             }
             
             Behavior on color {
-                ColorAnimation { duration: Theme.animationDuration }
+                ColorAnimation { duration: Appearance.animation.duration }
             }
             
             Text {
                 anchors.centerIn: parent
                 text: wsRect.wsId
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.fontSize
+                font.family: Appearance.font.family.main
+                font.pixelSize: Appearance.font.pixelSize.normal
                 font.weight: wsRect.isFocused ? Font.DemiBold : Font.Normal
-                color: wsRect.isFocused ? Theme.background : Theme.text
+                color: wsRect.isFocused ? Appearance.colors.onPrimary : Appearance.colors.text
             }
             
             MouseArea {

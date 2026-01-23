@@ -1,36 +1,35 @@
 import QtQuick
-
+import "../../../settings"
 import "../../../services"
-import "../../../theme"
 
 Rectangle {
     id: clockModule
 
-    implicitWidth: row.implicitWidth + Theme.padding * 2
-    implicitHeight: parent.height - Theme.paddingSmall
+    implicitWidth: row.implicitWidth + Appearance.sizes.padding * 2
+    implicitHeight: parent.height - Appearance.sizes.paddingSmall
 
-    radius: Theme.cornerRadiusSmall
+    radius: Appearance.sizes.cornerRadiusSmall
     color: "transparent"
     
     Row {
         id: row
-        anchors.verticalCenter: parent.verticalCenter
-        spacing: Theme.padding
+        anchors.centerIn: parent
+        spacing: Appearance.sizes.padding
 
         Text {
             text: Qt.formatTime(Clock.now, "hh:mm")
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSize
+            font.family: Appearance.font.family.main
+            font.pixelSize: Appearance.font.pixelSize.normal
             font.weight: Font.Medium
-            color: Theme.text
+            color: Appearance.colors.text
             verticalAlignment: Text.AlignVCenter
         }
 
         Text {
             text: Qt.formatDate(Clock.now, "MMM dd")
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSize
-            color: Theme.textSecondary
+            font.family: Appearance.font.family.main
+            font.pixelSize: Appearance.font.pixelSize.normal
+            color: Appearance.colors.textSecondary
             verticalAlignment: Text.AlignVCenter
         }
     }
@@ -39,7 +38,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         
-        onEntered: parent.color = Theme.surfaceVariant
+        onEntered: parent.color = Appearance.colors.surfaceVariant
         onExited: parent.color = "transparent"
     }
 }

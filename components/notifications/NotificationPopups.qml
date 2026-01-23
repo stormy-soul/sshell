@@ -1,12 +1,12 @@
 import QtQuick
 import Quickshell
+import "../../settings"
 import "../../services"
-import "../../theme"
 
 PanelWindow {
     id: popupsWindow
     
-    implicitWidth: 350
+    implicitWidth: Appearance.sizes.notificationWidth
     implicitHeight: Quickshell.screens[0].height
     screen: Quickshell.screens[0]
     color: "transparent"
@@ -22,16 +22,15 @@ PanelWindow {
     }
 
     margins {
-        top: Theme.paddingLarge
-        bottom: Theme.paddingLarge
-        left: Theme.paddingLarge
-        right: Theme.paddingLarge
+        top: Appearance.sizes.paddingLarge
+        bottom: Appearance.sizes.paddingLarge
+        left: Appearance.sizes.paddingLarge
+        right: Appearance.sizes.paddingLarge
     }
 
     Column {
         id: notificationColumn
-        spacing: Theme.padding
-        
+        spacing: Appearance.sizes.padding
         width: parent.width
 
         Repeater {
@@ -40,11 +39,11 @@ PanelWindow {
             Rectangle {
                 required property var modelData
 
-                width: 350
-                height: 80
-                radius: Theme.cornerRadius
-                color: Theme.background
-                border.color: Theme.border
+                width: Appearance.sizes.notificationWidth
+                height: Appearance.sizes.notificationHeight
+                radius: Appearance.sizes.cornerRadius
+                color: Appearance.colors.background
+                border.color: Appearance.colors.border
                 border.width: 1
 
                 opacity: 0
@@ -56,38 +55,38 @@ PanelWindow {
                 }
 
                 Behavior on opacity {
-                    NumberAnimation { duration: Theme.animationDuration }
+                    NumberAnimation { duration: Appearance.animation.duration }
                 }
 
                 Behavior on y {
-                    NumberAnimation { duration: Theme.animationDuration }
+                    NumberAnimation { duration: Appearance.animation.duration }
                 }
 
                 Row {
                     anchors.fill: parent
-                    anchors.margins: Theme.padding
-                    spacing: Theme.padding
+                    anchors.margins: Appearance.sizes.padding
+                    spacing: Appearance.sizes.padding
 
                     Column {
                         width: parent.width - 40
-                        spacing: Theme.paddingSmall
+                        spacing: Appearance.sizes.paddingSmall
 
                         Text {
                             width: parent.width
                             text: parent.parent.parent.modelData.title
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSize
+                            font.family: Appearance.font.family.main
+                            font.pixelSize: Appearance.font.pixelSize.normal
                             font.weight: Font.DemiBold
-                            color: Theme.text
+                            color: Appearance.colors.text
                             elide: Text.ElideRight
                         }
 
                         Text {
                             width: parent.width
                             text: parent.parent.parent.modelData.body
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSizeSmall
-                            color: Theme.textSecondary
+                            font.family: Appearance.font.family.main
+                            font.pixelSize: Appearance.font.pixelSize.small
+                            color: Appearance.colors.textSecondary
                             wrapMode: Text.WordWrap
                             maximumLineCount: 2
                             elide: Text.ElideRight
@@ -97,15 +96,15 @@ PanelWindow {
                     Rectangle {
                         width: 24
                         height: 24
-                        radius: Theme.cornerRadiusSmall
-                        color: closeArea.containsMouse ? Theme.surface : "transparent"
+                        radius: Appearance.sizes.cornerRadiusSmall
+                        color: closeArea.containsMouse ? Appearance.colors.surface : "transparent"
 
                         Text {
                             anchors.centerIn: parent
                             text: "󰅖"
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSizeSmall
-                            color: Theme.text
+                            font.family: Appearance.font.family.nerd
+                            font.pixelSize: Appearance.font.pixelSize.small
+                            color: Appearance.colors.text
                         }
 
                         MouseArea {

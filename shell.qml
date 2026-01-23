@@ -1,14 +1,15 @@
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import Quickshell.Hyprland
+import Quickshell.Wayland
 
-import "./theme"
-import "./services" 
+import "./settings"
+import "./services"
 import "./components/bar"
 import "./components/controlcenter"
 import "./components/launcher"
 import "./components/notifications"
-
 
 ShellRoot {
     id: root
@@ -81,35 +82,75 @@ ShellRoot {
         }
     }
 
-    // App Launcher
-    LazyLoader {
-        id: launcherLoader
-        active: Config.ready && Config.launcher.enabled
-
-        FloatingWindow {
-            id: launcherWindow
-            visible: ModuleLoader.launcherVisible
+    PanelWindow {
+        id: launcherWindow
+        visible: ModuleLoader.launcherVisible
+        color: "transparent"
+        
+        screen: Quickshell.screens[0]
+        
+        WlrLayershell.namespace: "sshell:launcher"
+        WlrLayershell.layer: WlrLayer.Overlay
+        
+        anchors {
+            top: true
+            bottom: true
+            left: true
+            right: true
+        }
+        
+        mask: Region {
+            item: ModuleLoader.launcherVisible ? appLauncher : null
+        }
+        
+        HyprlandFocusGrab {
+            id: focusGrab
+            windows: [launcherWindow]
+            active: false
             
-            implicitWidth: Config.launcher.width
-            implicitHeight: Config.launcher.height
-            
-            screen: Quickshell.screens[0]
-            
-            // Add namespace for Hyprland window rules
-            //WlrLayershell.namespace: "sshell:launcher"
-            
-            // Clear search and reload when launcher opens/closes
-            onVisibleChanged: {
-                if (visible) {
-                    //AppService.reload()
+            onCleared: {
+                if (!active) {
+                    ModuleLoader.launcherVisible = false
+                }
+            }
+        }
+        
+        Timer {
+            id: delayedGrabTimer
+            interval: 50
+            repeat: false
+            onTriggered: {
+                focusGrab.active = ModuleLoader.launcherVisible
+            }
+        }
+        
+        Connections {
+            target: ModuleLoader
+            function onLauncherVisibleChanged() {
+                if (ModuleLoader.launcherVisible) {
+                    LauncherSearch.query = ""
+                    delayedGrabTimer.start()
+                    // Focus the input
+                    Qt.callLater(function() {
+                        appLauncher.focusSearchInput()
+                    })
                 } else {
-                    // Clear search when closing
+                    focusGrab.active = false
                     LauncherSearch.query = ""
                 }
             }
-
-            AppLauncher {
-                anchors.fill: parent
+        }
+        
+        AppLauncher {
+            id: appLauncher
+            anchors.fill: parent
+            
+            Keys.onEscapePressed: {
+                if (LauncherSearch.query !== "") {
+                    LauncherSearch.query = ""
+                } else {
+                    ModuleLoader.launcherVisible = false
+                }
             }
         }
     }

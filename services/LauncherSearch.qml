@@ -2,84 +2,91 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../components/bar"
 
 Singleton {
     id: root
     
     property string query: ""
     
-    // Search prefixes
     readonly property string prefixApp: ":"
     readonly property string prefixMath: "="
     
-    // Detect current search mode
     readonly property int searchMode: {
         if (query.startsWith(prefixApp)) return 1  // App search
         if (query.startsWith(prefixMath)) return 2 // Math
-        return 0 // Default (show apps)
+        if (/^[\d\s\+\-\*\/\(\)\.\^%]+$/.test(query) && /\d/.test(query)) return 2
+        return 0 // Default 
     }
     
-    // Clean query (remove prefix)
     readonly property string cleanQuery: {
         if (searchMode === 1) return query.slice(prefixApp.length).trim()
         if (searchMode === 2) return query.slice(prefixMath.length).trim()
         return query.trim()
     }
     
-    // Math result
     property string mathResult: ""
     
-    // Results list
     property var results: {
-        if (query === "") return []
-        
         var resultList = []
         
-        // Math results (when prefix is = or query starts with number)
-        if (searchMode === 2 || /^\d/.test(query)) {
+        if (searchMode === 2 && cleanQuery.length > 0) {
             mathTimer.restart()
-            if (mathResult) {
+            if (mathResult && mathResult.length > 0) {
                 resultList.push({
                     type: "math",
                     name: mathResult,
-                    description: "Math result",
+                    description: "Math result - click to copy",
                     icon: "calculate",
                     iconType: "material",
                     execute: function() {
                         Quickshell.clipboardText = mathResult
+                        console.log("Math result copied:", mathResult)
                     }
                 })
             }
         }
         
-        // App results
         if (searchMode === 0 || searchMode === 1) {
             var apps = AppSearch.fuzzyQuery(cleanQuery)
+            console.log("LauncherSearch: Got", apps.length, "apps from AppSearch")
+            
             for (var i = 0; i < apps.length; i++) {
                 var app = apps[i]
+                
+                var makeExecutor = function(appToRun) {
+                    return function() {
+                        console.log("Launching app:", appToRun.name, "with exec:", appToRun.exec)
+                        if (appToRun && appToRun.execute) {
+                            appToRun.execute()
+                        }
+                        ModuleLoader.launcherVisible = false
+                    }
+                }
+                
                 resultList.push({
                     type: "app",
-                    name: app.name,
-                    description: app.comment || app.genericName || "",
-                    icon: app.icon,
+                    name: app.name || "Unknown",
+                    description: app.comment || app.description || app.genericName || "",
+                    icon: app.icon || "application-x-executable",
                     iconType: "system",
-                    execute: function() {
-                        app.execute()
-                    }
+                    execute: makeExecutor(app),
+                    active: false
                 })
             }
         }
         
+        console.log("LauncherSearch: Returning", resultList.length, "total results")
         return resultList
     }
     
-    // Math calculation timer (debounce)
     Timer {
         id: mathTimer
         interval: 300
         onTriggered: {
             var expr = cleanQuery
-            if (expr) {
+            if (expr && expr.length > 0) {
+                console.log("Math: Evaluating:", expr)
                 mathProc.running = false
                 mathProc.command = ["qalc", "-t", expr]
                 mathProc.running = true
@@ -87,13 +94,31 @@ Singleton {
         }
     }
     
-    // Math calculation process
     Process {
         id: mathProc
+        
+        property string outputBuffer: ""
+        
         stdout: SplitParser {
             onRead: data => {
-                root.mathResult = data.trim()
+                mathProc.outputBuffer += data
             }
         }
+        
+        onExited: {
+            if (exitCode === 0) {
+                var result = mathProc.outputBuffer.trim()
+                console.log("Math: Result:", result)
+                root.mathResult = result
+            } else {
+                console.warn("Math: qalc failed with exit code:", exitCode)
+                root.mathResult = ""
+            }
+            mathProc.outputBuffer = ""
+        }
+    }
+    
+    onQueryChanged: {
+        console.log("LauncherSearch: Query changed to:", query, "- Mode:", searchMode)
     }
 }
