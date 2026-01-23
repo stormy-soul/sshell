@@ -23,7 +23,8 @@ ShellRoot {
             property var modelData
             property var screenInfo: modelData 
             screen: screenInfo 
-            
+
+            WlrLayershell.namespace: "sshell:bar"
             implicitHeight: Config.bar.height
             color: "transparent"
 
@@ -57,6 +58,7 @@ ShellRoot {
             id: controlCenterWindow
             visible: false
             
+            WlrLayershell.namespace: "sshell:control-center"
             implicitWidth: Config.controlCenter.width
             implicitHeight: 600
             
