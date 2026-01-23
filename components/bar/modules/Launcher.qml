@@ -11,11 +11,12 @@ Rectangle {
     color: "transparent"
     radius: Theme.cornerRadiusSmall
 
-    Icon {
+    MaterialSymbol {
         anchors.centerIn: parent
-        source: "" 
+        text: "apps"
         size: 18
         color: hoverArea.containsMouse ? Theme.accent : Theme.text
+        fill: hoverArea.containsMouse ? 1 : 0
     }
 
     MouseArea {

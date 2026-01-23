@@ -95,16 +95,21 @@ ShellRoot {
             
             screen: Quickshell.screens[0]
             
-            // Reload apps when launcher opens
+            // Add namespace for Hyprland window rules
+            //WlrLayershell.namespace: "sshell:launcher"
+            
+            // Clear search and reload when launcher opens/closes
             onVisibleChanged: {
                 if (visible) {
-                    AppService.reload()
+                    //AppService.reload()
+                } else {
+                    // Clear search when closing
+                    LauncherSearch.query = ""
                 }
             }
 
             AppLauncher {
                 anchors.fill: parent
-                onLaunchApp: launcherWindow.visible = false
             }
         }
     }

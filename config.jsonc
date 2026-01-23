@@ -62,12 +62,11 @@
     "launcher": {
         "enabled": true,
         "width": 600,
-        "height": 500,
-        "grid": true,
-        "fuzzy": true
+        "height": 500
     },
     "theme": {
         "accentColor": "#a6e3a1",
+        "icons": "filled",
         "cornerRadius": 10,
         "animationDuration": 200,
         "useSystemTheme": true

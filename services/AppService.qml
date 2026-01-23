@@ -11,49 +11,9 @@ Scope {
     property int loadedDirs: 0
     property int totalDirs: 2
     
-    readonly property var appDirs: [
-        "/usr/share/applications",
-        Quickshell.env("HOME") + "/.local/share/applications"
-    ]
+    readonly property var appDirs: Directories.appDirs
     
-    // Processes to list desktop files
-    Variants {
-        id: dirListers
-        model: root.appDirs
-        
-        Process {
-            id: lister
-            property var modelData
-            property string dirPath: modelData
-            
-            command: ["find", dirPath, "-maxdepth", "1", "-name", "*.desktop", "-type", "f"]
-            running: false
-            
-            onExited: function(exitCode, exitStatus) {
-                if (exitCode !== 0) {
-                    console.warn("AppService: Failed to list apps in", dirPath)
-                    return
-                }
-                
-                var output = stdout().trim()
-                if (output.length === 0) return
-                
-                var files = output.split('\n')
-                for (var i = 0; i < files.length; i++) {
-                    if (files[i].trim().length > 0) {
-                        parseDesktopFile(files[i].trim())
-                    }
-                }
-                
-                root.loadedDirs++
-                if (root.loadedDirs >= root.totalDirs) {
-                    sortApps()
-                    root.loading = false
-                    console.log("AppService: Loaded", root.apps.count, "applications")
-                }
-            }
-        }
-    }
+    // Process instances will be created dynamically in loadApps()
     
     Component.onCompleted: {
         loadApps()
@@ -70,29 +30,87 @@ Scope {
         loadedDirs = 0
         apps.clear()
         
-        // Trigger all listers
-        for (var i = 0; i < dirListers.count; i++) {
-            var lister = dirListers.at(i)
-            if (lister) {
-                lister.running = true
+        // Create and run a process for each directory
+        for (var i = 0; i < appDirs.length; i++) {
+            createDirLister(appDirs[i])
+        }
+    }
+    
+    function createDirLister(dirPath) {
+        console.log("AppService: Scanning directory:", dirPath)
+        
+        var processQml = 'import QtQuick; import Quickshell.Io; Process { \
+            property string dirPath: "' + dirPath + '"; \
+            property string outputBuffer: ""; \
+            command: ["find", "' + dirPath + '", "-maxdepth", "1", "-name", "*.desktop", "-type", "f"]; \
+            running: true; \
+            stdout: SplitParser { \
+                onRead: data => outputBuffer += data; \
+            } \
+        }'
+        
+        var process = Qt.createQmlObject(processQml, root, "lister_" + Math.random().toString(36).substr(2, 9))
+        
+        process.exited.connect(function(exitCode, exitStatus) {
+            if (exitCode !== 0) {
+                console.warn("AppService: Failed to list apps in", process.dirPath, "- exit code:", exitCode)
+                root.loadedDirs++
+                checkCompletion()
+                process.destroy()
+                return
             }
+            
+            var output = process.outputBuffer.trim()
+            if (!output || output.length === 0) {
+                console.log("AppService: No .desktop files found in", process.dirPath)
+            } else {
+                var files = output.split('\n')
+                console.log("AppService: Found", files.length, "desktop files in", process.dirPath)
+                for (var i = 0; i < files.length; i++) {
+                    if (files[i].trim().length > 0) {
+                        parseDesktopFile(files[i].trim())
+                    }
+                }
+            }
+            
+            root.loadedDirs++
+            checkCompletion()
+            process.destroy()
+        })
+    }
+    
+    function checkCompletion() {
+        if (root.loadedDirs >= root.totalDirs) {
+            sortApps()
+            root.loading = false
+            console.log("AppService: Loaded", root.apps.count, "applications")
         }
     }
     
     function parseDesktopFile(filePath) {
-        var reader = Qt.createQmlObject(
-            'import Quickshell.Io; Process { command: ["cat", "' + filePath + '"]; running: true }',
-            root,
-            "reader_" + Math.random().toString(36).substr(2, 9)
-        )
+        var readerQml = 'import QtQuick; import Quickshell.Io; Process { \
+            property string outputBuffer: ""; \
+            command: ["cat", "' + filePath + '"]; \
+            running: true; \
+            stdout: SplitParser { \
+                onRead: data => outputBuffer += data; \
+            } \
+        }'
+        
+        var reader = Qt.createQmlObject(readerQml, root, "reader_" + Math.random().toString(36).substr(2, 9))
         
         reader.exited.connect(function(exitCode, exitStatus) {
             if (exitCode === 0) {
-                var content = reader.stdout()
+                var content = reader.outputBuffer
                 var app = extractDesktopInfo(content, filePath)
+                
+                console.log("AppService: Parsed", filePath, "- name:", app.name, "exec:", app.exec, "noDisplay:", app.noDisplay, "hidden:", app.hidden)
                 
                 if (app && app.name && app.exec && !app.noDisplay && !app.hidden) {
                     apps.append(app)
+                    console.log("AppService: Added app:", app.name)
+                } else {
+                    console.log("AppService: Skipped app:", filePath, "reasons - noName:", !app.name, "noExec:", !app.exec, "noDisplay:", app.noDisplay, "hidden:", app.hidden)
                 }
             }
             reader.destroy()
@@ -153,27 +171,21 @@ Scope {
             return "file://" + iconName
         }
         
-        // Common icon paths to search
-        var iconPaths = [
-            "/usr/share/icons/hicolor/scalable/apps/" + iconName + ".svg",
-            "/usr/share/icons/hicolor/256x256/apps/" + iconName + ".png",
-            "/usr/share/icons/hicolor/128x128/apps/" + iconName + ".png",
-            "/usr/share/icons/hicolor/48x48/apps/" + iconName + ".png",
-            "/usr/share/pixmaps/" + iconName + ".png",
-            "/usr/share/pixmaps/" + iconName + ".svg",
-            "/usr/share/pixmaps/" + iconName + ".xpm"
-        ]
+        // Search in system icon directories from Directories service
+        var extensions = [".svg", ".png", ".xpm"]
         
-        // Check if icon file exists (we'll return the first common path for now)
-        // In a production system, you'd want to actually check file existence
-        for (var i = 0; i < iconPaths.length; i++) {
-            // For now, return first SVG or PNG path
-            if (iconPaths[i].endsWith(".svg") || iconPaths[i].endsWith(".png")) {
-                return "file://" + iconPaths[i]
+        for (var i = 0; i < Directories.systemIconDirs.length; i++) {
+            var dirPath = Directories.systemIconDirs[i]
+            for (var j = 0; j < extensions.length; j++) {
+                var fullPath = dirPath + iconName + extensions[j]
+                // Note: We can't check file existence in QML, so we return the path
+                // and let the Icon component handle fallback
+                if (extensions[j] === ".svg" || extensions[j] === ".png") {
+                    return "file://" + fullPath
+                }
             }
         }
         
-        // If not found, return the icon name (might be a theme icon)
         return iconName
     }
     
