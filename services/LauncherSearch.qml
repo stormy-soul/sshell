@@ -20,8 +20,8 @@ Singleton {
     }
     
     readonly property string cleanQuery: {
-        if (searchMode === 1) return query.slice(prefixApp.length).trim()
-        if (searchMode === 2) return query.slice(prefixMath.length).trim()
+        if (searchMode === 1 && query.startsWith(prefixApp)) return query.slice(prefixApp.length).trim()
+        if (searchMode === 2 && query.startsWith(prefixMath)) return query.slice(prefixMath.length).trim()
         return query.trim()
     }
     

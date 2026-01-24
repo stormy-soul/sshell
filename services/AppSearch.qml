@@ -6,10 +6,25 @@ import Quickshell.Services.SystemTray
 Singleton {
     id: root
 
-    readonly property var allApps: Array.from(DesktopEntries.applications.values)
+    property var allApps: []
+    
+    // Internal property to track updates from DesktopEntries
+    property var _sourceApps: Array.from(DesktopEntries.applications.values)
+    
+    on_SourceAppsChanged: updateTimer.restart()
+    
+    Timer {
+        id: updateTimer
+        interval: 100 // Debounce window
+        triggeredOnStart: true
+        onTriggered: {
+            root.allApps = root._sourceApps
+            console.log("AppSearch: Loaded/Updated", root.allApps.length, "applications")
+        }
+    }
     
     Component.onCompleted: {
-        console.log("AppSearch: Loaded", allApps.length, "applications")
+        // Initial load handled by timer trigger
     }
     
     function fuzzyQuery(searchText) {

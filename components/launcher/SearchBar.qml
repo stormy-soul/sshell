@@ -25,7 +25,6 @@ Row {
         }
     }
     
-    // Search icon with Material shape
     MaterialShapeWrappedIcon {
         anchors.verticalCenter: parent.verticalCenter
         iconSize: Appearance.font.pixelSize.huge
@@ -44,7 +43,6 @@ Row {
         }
     }
     
-    // Search input with darker background
     Rectangle {
         width: Appearance.sizes.searchBarWidth
         height: Appearance.sizes.searchBarHeight
@@ -73,7 +71,7 @@ Row {
             
             Text {
                 visible: parent.text.length === 0
-                text: "Search apps, calculate..."
+                text: "Search apps or calculate..."
                 font: parent.font
                 color: Appearance.colors.textSecondary
                 anchors.verticalCenter: parent.verticalCenter

@@ -4,7 +4,6 @@ singleton Clock 1.0 Clock.qml
 singleton NotificationService 1.0 NotificationService.qml
 singleton HyprlandService 1.0 HyprlandService.qml
 singleton AppService 1.0 AppService.qml
-singleton Directories 1.0 Directories.qml
 singleton LauncherSearch 1.0 LauncherSearch.qml
 singleton AppSearch 1.0 AppSearch.qml
 singleton ModuleLoader 1.0 ModuleLoader.qml
