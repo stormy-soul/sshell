@@ -56,30 +56,52 @@ ShellRoot {
 
         PanelWindow {
             id: controlCenterWindow
-            visible: false
+            visible: ModuleLoader.controlCenterVisible
+            color: "transparent"
             
             WlrLayershell.namespace: "sshell:control-center"
-            implicitWidth: Config.controlCenter.width
-            implicitHeight: 600
+            WlrLayershell.layer: WlrLayer.Overlay
             
             screen: Quickshell.screens[0]
             
-            exclusionMode: ExclusionMode.Ignore 
-
             anchors {
-                right: Config.controlCenter.position === "right"
-                left: Config.controlCenter.position === "left"
                 top: true
+                bottom: true
+                left: true
+                right: true
             }
             
-            margins {
-                top: Config.bar.height + Config.bar.margin + 20
-                right: Config.controlCenter.position === "right" ? 20 : 0
-                left: Config.controlCenter.position === "left" ? 20 : 0
+            mask: Region {
+                item: ModuleLoader.controlCenterVisible ? controlCenterItem : null
+            }
+            
+            HyprlandFocusGrab {
+                id: ccFocusGrab
+                windows: [controlCenterWindow]
+                active: ModuleLoader.controlCenterVisible
+                
+                onCleared: {
+                    if (!active) ModuleLoader.controlCenterVisible = false
+                }
             }
 
             ControlCenter {
-                anchors.fill: parent
+                id: controlCenterItem
+                focus: true // Receive keys
+                
+                width: Config.controlCenter.width
+                height: parent.height - (Config.bar.height + Config.bar.margin)
+                
+                anchors.top: parent.top
+                anchors.topMargin: Config.bar.margin
+                
+                anchors.right: Config.controlCenter.position === "right" ? parent.right : undefined
+                anchors.left: Config.controlCenter.position === "left" ? parent.left : undefined
+                
+                anchors.rightMargin: Config.controlCenter.position === "right" ? (Config.bar.padding * 2) : 0
+                anchors.leftMargin: Config.controlCenter.position === "left" ? (Config.bar.padding * 2) : 0
+                
+                Keys.onEscapePressed: ModuleLoader.controlCenterVisible = false
             }
         }
     }

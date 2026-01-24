@@ -28,6 +28,10 @@ PanelWindow {
         right: Appearance.sizes.paddingLarge
     }
 
+    mask: Region {
+        item: notificationColumn
+    }
+
     Column {
         id: notificationColumn
         spacing: Appearance.sizes.padding

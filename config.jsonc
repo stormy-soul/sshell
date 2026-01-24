@@ -50,8 +50,8 @@
     },
     "controlCenter": {
         "enabled": true,
-        "width": 400,
-        "position": "right"
+        "width": 450,
+        "position": "right" // left/right
     },
     "notifications": {
         "enabled": true,

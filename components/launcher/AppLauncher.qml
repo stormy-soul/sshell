@@ -40,12 +40,7 @@ Item {
             }
         }
         
-        color: Qt.rgba(
-            Appearance.colors.background.r,
-            Appearance.colors.background.g,
-            Appearance.colors.background.b,
-            0.85
-        )
+        color: Appearance.colors.overlayBackground
         radius: Appearance.sizes.searchBarHeight / 2 + Appearance.sizes.paddingLarge
         border.color: Appearance.colors.border
         border.width: 1

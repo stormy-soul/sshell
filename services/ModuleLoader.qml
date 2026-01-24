@@ -10,4 +10,9 @@ QtObject {
         launcherVisible = !launcherVisible
     }
 
+    property bool controlCenterVisible: false
+    function toggleControlCenter() {
+        controlCenterVisible = !controlCenterVisible
+    }
+
 }

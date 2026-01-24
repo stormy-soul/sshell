@@ -42,6 +42,7 @@ Singleton {
     
     readonly property QtObject colors: QtObject {
         readonly property color background: "#1e1e2e"
+        readonly property color overlayBackground: Qt.rgba(background.r, background.g, background.b, 0.85)
         readonly property color surface: "#313244"
         readonly property color surfaceVariant: "#45475a"
         readonly property color surfaceHover: "#3a3d4d"
