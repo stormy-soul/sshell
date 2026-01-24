@@ -59,7 +59,7 @@ Row {
                 font.family: Appearance.font.family.main
                 font.pixelSize: Appearance.font.pixelSize.normal
                 font.weight: wsRect.isFocused ? Font.DemiBold : Font.Normal
-                color: wsRect.isFocused ? Appearance.colors.onPrimary : Appearance.colors.text
+                color: wsRect.isFocused ? (Colors.isDark(wsRect.color) ? Appearance.colors.text : Appearance.colors.colOnPrimary) : Appearance.colors.text
             }
             
             MouseArea {
