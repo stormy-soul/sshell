@@ -13,6 +13,8 @@ Scope {
     property alias launcher: configAdapter.launcher
     property alias theme: configAdapter.theme
     property alias workspaces: configAdapter.workspaces
+    property alias weather: configAdapter.weather
+    property alias tray: configAdapter.tray
 
     property bool ready: false
     property var parsedConfig: ({})
@@ -88,7 +90,8 @@ Scope {
                 launcher: { enabled: true, width: 600, height: 500 },
                 launcher: { enabled: true, width: 600, height: 500 },
                 theme: { accentColor: "#a6e3a1", cornerRadius: 10, animationDuration: 200, useSystemTheme: true },
-                weather: { interval: 3600, unit: "metric", city: "", useUSCS: false, enableGPS: false }
+                weather: { interval: 3600, unit: "metric", city: "", useUSCS: false, enableGPS: false },
+                tray: { showNetworkName: false, showBluetoothName: false }
             }
 
             function deepMerge(target, source) {
@@ -214,6 +217,11 @@ Scope {
             property string city: ""
             property bool useUSCS: false
             property bool enableGPS: false
+        }
+
+        property JsonObject tray: JsonObject {
+            property bool showNetworkName: true
+            property bool showBluetoothName: true
         }
     }
 

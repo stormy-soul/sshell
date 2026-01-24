@@ -5,12 +5,13 @@ import "../../common"
 
 Rectangle {
     id: launcherButton
-    width: Appearance.sizes.barHeight
-    height: Appearance.sizes.barHeight
+    width: symbolic.width
+    height: symbolic.height
     color: "transparent"
     radius: Appearance.sizes.cornerRadiusSmall
     
     MaterialSymbol {
+        id: symbolic
         anchors.centerIn: parent
         text: "apps"
         size: 18

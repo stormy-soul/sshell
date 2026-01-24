@@ -106,7 +106,7 @@ Singleton {
             }
         }
         
-        onExited: {
+        onExited: (exitCode, exitStatus) => {
             if (exitCode === 0 && root.outputBuffer.length > 0) {
                 try {
                     var json = JSON.parse(root.outputBuffer)

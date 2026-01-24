@@ -1,6 +1,6 @@
 import QtQuick
 import "../../../settings"
-import "../../../services"
+import "../../../services" as Services
 import "../../common"
 
 Rectangle {
@@ -11,7 +11,7 @@ Rectangle {
     color: "transparent"
     
     readonly property var weatherIconMap: ({
-        "113": "wb_sunny", // clear_day
+        "113": "wb_sunny", // clear_day -> wb_sunny
         "116": "partly_cloudy_day",
         "119": "cloud",
         "122": "cloud",
@@ -78,15 +78,15 @@ Rectangle {
         spacing: Appearance.sizes.padding
         
         MaterialSymbol {
-            text: getIcon(Weather.data.iconCode)
+            text: getIcon(Services.Weather.data.iconCode)
             size: Appearance.font.pixelSize.large
-            color: Appearance.colors.text
+            color: Appearance.colors.textSecondary
             anchors.verticalCenter: parent.verticalCenter
         }
         
         Text {
-            text: Weather.data.temp
-            color: Appearance.colors.text
+            text: Services.Weather.data.temp
+            color: Appearance.colors.textSecondary
             font.family: Appearance.font.family.main
             font.pixelSize: Appearance.font.pixelSize.small
             anchors.verticalCenter: parent.verticalCenter
@@ -96,6 +96,8 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
-        onClicked: Weather.getData()
+        onClicked: {
+             Services.Weather.getData()
+        }
     }
 }

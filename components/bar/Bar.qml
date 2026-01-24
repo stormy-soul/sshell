@@ -13,7 +13,7 @@ Rectangle {
     Row {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: Appearance.sizes.padding
+        anchors.leftMargin: Appearance.sizes.padding * 2
         spacing: Appearance.sizes.padding
 
         Repeater {
@@ -43,7 +43,7 @@ Rectangle {
     Row {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: Appearance.sizes.padding
+        anchors.rightMargin: Appearance.sizes.padding * 2
         spacing: Appearance.sizes.padding
 
         Repeater {

@@ -31,15 +31,11 @@
                 "enabled": true
             },
             {
-                "module": "SystemTray",
+                "module": "Tray",
                 "enabled": true
             },
             {
                 "module": "Volume",
-                "enabled": false
-            },
-            {
-                "module": "Network",
                 "enabled": false
             }
         ]
@@ -77,9 +73,13 @@
     },
     "weather": {
         "interval": 3600,
-        "unit": "metric", // metric or imperial
-        "city": "",
-        "useUSCS": false, // use USCS instead of metric
+        "unit": "metric",
+        "city": "Anuradhapura, LK",
+        "useUSCS": false,
         "enableGPS": false
+    },
+    "tray": {
+        "showNetworkName": true,
+        "showBluetoothName": true
     }
 }

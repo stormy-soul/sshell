@@ -13,14 +13,6 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         spacing: Appearance.sizes.padding
         
-        Text {
-            text: Math.round(Battery.percentage * 100) + "%"
-            font.family: Appearance.font.family.main
-            font.pixelSize: Appearance.font.pixelSize.small
-            color: Appearance.colors.text
-            anchors.verticalCenter: parent.verticalCenter
-        }
-        
         Item {
             width: bgIcon.implicitWidth
             height: bgIcon.implicitHeight
@@ -58,6 +50,14 @@ Rectangle {
                 source: bgIcon
                 color: parent.iconColor
             }
+        }
+
+        Text {
+            text: Math.round(Battery.percentage * 100) + "%"
+            font.family: Appearance.font.family.main
+            font.pixelSize: Appearance.font.pixelSize.small
+            color: Appearance.colors.textSecondary
+            anchors.verticalCenter: parent.verticalCenter
         }
     }
 }
