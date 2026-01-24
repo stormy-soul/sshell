@@ -13,13 +13,18 @@ Item {
     
     implicitWidth: shape_.implicitSize
     implicitHeight: shape_.implicitSize
+    width: implicitWidth
+    height: implicitHeight
     
     MaterialShape {
         id: shape_
         anchors.centerIn: parent
         color: root.shapeColor
         shape: root.shape
-        implicitSize: Math.max(symbol.implicitWidth, symbol.implicitHeight) + root.padding * 2
+        // Safeguard against NaN which can happen during font/text transitions
+        implicitSize: (Math.max(symbol.implicitWidth, symbol.implicitHeight) || 0) + root.padding * 2
+        width: implicitWidth
+        height: implicitHeight
     }
     
     MaterialSymbol {

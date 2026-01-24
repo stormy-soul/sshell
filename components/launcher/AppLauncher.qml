@@ -31,7 +31,7 @@ Item {
             if (showResults) {
                 return contentColumn.implicitHeight + Appearance.sizes.paddingLarge * 2
             } else {
-                return Math.max(Appearance.sizes.launcherInitialHeight, searchBar.height + Appearance.sizes.paddingLarge * 2)
+                return Math.max(Appearance.sizes.launcherInitialHeight, (searchBar.height || 0) + Appearance.sizes.paddingLarge * 2)
             }
         }
         

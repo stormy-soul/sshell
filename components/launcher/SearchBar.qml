@@ -48,6 +48,7 @@ Row {
     Rectangle {
         width: Appearance.sizes.searchBarWidth
         height: Appearance.sizes.searchBarHeight
+        anchors.verticalCenter: parent.verticalCenter
         radius: height / 2
         color: Appearance.colors.inputBackground
         
