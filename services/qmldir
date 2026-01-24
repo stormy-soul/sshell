@@ -9,3 +9,4 @@ singleton AppSearch 1.0 AppSearch.qml
 singleton ModuleLoader 1.0 ModuleLoader.qml
 singleton Battery 1.0 Battery.qml
 singleton Colors 1.0 Colors.qml
+singleton Clipboard 1.0 Clipboard.qml

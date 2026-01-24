@@ -11,15 +11,18 @@ Singleton {
     
     readonly property string prefixApp: ":"
     readonly property string prefixMath: "="
+    readonly property string prefixClipboard: ";"
     
     readonly property int searchMode: {
+        if (query.startsWith(prefixClipboard)) return 3 // Clipboard
         if (query.startsWith(prefixApp)) return 1  // App search
         if (query.startsWith(prefixMath)) return 2 // Math
         if (/^[\d\s\+\-\*\/\(\)\.\^%]+$/.test(query) && /\d/.test(query)) return 2
-        return 0 // Default 
+        return 1 // Default to App Search
     }
     
     readonly property string cleanQuery: {
+        if (searchMode === 3) return query.slice(prefixClipboard.length).trim()
         if (searchMode === 1 && query.startsWith(prefixApp)) return query.slice(prefixApp.length).trim()
         if (searchMode === 2 && query.startsWith(prefixMath)) return query.slice(prefixMath.length).trim()
         return query.trim()
@@ -27,8 +30,47 @@ Singleton {
     
     property string mathResult: ""
     
+    onCleanQueryChanged: {
+        if (searchMode === 3) {
+            Clipboard.search(cleanQuery)
+        }
+    }
+    
+    onSearchModeChanged: {
+        if (searchMode === 3) {
+            Clipboard.search(cleanQuery)
+        }
+    }
+    
     property var results: {
         var resultList = []
+        
+        if (searchMode === 3) {
+            var clipEntries = Clipboard.entries
+            
+            for (var k = 0; k < clipEntries.length; k++) {
+                var entry = clipEntries[k]
+                // Helper to capture scope
+                var makeClipExecutor = function(id) {
+                    return function() {
+                        Clipboard.copy(id)
+                        console.log("Clipboard entry copied:", id)
+                        ModuleLoader.launcherVisible = false
+                    }
+                }
+
+                resultList.push({
+                    type: "clipboard",
+                    id: entry.id,
+                    name: entry.content,
+                    description: "Clipboard entry #" + entry.id,
+                    icon: "content_paste",
+                    iconType: "material",
+                    execute: makeClipExecutor(entry.id)
+                })
+            }
+            return resultList
+        }
         
         if (searchMode === 2 && cleanQuery.length > 0) {
             mathTimer.restart()
@@ -47,7 +89,7 @@ Singleton {
             }
         }
         
-        if (searchMode === 0 || searchMode === 1) {
+        if (searchMode === 1 || searchMode === 0) { // App search (default)
             var apps = AppSearch.fuzzyQuery(cleanQuery)
             console.log("LauncherSearch: Got", apps.length, "apps from AppSearch")
             

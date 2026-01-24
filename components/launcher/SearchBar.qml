@@ -34,11 +34,13 @@ Row {
         text: {
             if (LauncherSearch.searchMode === 1) return "apps"
             if (LauncherSearch.searchMode === 2) return "calculate"
+            if (LauncherSearch.searchMode === 3) return "content_paste"
             return "search"
         }
         shape: {
             if (LauncherSearch.searchMode === 1) return MaterialShape.Shape.Clover4Leaf
             if (LauncherSearch.searchMode === 2) return MaterialShape.Shape.PuffyDiamond
+            if (LauncherSearch.searchMode === 3) return MaterialShape.Shape.Gem
             return MaterialShape.Shape.Cookie7Sided
         }
     }
@@ -71,7 +73,7 @@ Row {
             
             Text {
                 visible: parent.text.length === 0
-                text: "Search apps or calculate..."
+                text: "Search apps, calculate, or clipboard..."
                 font: parent.font
                 color: Appearance.colors.textSecondary
                 anchors.verticalCenter: parent.verticalCenter

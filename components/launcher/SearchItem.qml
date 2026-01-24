@@ -13,7 +13,7 @@ Rectangle {
     property int horizontalMargin: Appearance.sizes.padding
 
     width: ListView.view ? ListView.view.width : 300
-    height: Appearance.sizes.resultItemHeight
+    height: (entry.type === "clipboard" && Clipboard.isImage(entry.name || "")) ? 200 : Appearance.sizes.resultItemHeight
     radius: Appearance.sizes.cornerRadius
     
     color: {
@@ -42,6 +42,7 @@ Rectangle {
         
         Loader {
             anchors.verticalCenter: parent.verticalCenter
+            visible: entry.type !== "clipboard" // Hide icon for clipboard
             
             sourceComponent: {
                 if (!root.isValid) return undefined
@@ -68,11 +69,38 @@ Rectangle {
         }
         
         Column {
-            width: parent.width - Appearance.sizes.resultIconSize - parent.spacing - root.horizontalMargin * 2
+            width: {
+                if (entry.type === "clipboard") return parent.width - root.horizontalMargin * 2
+                return parent.width - Appearance.sizes.resultIconSize - parent.spacing - root.horizontalMargin * 2
+            }
             anchors.verticalCenter: parent.verticalCenter
             spacing: 2
             
             Text {
+                visible: entry.type === "clipboard"
+                text: root.isValid ? ("#" + entry.id) : ""
+                font.family: Appearance.font.family.main
+                font.pixelSize: Appearance.font.pixelSize.tiny
+                font.bold: true
+                color: Appearance.colors.textSecondary
+            }
+            
+            Loader {
+                active: entry.type === "clipboard" && Clipboard.isImage(entry.name)
+                visible: active
+                width: parent.width
+                height: root.height - 40 
+                
+                sourceComponent: CliphistImage {
+                    entryId: entry.id
+                    entryContent: entry.name
+                    width: parent.width
+                    height: parent.height
+                }
+            }
+            
+            Text {
+                visible: !(entry.type === "clipboard" && Clipboard.isImage(entry.name))
                 text: root.isValid ? (entry.name || "") : ""
                 font.family: Appearance.font.family.main
                 font.pixelSize: Appearance.font.pixelSize.normal
@@ -82,13 +110,13 @@ Rectangle {
             }
             
             Text {
+                visible: entry.type !== "clipboard" && text.length > 0
                 text: root.isValid ? (entry.description || "") : ""
                 font.family: Appearance.font.family.main
                 font.pixelSize: Appearance.font.pixelSize.small
                 color: Appearance.colors.textSecondary
                 elide: Text.ElideRight
                 width: parent.width
-                visible: text.length > 0
             }
         }
     }
@@ -100,6 +128,9 @@ Rectangle {
         cursorShape: Qt.PointingHandCursor
         
         onClicked: {
+            resultsList.currentIndex = index
+            resultsList.forceActiveFocus()
+            
             if (root.isValid && entry.execute) {
                 entry.execute()
                 ModuleLoader.launcherVisible = false
