@@ -86,7 +86,9 @@ Scope {
                 controlCenter: { enabled: true, width: 400, position: "right" },
                 notifications: { enabled: true, position: "top-right", maxNotifications: 5, timeout: 5000 },
                 launcher: { enabled: true, width: 600, height: 500 },
-                theme: { accentColor: "#a6e3a1", cornerRadius: 10, animationDuration: 200, useSystemTheme: true }
+                launcher: { enabled: true, width: 600, height: 500 },
+                theme: { accentColor: "#a6e3a1", cornerRadius: 10, animationDuration: 200, useSystemTheme: true },
+                weather: { interval: 3600, unit: "metric", city: "", useUSCS: false, enableGPS: false }
             }
 
             function deepMerge(target, source) {
@@ -204,6 +206,14 @@ Scope {
             property int cornerRadius: 10
             property int animationDuration: 200
             property bool useSystemTheme: true
+        }
+
+        property JsonObject weather: JsonObject {
+            property int interval: 3600
+            property string unit: "metric"
+            property string city: ""
+            property bool useUSCS: false
+            property bool enableGPS: false
         }
     }
 

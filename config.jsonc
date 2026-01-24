@@ -23,6 +23,10 @@
         ],
         "right": [
             {
+                "module": "Weather",
+                "enabled": true
+            },
+            {
                 "module": "Battery",
                 "enabled": true
             },
@@ -70,5 +74,12 @@
         "cornerRadius": 10,
         "animationDuration": 200,
         "useSystemTheme": true
+    },
+    "weather": {
+        "interval": 3600,
+        "unit": "metric", // metric or imperial
+        "city": "",
+        "useUSCS": false, // use USCS instead of metric
+        "enableGPS": false
     }
 }
