@@ -69,4 +69,17 @@ Singleton {
             }
         }
     }
+    function toggleWifi() {
+        var cmd = root.wifiEnabled ? "off" : "on"
+        toggleProc.command = ["nmcli", "radio", "wifi", cmd]
+        toggleProc.running = true
+        // Optimistic update?
+        // root.wifiEnabled = !root.wifiEnabled 
+        // Better wait for checkRadio
+    }
+    
+    Process {
+        id: toggleProc
+        onExited: checkRadio.running = true
+    }
 }

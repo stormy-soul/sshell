@@ -35,4 +35,6 @@ QtObject {
             destroy()
         }
     }
+    property bool dnd: false
+    function toggleDnd() { dnd = !dnd }
 }

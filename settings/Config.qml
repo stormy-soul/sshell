@@ -182,6 +182,7 @@ Scope {
 
         property JsonObject workspaces: JsonObject {
             property var persistent: [1, 2, 3, 4, 5] 
+            property string style: "arabic"
         }
 
         property JsonObject controlCenter: JsonObject {

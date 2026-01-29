@@ -13,3 +13,5 @@ singleton Clipboard 1.0 Clipboard.qml
 singleton Weather 1.0 Weather.qml
 singleton Network 1.0 Network.qml
 singleton Bluetooth 1.0 Bluetooth.qml
+singleton Audio 1.0 AudioService.qml
+singleton Brightness 1.0 Brightness.qml

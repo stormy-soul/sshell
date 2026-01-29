@@ -7,8 +7,8 @@ Rectangle {
     id: root
     implicitWidth: row.width + (Appearance.sizes.padding * 2)
     implicitHeight: 30
-    color: hoverArea.containsMouse ? Appearance.colors.hover : "transparent"
-    radius: Appearance.sizes.cornerRadiusSmall
+    color: hoverArea.containsMouse ? Appearance.colors.surfaceHover : "transparent"
+    radius: Appearance.sizes.text
 
     anchors.verticalCenter: parent.verticalCenter
 
@@ -46,7 +46,7 @@ Rectangle {
                         id: btIcon
                         text: bluetoothItem.getIcon()
                         size: Appearance.font.pixelSize.large
-                        color: Appearance.colors.textSecondary
+                        color: Appearance.colors.text
                     }
                     
                     Text {
@@ -106,7 +106,7 @@ Rectangle {
                 MaterialSymbol {
                     text: networkItem.getIcon()
                     size: Appearance.font.pixelSize.large
-                    color: Appearance.colors.textSecondary
+                    color: Appearance.colors.text
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 

@@ -25,6 +25,31 @@ Row {
         }
         return null
     }
+
+    function getWorkspaceLabel(id) {
+        var style = Config.configAdapter.workspaces.style || "arabic" 
+        style = Config.workspaces.style || "arabic"
+        
+        if (style === "arabic") return id.toString()
+        
+        if (style === "roman") {
+            var romals = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
+            if (id > 0 && id <= 10) return romals[id]
+            return id.toString()
+        }
+        
+        if (style === "han") {
+            var hans = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
+            if (id > 0 && id <= 10) return hans[id]
+            return id.toString()
+        }
+        
+        if (style === "dot") {
+            return "●" // or "•"
+        }
+        
+        return id.toString()
+    }
     
     Repeater {
         model: workspaces.getSortedWorkspaceIds()
@@ -52,10 +77,11 @@ Row {
             Behavior on color {
                 ColorAnimation { duration: Appearance.animation.duration }
             }
+
             
             Text {
                 anchors.centerIn: parent
-                text: wsRect.wsId
+                text: workspaces.getWorkspaceLabel(wsRect.wsId)
                 font.family: Appearance.font.family.main
                 font.pixelSize: Appearance.font.pixelSize.normal
                 font.weight: wsRect.isFocused ? Font.DemiBold : Font.Normal

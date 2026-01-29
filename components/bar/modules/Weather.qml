@@ -80,13 +80,13 @@ Rectangle {
         MaterialSymbol {
             text: getIcon(Services.Weather.data.iconCode)
             size: Appearance.font.pixelSize.large
-            color: Appearance.colors.textSecondary
+            color: Appearance.colors.text
             anchors.verticalCenter: parent.verticalCenter
         }
         
         Text {
             text: Services.Weather.data.temp
-            color: Appearance.colors.textSecondary
+            color: Appearance.colors.text
             font.family: Appearance.font.family.main
             font.pixelSize: Appearance.font.pixelSize.small
             anchors.verticalCenter: parent.verticalCenter

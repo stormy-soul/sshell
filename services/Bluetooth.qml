@@ -29,4 +29,9 @@ Singleton {
         }
         return ""
     }
+    function toggle() {
+        if (Bluetooth.defaultAdapter) {
+            Bluetooth.defaultAdapter.enabled = !Bluetooth.defaultAdapter.enabled
+        }
+    }
 }

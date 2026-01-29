@@ -13,6 +13,10 @@
             {
                 "module": "Workspaces",
                 "enabled": true
+            },
+            {
+                "module": "Weather",
+                "enabled": true
             }
         ],
         "center": [
@@ -22,10 +26,6 @@
             }
         ],
         "right": [
-            {
-                "module": "Weather",
-                "enabled": true
-            },
             {
                 "module": "Battery",
                 "enabled": true
@@ -45,8 +45,10 @@
             1,
             2,
             3,
-            4
-        ]
+            4,
+            5
+        ],
+        "style": "roman" // arabic/roman/han/dot
     },
     "controlCenter": {
         "enabled": true,
