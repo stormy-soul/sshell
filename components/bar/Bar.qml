@@ -48,12 +48,23 @@ Rectangle {
         anchors.rightMargin: Appearance.sizes.padding * 2
         spacing: Appearance.sizes.padding
 
+        Loader {
+            anchors.verticalCenter: parent.verticalCenter
+            source: "modules/TrayToggle.qml"
+            active: {
+                for (var i = 0; i < Config.bar.right.length; i++) {
+                     if (Config.bar.right[i].module === "Tray" && Config.bar.right[i].enabled) return true;
+                }
+                return false;
+            }
+        }
+
         Repeater {
             model: Config.bar.right
             Loader {
                 anchors.verticalCenter: parent.verticalCenter
                 source: "modules/" + modelData.module + ".qml"
-                active: modelData.enabled
+                active: modelData.enabled && modelData.module !== "TrayToggle" // hide duplicate if exists
             }
         }
     }

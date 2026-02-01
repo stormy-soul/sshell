@@ -1,5 +1,6 @@
 Icon 1.0 common/Icon.qml
 MaterialIcon 1.0 common/MaterialIcon.qml
+FluentIcon 1.0 common/FluentIcon.qml
 
 Bar 1.0 bar/Bar.qml
 

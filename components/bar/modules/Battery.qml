@@ -1,24 +1,42 @@
 import QtQuick
 import "../../../settings"
 import "../../../services"
-import "../../../components"
+import "../../common"
 
 Rectangle {
+    id: batteryModule
     implicitWidth: row.implicitWidth
     implicitHeight: 30
     color: "transparent"
+    
+    property bool lowBatteryWarned: false
+    
+    Connections {
+        target: Battery
+        function onPercentageChanged() {
+            if (Battery.percentage <= 0.10 && !Battery.isCharging && !batteryModule.lowBatteryWarned) {
+                NotificationService.push(
+                    "Low Battery",
+                    "Battery is at " + Math.round(Battery.percentage * 100) + "%. Please plug in your charger.",
+                    "battery_alert"
+                )
+                batteryModule.lowBatteryWarned = true
+            } else if (Battery.percentage > 0.10 || Battery.isCharging) {
+                batteryModule.lowBatteryWarned = false
+            }
+        }
+    }
     
     Row {
         id: row
         anchors.verticalCenter: parent.verticalCenter
         spacing: Appearance.sizes.padding
         
-        MaterialIcon {
+        FluentIcon {
             id: batIcon
             anchors.verticalCenter: parent.verticalCenter
-            width: Appearance.font.pixelSize.extraLarge
-            height: Appearance.font.pixelSize.extraLarge * 2
-            rotation: 90
+            width: Appearance.font.pixelSize.huge
+            height: Appearance.font.pixelSize.huge
             color: {
                 if (Battery.isCharging) return Appearance.colors.accent
                 if (Battery.percentage <= 0.2) return Appearance.colors.warningCol
@@ -27,17 +45,20 @@ Rectangle {
             icon: getBatteryIcon()
 
             function getBatteryIcon() {
-                if (Battery.isCharging) return "battery_charging_full"
+                if (Battery.isCharging) return "battery-charge"
                 
                 var p = Battery.percentage
-                if (p >= 0.95) return "battery_full"
-                if (p >= 0.85) return "battery_6_bar"
-                if (p >= 0.70) return "battery_5_bar"
-                if (p >= 0.55) return "battery_4_bar"
-                if (p >= 0.40) return "battery_3_bar"
-                if (p >= 0.25) return "battery_2_bar"
-                if (p >= 0.10) return "battery_1_bar"
-                return "battery_0_bar"
+                if (p >= 0.95) return "battery-full"
+                if (p >= 0.85) return "battery-9"
+                if (p >= 0.75) return "battery-8"
+                if (p >= 0.65) return "battery-7"
+                if (p >= 0.55) return "battery-6"
+                if (p >= 0.45) return "battery-5"
+                if (p >= 0.35) return "battery-4"
+                if (p >= 0.25) return "battery-3"
+                if (p >= 0.15) return "battery-2"
+                if (p >= 0.05) return "battery-1"
+                return "battery-0"
             }
         }
 

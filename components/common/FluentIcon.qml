@@ -8,7 +8,6 @@ Item {
     property string icon: ""
     property color color: Appearance.colors.text
     
-    // Default size if not specified
     implicitWidth: 24
     implicitHeight: 24
     

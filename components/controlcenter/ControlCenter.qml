@@ -21,7 +21,6 @@ Rectangle {
     opacity: 0
     visible: true 
     
-    Component.onCompleted: opacity = 1
     Behavior on opacity { NumberAnimation { duration: Appearance.animation.duration } }
     
     onOpacityChanged: {
@@ -34,10 +33,59 @@ Rectangle {
     property string activeDetail: ""
     property bool editMode: false
     
-    Item {
-        id: mainContent
-        anchors.fill: parent
+    property var groupExpandedState: ({})
+    property var groupedNotifications: []
+
+    function updateGroupedModel() {
+        let raw = NotificationService.notifications
+        let reversed = raw.slice().reverse()
         
+        let groups = {} 
+        
+        reversed.forEach(n => {
+            if (!groups[n.title]) groups[n.title] = []
+            groups[n.title].push(n)
+        })
+        
+        let displayList = []
+        let processedTitles = {}
+        
+        reversed.forEach(n => {
+            let group = groups[n.title]
+            
+            if (group.length > (Config.notifications.groupAt || 3)) {
+                 if (processedTitles[n.title]) return
+                 
+                 displayList.push({
+                    type: "group",
+                    id: "group_" + n.title,
+                    title: n.title,
+                    items: group,
+                    expanded: root.groupExpandedState["group_" + n.title] || false
+                })
+                processedTitles[n.title] = true
+            } else {
+                 if (processedTitles[n.title]) return 
+                 
+                 displayList.push({
+                    type: "notification",
+                    data: n
+                })
+            }
+        })
+        
+        root.groupedNotifications = displayList
+    }
+
+    // Trigger update when source changes or component completed
+    Connections {
+        target: NotificationService
+        function onNotificationsChanged() { root.updateGroupedModel() }
+    }
+    Component.onCompleted: {
+        opacity = 1
+        root.updateGroupedModel()
+    }
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: Appearance.sizes.paddingExtraLarge
@@ -51,13 +99,14 @@ Rectangle {
             
             Row {
                 id: userRow
-                spacing: Appearance.sizes.paddingSmall
+                spacing: Appearance.sizes.padding
                 Layout.alignment: Qt.AlignVCenter
                 
                 Rectangle {
+                    id: pfpContainer
                     width: 32
                     height: 32
-                    radius: 16
+                    radius: Appearance.sizes.cornerRadiusSmall
                     color: "transparent"
                     clip: true
                     
@@ -68,13 +117,23 @@ Rectangle {
                         fillMode: Image.PreserveAspectCrop
                         smooth: true
                         mipmap: true
-                        visible: status === Image.Ready
+                        visible: status === Image.Ready && Config.controlCenter.showPfp
+                        
+                        layer.enabled: true
+                        layer.effect: OpacityMask {
+                            maskSource: Rectangle {
+                                width: pfp.width
+                                height: pfp.height
+                                radius: pfpContainer.radius
+                                visible: false
+                            }
+                        }
                     }
                     
-                    MaterialIcon {
-                        visible: pfp.status !== Image.Ready
+                    FluentIcon {
+                        visible: pfp.status !== Image.Ready || !Config.controlCenter.showPfp
                         anchors.centerIn: parent
-                        icon: "person"
+                        icon: "emoji-cat"
                         width: 24
                         height: 24
                         color: Appearance.colors.text
@@ -250,21 +309,205 @@ Rectangle {
                 }
 
                 ListView {
+                    id: notificationList
                     visible: !root.editMode && NotificationService.notifications.length > 0
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     clip: true
-                    model: NotificationService.notifications
+                    model: root.groupedNotifications
                     spacing: 5
                     
-                    delegate: Rectangle {
-                        width: parent.width
-                        height: 60
-                        color: Appearance.colors.background
-                        radius: Appearance.sizes.cornerRadius
-                        
-                        Text { text: modelData.title; color: Appearance.colors.text; x: 10; y: 10 }
-                        Text { text: modelData.body; color: Appearance.colors.textSecondary; x: 10; y: 30 }
+                    add: Transition {
+                        NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 200 }
+                        NumberAnimation { property: "scale"; from: 0.9; to: 1; duration: 200 }
+                    }
+                    remove: Transition {
+                        NumberAnimation { property: "opacity"; to: 0; duration: 200 }
+                        NumberAnimation { property: "scale"; to: 0.9; duration: 200 }
+                    }
+                    displaced: Transition {
+                        NumberAnimation { properties: "x,y"; duration: 200; easing.type: Easing.OutQuad }
+                    }
+                    
+                    Component {
+                        id: notificationComponent
+                        Rectangle {
+                            width: notificationList.width - 20 
+                            height: notificationContent.implicitHeight + 20
+                            color: Appearance.colors.background
+                            radius: Appearance.sizes.cornerRadius
+                            
+                            property var notifModel: ({ "title": "", "body": "", "image": "", "id": "" })
+                            
+                            RowLayout {
+                                id: notificationContent
+                                anchors.fill: parent
+                                anchors.margins: 10
+                                spacing: 12
+                                
+                                MaterialIcon {
+                                    Layout.alignment: Qt.AlignTop
+                                    icon: imageIcon.visible ? "notifications" : (notifModel.image || "notifications")
+                                    width: 24
+                                    height: 24
+                                    color: Appearance.colors.accent
+                                    visible: !imageIcon.visible
+                                }
+
+                                Image {
+                                    id: imageIcon
+                                    Layout.preferredWidth: 24
+                                    Layout.preferredHeight: 24
+                                    Layout.alignment: Qt.AlignTop
+                                    visible: notifModel.image && (notifModel.image.startsWith("/") || notifModel.image.startsWith("image://"))
+                                    source: visible ? (notifModel.image.startsWith("/") ? "file://" + notifModel.image : notifModel.image) : ""
+                                    fillMode: Image.PreserveAspectCrop
+                                    layer.enabled: true
+                                    layer.effect: OpacityMask {
+                                        maskSource: Rectangle {
+                                            width: 24
+                                            height: 24
+                                            radius: Appearance.sizes.cornerRadiusSmall
+                                            visible: false
+                                        }
+                                    }
+                                }
+                                
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 4
+                                    
+                                    Text {
+                                        Layout.fillWidth: true
+                                        text: notifModel.title
+                                        color: Appearance.colors.text
+                                        font.family: Appearance.font.family.main
+                                        font.pixelSize: Appearance.font.pixelSize.normal
+                                        font.weight: Font.DemiBold
+                                        wrapMode: Text.Wrap
+                                        elide: Text.ElideRight
+                                        maximumLineCount: 2
+                                    }
+                                    
+                                    Text {
+                                        Layout.fillWidth: true
+                                        text: notifModel.body
+                                        color: Appearance.colors.textSecondary
+                                        font.family: Appearance.font.family.main
+                                        font.pixelSize: Appearance.font.pixelSize.small
+                                        wrapMode: Text.Wrap
+                                        elide: Text.ElideRight
+                                        maximumLineCount: 3
+                                    }
+                                }
+                                
+                                Rectangle {
+                                    Layout.preferredWidth: 20
+                                    Layout.preferredHeight: 20
+                                    radius: 10
+                                    color: closeMouse.containsMouse ? Appearance.colors.surface : "transparent"
+                                    Layout.alignment: Qt.AlignTop
+                                    
+                                    MaterialIcon {
+                                        anchors.centerIn: parent
+                                        icon: "close"
+                                        width: 14
+                                        height: 14
+                                        color: Appearance.colors.textSecondary
+                                    }
+                                    
+                                    MouseArea {
+                                        id: closeMouse
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        onClicked: NotificationService.close(notifModel.id)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Component {
+                        id: groupComponent
+                        Column {
+                            width: notificationList.width - 20
+                            
+                            property var groupModel: ({ "title": "", "items": [], "expanded": false, "id": "" })
+                            
+                            Rectangle {
+                                width: parent.width
+                                height: 40
+                                color: Appearance.colors.surface
+                                radius: Appearance.sizes.cornerRadius
+                                
+                                RowLayout {
+                                    anchors.fill: parent
+                                    anchors.margins: 10
+                                    spacing: 12
+                                    
+                                    MaterialIcon {
+                                        icon: groupModel.expanded ? "expand_less" : "expand_more"
+                                        width: 24
+                                        height: 24
+                                        color: Appearance.colors.text
+                                    }
+                                    
+                                    Text {
+                                        Layout.fillWidth: true
+                                        text: "Group - " + groupModel.title + " (" + groupModel.items.length + ")"
+                                        color: Appearance.colors.text
+                                        font.family: Appearance.font.family.main
+                                        font.weight: Font.DemiBold
+                                    }
+                                }
+                                
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        let newState = !groupModel.expanded
+                                        root.groupExpandedState[groupModel.id] = newState
+                                        root.updateGroupedModel()
+                                    }
+                                }
+                            }
+                            
+                            Item {
+                                id: expandWrapper
+                                width: parent.width
+                                height: groupModel.expanded ? expandedContent.height : 0
+                                clip: true
+                                opacity: groupModel.expanded ? 1 : 0
+                                
+                                Behavior on height { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
+                                Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutQuart } }
+
+                                Column {
+                                    id: expandedContent
+                                    width: parent.width
+                                    visible: true
+                                    spacing: 2
+                                    
+                                    Repeater {
+                                        model: groupModel.items
+                                        delegate: Loader {
+                                            width: parent.width
+                                            sourceComponent: notificationComponent
+                                            onLoaded: item.notifModel = modelData
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    delegate: Loader {
+                        width: ListView.view.width
+                        sourceComponent: modelData.type === "group" ? groupComponent : notificationComponent
+                        onLoaded: {
+                            if (modelData.type === "group") item.groupModel = modelData
+                            else item.notifModel = modelData.data
+                        }
                     }
                 }
                 
@@ -341,18 +584,21 @@ Rectangle {
             SliderRow {
                 icon: Audio.muted ? "volume_off" : "volume_up"
                 value: Audio.volume
-                onMoved: (val) => Audio.setVolume(val)
+                onMoved: (val) => {
+                    Audio.setVolume(val)
+                }
             }
             
             SliderRow {
                 icon: "brightness_high"
                 value: Brightness.brightness
-                onMoved: (val) => Brightness.setBrightness(val)
+                onMoved: (val) => {
+                    Brightness.setBrightness(val)
+                }
             }
             
             Item { Layout.fillHeight: true } 
         }
-    }
     }
 
     Rectangle {

@@ -8,9 +8,12 @@ Item {
     focus: true
     
     function focusSearchInput() {
+        if (ModuleLoader.clipboardMode) {
+            searchBar.searchText = ";"
+        }
         searchBar.focusInput()
     }
-    
+
     MouseArea {
         anchors.fill: parent
         onClicked: {
@@ -42,7 +45,7 @@ Item {
         
         color: Appearance.colors.overlayBackground
         radius: Appearance.sizes.searchBarHeight / 2 + Appearance.sizes.paddingLarge
-        border.color: Appearance.colors.border
+        border.color: Qt.rgba(Appearance.colors.border.r, Appearance.colors.border.g, Appearance.colors.border.b, 0.1)
         border.width: 1
         clip: true
         

@@ -42,6 +42,10 @@ Singleton {
         if (actual < 1) actual = 1
         Quickshell.execDetached(["brightnessctl", "s", actual.toString()])
     }
+    
+    function change(delta) {
+        setBrightness(root.brightness + delta)
+    }
 
     function refresh() {
         getProc.running = false

@@ -15,6 +15,7 @@ Scope {
     property alias workspaces: configAdapter.workspaces
     property alias weather: configAdapter.weather
     property alias tray: configAdapter.tray
+    property alias osd: configAdapter.osd
 
     property bool ready: false
     property var parsedConfig: ({})
@@ -91,7 +92,8 @@ Scope {
                 launcher: { enabled: true, width: 600, height: 500 },
                 theme: { accentColor: "#a6e3a1", cornerRadius: 10, animationDuration: 200, useSystemTheme: true },
                 weather: { interval: 3600, unit: "metric", city: "", useUSCS: false, enableGPS: false },
-                tray: { showNetworkName: false, showBluetoothName: false }
+                tray: { showNetworkName: false, showBluetoothName: false },
+                osd: { enabled: true, timeout: 1500, position: "top-center" }
             }
 
             function deepMerge(target, source) {
@@ -189,12 +191,14 @@ Scope {
             property bool enabled: true
             property int width: 400
             property string position: "right"
+            property bool showPfp: true
         }
 
         property JsonObject notifications: JsonObject {
             property bool enabled: true
             property string position: "top-right"
             property int maxNotifications: 5
+            property int groupAt: 3
             property int timeout: 5000
         }
 
@@ -223,6 +227,12 @@ Scope {
         property JsonObject tray: JsonObject {
             property bool showNetworkName: true
             property bool showBluetoothName: true
+        }
+
+        property JsonObject osd: JsonObject {
+            property bool enabled: true
+            property int timeout: 1500
+            property string position: "top-center"
         }
     }
 

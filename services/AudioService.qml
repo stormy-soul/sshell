@@ -59,11 +59,20 @@ Singleton {
     
     function toggleMute() {
         Quickshell.execDetached(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"])
+        // Optimistic update
         root.muted = !root.muted
     }
 
     function refresh() {
         statusProc.running = false
         statusProc.running = true
+    }
+    
+    function incrementVolume() {
+        setVolume(root.volume + 0.05)
+    }
+    
+    function decrementVolume() {
+        setVolume(root.volume - 0.05)
     }
 }

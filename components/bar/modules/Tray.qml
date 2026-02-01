@@ -8,7 +8,7 @@ Rectangle {
     implicitWidth: row.width + (Appearance.sizes.padding * 2)
     implicitHeight: 30
     color: hoverArea.containsMouse ? Appearance.colors.surfaceHover : "transparent"
-    radius: Appearance.sizes.text
+    radius: Appearance.sizes.cornerRadius
 
     anchors.verticalCenter: parent.verticalCenter
 
@@ -84,16 +84,18 @@ Rectangle {
             property bool showName: Config.tray.showNetworkName
             
             function getIcon() {
+                if (Services.Network.ethernetConnected) return "account_tree"
+                
                 if (!Services.Network.wifiEnabled) return "wifi_off"
-                if (Services.Network.wifiStatus === "disconnected") return "wifi_find"
-                if (Services.Network.wifiStatus === "connecting") return "wifi_find" // signal_wifi_statusbar_not_connected not found in list? using wifi_find or signal_wifi_bad
+                if (Services.Network.wifiStatus === "disconnected") return "signal_wifi_statusbar_null"
+                if (Services.Network.wifiStatus === "connecting") return "wifi_find"
                 
                 var s = Services.Network.signalStrength
                 if (s >= 80) return "signal_wifi_4_bar"
-                if (s >= 60) return "network_wifi" 
-                if (s >= 40) return "network_wifi_3_bar" 
-                if (s >= 20) return "signal_wifi_1_bar" // Fallback mostly
-                return "signal_wifi_0_bar"
+                if (s >= 60) return "network_wifi_3_bar" 
+                if (s >= 40) return "network_wifi_2_bar" 
+                if (s >= 20) return "network_wifi_1_bar"
+                return "network_wifi_0_bar"
             }
             
             Row {

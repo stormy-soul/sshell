@@ -125,7 +125,7 @@ Row {
                     text: workspaces.getWorkspaceLabel(delegate.wsId)
                     font.family: Appearance.font.family.main
                     font.pixelSize: Appearance.font.pixelSize.normal
-                    font.weight: delegate.isFocused ? Font.DemiBold : Font.Normal
+                    font.weight: delegate.isFocused ? Font.Bold : Font.DemiBold
                     color: {
                         if (delegate.isFocused) return Colors.isDark(delegate.backgroundColor) ? Appearance.colors.text : Appearance.colors.colOnPrimary
                         if (delegate.hasWindows) return Appearance.colors.text

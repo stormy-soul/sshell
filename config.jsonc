@@ -48,17 +48,19 @@
             4,
             5
         ],
-        "style": "dot" // arabic/roman/han/dot
+        "style": "han" // arabic/roman/han/dot
     },
     "controlCenter": {
         "enabled": true,
         "width": 450,
-        "position": "right" // left/right
+        "position": "right", // left/right
+        "showPfp": false
     },
     "notifications": {
         "enabled": true,
         "position": "top-right",
         "maxNotifications": 5,
+        "groupAt": 3,
         "timeout": 5000
     },
     "launcher": {
@@ -83,5 +85,10 @@
     "tray": {
         "showNetworkName": true,
         "showBluetoothName": true
+    },
+    "osd": {
+        "enabled": true,
+        "timeout": 1500,
+        "position": "top-center"
     }
 }

@@ -1,3 +1,4 @@
+//@ pragma UseQApplication
 import Quickshell
 import Quickshell.Io
 import QtQuick
@@ -10,9 +11,13 @@ import "./components/bar"
 import "./components/controlcenter"
 import "./components/launcher"
 import "./components/notifications"
+import "./components/common" as Common
 
 ShellRoot {
     id: root
+
+    // Services
+    property var osdMonitor: OSDMonitor 
 
     // Bar windows
     Variants {
@@ -43,8 +48,14 @@ ShellRoot {
             }
 
             Bar {
+                id: bar
                 anchors.fill: parent
                 visible: Config.ready && Config.bar.enabled
+                opacity: ShellState.masterVisible ? 1 : 0
+            }
+            
+            mask: Region {
+                item: ShellState.masterVisible ? bar : null
             }
         }
     }
@@ -72,7 +83,7 @@ ShellRoot {
             }
             
             mask: Region {
-                item: ModuleLoader.controlCenterVisible ? controlCenterItem : null
+                item: (ModuleLoader.controlCenterVisible && ShellState.masterVisible) ? controlCenterItem : null
             }
             
             HyprlandFocusGrab {
@@ -87,6 +98,7 @@ ShellRoot {
 
             ControlCenter {
                 id: controlCenterItem
+                opacity: ShellState.masterVisible ? 1 : 0
                 focus: true // Receive keys
                 
                 width: Config.controlCenter.width
@@ -124,7 +136,7 @@ ShellRoot {
         }
         
         mask: Region {
-            item: ModuleLoader.launcherVisible ? appLauncher : null
+            item: (ModuleLoader.launcherVisible && ShellState.masterVisible) ? appLauncher : null
         }
         
         HyprlandFocusGrab {
@@ -167,6 +179,7 @@ ShellRoot {
         
         AppLauncher {
             id: appLauncher
+            opacity: ShellState.masterVisible ? 1 : 0
             anchors.fill: parent
             
             Keys.onEscapePressed: {
@@ -179,8 +192,104 @@ ShellRoot {
         }
     }
 
-    // Notifications
     NotificationPopups {
         visible: Config.ready && Config.notifications.enabled
+    }
+    
+    PanelWindow {
+        id: osdWindow
+        visible: OSD.visible && Config.osd?.enabled !== false
+        color: "transparent"
+        
+        screen: Quickshell.screens[0]
+        
+        WlrLayershell.namespace: "sshell:osd"
+        WlrLayershell.layer: WlrLayer.Overlay
+        WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+        
+        exclusionMode: ExclusionMode.Ignore
+        
+        anchors {
+            top: true
+            left: true
+            right: true
+        }
+        
+        implicitHeight: osdPopup.y + osdPopup.height + 10
+        
+        mask: Region {
+            item: (OSD.visible && ShellState.masterVisible) ? osdPopup : null
+        }
+        
+        Common.OSD {
+            id: osdPopup
+            opacity: ShellState.masterVisible ? 1 : 0
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: Appearance.sizes.barHeight + Appearance.sizes.barMargin + 10
+        }
+    }
+    
+    GlobalShortcut {
+        name: "launcherToggle"
+        description: "Toggle app launcher"
+        onPressed: ModuleLoader.toggleLauncher()
+    }
+    
+    GlobalShortcut {
+        name: "controlCenterToggle"
+        description: "Toggle control center"
+        onPressed: ModuleLoader.toggleControlCenter()
+    }
+    
+    GlobalShortcut {
+        name: "clipboardToggle"
+        description: "Toggle clipboard history"
+        onPressed: ModuleLoader.toggleClipboard()
+    }
+    
+    GlobalShortcut {
+        name: "testNotification"
+        description: "Send a test notification"
+        onPressed: NotificationService.sendTestNotification()
+    }
+
+    GlobalShortcut {
+        name: "brightnessUp"
+        description: "Increase Brightness"
+        onPressed: {
+            Brightness.change(0.05)
+        }
+    }
+
+    GlobalShortcut {
+        name: "brightnessDown"
+        description: "Decrease Brightness"
+        onPressed: {
+            Brightness.change(-0.05)
+        }
+    }
+    
+    GlobalShortcut {
+        name: "audioVolumeUp"
+        description: "Increase Volume"
+        onPressed: Audio.incrementVolume()
+    }
+
+    GlobalShortcut {
+        name: "audioVolumeDown"
+        description: "Decrease Volume"
+        onPressed: Audio.decrementVolume()
+    }
+    
+    GlobalShortcut {
+        name: "audioMute"
+        description: "Toggle Mute"
+        onPressed: Audio.toggleMute()
+    }
+
+    GlobalShortcut {
+        name: "shellStateToggle"
+        description: "Toggle Shell State"
+        onPressed: ShellState.toggle()
     }
 }

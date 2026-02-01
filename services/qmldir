@@ -18,3 +18,6 @@ singleton Bluetooth 1.0 Bluetooth.qml
 singleton Audio 1.0 AudioService.qml
 singleton Brightness 1.0 Brightness.qml
 singleton SystemInfo 1.0 SystemInfo.qml
+singleton OSD 1.0 OSD.qml
+singleton OSDMonitor 1.0 OSDMonitor.qml
+singleton ShellState 1.0 ShellState.qml
