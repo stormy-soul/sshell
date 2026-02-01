@@ -35,15 +35,35 @@ Singleton {
         onTriggered: statusProc.running = true
     }
     
+    property real pendingVolume: -1
+    
+    Timer {
+         id: volumeTimer
+         interval: 50
+         repeat: false
+         onTriggered: {
+             if (root.pendingVolume >= 0) {
+                 Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", root.pendingVolume.toString()])
+                 root.pendingVolume = -1
+             }
+         }
+    }
+
     function setVolume(val) {
         if (val < 0) val = 0
         if (val > 1.5) val = 1.5
         root.volume = val
-        Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", val.toString()])
+        root.pendingVolume = val
+        if (!volumeTimer.running) volumeTimer.start()
     }
     
     function toggleMute() {
         Quickshell.execDetached(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"])
         root.muted = !root.muted
+    }
+
+    function refresh() {
+        statusProc.running = false
+        statusProc.running = true
     }
 }

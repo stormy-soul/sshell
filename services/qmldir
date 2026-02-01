@@ -1,6 +1,8 @@
 module sshell.services
 
 singleton Clock 1.0 Clock.qml
+singleton Persistent 1.0 Persistent.qml
+singleton QuickControlsService 1.0 QuickControlsService.qml
 singleton NotificationService 1.0 NotificationService.qml
 singleton HyprlandService 1.0 HyprlandService.qml
 singleton AppService 1.0 AppService.qml
@@ -15,3 +17,4 @@ singleton Network 1.0 Network.qml
 singleton Bluetooth 1.0 Bluetooth.qml
 singleton Audio 1.0 AudioService.qml
 singleton Brightness 1.0 Brightness.qml
+singleton SystemInfo 1.0 SystemInfo.qml

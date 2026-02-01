@@ -48,7 +48,7 @@
             4,
             5
         ],
-        "style": "roman" // arabic/roman/han/dot
+        "style": "dot" // arabic/roman/han/dot
     },
     "controlCenter": {
         "enabled": true,
@@ -68,7 +68,7 @@
     },
     "theme": {
         "accentColor": "#a6e3a1",
-        "icons": "filled",
+        "icons": "round", // filled/outlined/round/sharp/two-tone
         "cornerRadius": 10,
         "animationDuration": 200,
         "useSystemTheme": true

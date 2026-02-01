@@ -11,6 +11,7 @@ Singleton {
         readonly property int padding: 8
         readonly property int paddingLarge: 12
         readonly property int paddingExtraLarge: 16
+        readonly property int paddingHellaLarge: 20
         
         readonly property int cornerRadiusSmall: 6
         readonly property int cornerRadius: 10
@@ -41,9 +42,10 @@ Singleton {
     }
     
     readonly property QtObject colors: QtObject {
-        readonly property color background: "#1e1e2e"
-        readonly property color overlayBackground: Qt.rgba(background.r, background.g, background.b, 0.85)
-        readonly property color surface: "#313244"
+        readonly property color backgroundSolid: "#141313"
+        readonly property color background: Qt.rgba(backgroundSolid.r, backgroundSolid.g, backgroundSolid.b, 0.45)
+        readonly property color overlayBackground: Qt.rgba(background.r, background.g, background.b, 0.45)
+        readonly property color surface: Qt.rgba(background.r, background.g, background.b, 0.9)
         readonly property color surfaceVariant: "#45475a"
         readonly property color surfaceHover: "#3a3d4d"
         
@@ -92,8 +94,10 @@ Singleton {
             readonly property int small: 12
             readonly property int normal: 14
             readonly property int large: 16
+            readonly property int extraLarge: 18
             readonly property int huge: 20
             readonly property int massive: 24
+            readonly property int ton618Ahh: 64
         }
         
         readonly property QtObject weight: QtObject {

@@ -42,4 +42,9 @@ Singleton {
         if (actual < 1) actual = 1
         Quickshell.execDetached(["brightnessctl", "s", actual.toString()])
     }
+
+    function refresh() {
+        getProc.running = false
+        getProc.running = true
+    }
 }

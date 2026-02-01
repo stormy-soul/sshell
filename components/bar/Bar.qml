@@ -5,8 +5,10 @@ import "../../services"
 Rectangle {
     id: bar
     color: Appearance.colors.background
-    radius: Appearance.sizes.cornerRadius
-    opacity: 0.9
+    radius: Appearance.sizes.cornerRadiusLarge
+    opacity: 1
+    border.width: 1
+    border.color: Qt.rgba(Appearance.colors.border.r, Appearance.colors.border.g, Appearance.colors.border.b, 0.1)
 
     anchors.fill: parent
 

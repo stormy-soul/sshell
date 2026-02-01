@@ -5,7 +5,7 @@ import "../../../services"
 
 Row {
     id: workspaces
-    spacing: Appearance.sizes.padding
+    spacing: 0
 
     function getSortedWorkspaceIds() {
         var _trigger = Hyprland.workspaces.length 
@@ -51,47 +51,91 @@ Row {
         return id.toString()
     }
     
+    function checkOccupied(id) {
+        var params = Hyprland.workspaces.values
+        for (let i = 0; i < params.length; i++) {
+             if (params[i].id === id) return params[i].clients.length > 0
+        }
+        return false
+    }
+
+    function checkFocused(id) {
+        return Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === id
+    }
+
     Repeater {
+        id: repeater
         model: workspaces.getSortedWorkspaceIds()
         
-        Rectangle {
-            id: wsRect
+        Item {
+            id: delegate
             readonly property int wsId: modelData
             property var activeWsObject: workspaces.getHyprlandWorkspace(wsId)
-
-            height: (Config.bar.height || 40) - (workspaces.spacing * 2)
-            width: height
-            radius: Appearance.sizes.cornerRadiusSmall
+            
+            property int coreHeight: (Config.bar.height || 40) - (Appearance.sizes.padding * 2)
             
             property bool isFocused: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
             property bool hasWindows: activeWsObject ? (activeWsObject.clients.length > 0) : false
             property bool existsInHyprland: activeWsObject !== null             
-    
-            color: {
+
+            property int leftId: index > 0 ? (workspaces.getSortedWorkspaceIds()[index - 1] ?? -999) : -999
+            property int rightId: index < repeater.count - 1 ? (workspaces.getSortedWorkspaceIds()[index + 1] ?? -999) : -999
+            
+            property bool leftNeighborConnected: !isFocused && hasWindows && workspaces.checkOccupied(leftId) && !workspaces.checkFocused(leftId)
+            property bool rightNeighborConnected: !isFocused && hasWindows && workspaces.checkOccupied(rightId) && !workspaces.checkFocused(rightId)
+
+            property color backgroundColor: {
                 if (isFocused) return Appearance.colors.accent
-                if (hasWindows) return Appearance.colors.surface
+                if (hasWindows) {
+                    var c = Appearance.colors.surface
+                    return Qt.rgba(c.r, c.g, c.b, 0.4)
+                }
                 if (existsInHyprland) return Appearance.colors.surface
                 return "transparent" 
             }
             
-            Behavior on color {
-                ColorAnimation { duration: Appearance.animation.duration }
-            }
+            width: coreHeight + (rightNeighborConnected ? 0 : Appearance.sizes.padding)
+            height: coreHeight
+            
+            
+            Rectangle {
+                id: wsRect
+                width: parent.coreHeight
+                height: parent.coreHeight
+                anchors.left: parent.left
+                
+                property real r: Appearance.sizes.cornerRadiusSmall
+                
+                topLeftRadius: delegate.leftNeighborConnected ? 0 : r
+                bottomLeftRadius: delegate.leftNeighborConnected ? 0 : r
+                
+                topRightRadius: delegate.rightNeighborConnected ? 0 : r
+                bottomRightRadius: delegate.rightNeighborConnected ? 0 : r
+                
+                color: delegate.backgroundColor
+                
+                Behavior on color { ColorAnimation { duration: Appearance.animation.duration } }
+                Behavior on topLeftRadius { NumberAnimation { duration: Appearance.animation.duration } }
+                Behavior on bottomLeftRadius { NumberAnimation { duration: Appearance.animation.duration } }
+                Behavior on topRightRadius { NumberAnimation { duration: Appearance.animation.duration } }
+                Behavior on bottomRightRadius { NumberAnimation { duration: Appearance.animation.duration } }
 
-            
-            Text {
-                anchors.centerIn: parent
-                text: workspaces.getWorkspaceLabel(wsRect.wsId)
-                font.family: Appearance.font.family.main
-                font.pixelSize: Appearance.font.pixelSize.normal
-                font.weight: wsRect.isFocused ? Font.DemiBold : Font.Normal
-                color: wsRect.isFocused ? (Colors.isDark(wsRect.color) ? Appearance.colors.text : Appearance.colors.colOnPrimary) : Appearance.colors.text
-            }
-            
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    Hyprland.dispatch("workspace " + wsRect.wsId)
+                Text {
+                    anchors.centerIn: parent
+                    text: workspaces.getWorkspaceLabel(delegate.wsId)
+                    font.family: Appearance.font.family.main
+                    font.pixelSize: Appearance.font.pixelSize.normal
+                    font.weight: delegate.isFocused ? Font.DemiBold : Font.Normal
+                    color: {
+                        if (delegate.isFocused) return Colors.isDark(delegate.backgroundColor) ? Appearance.colors.text : Appearance.colors.colOnPrimary
+                        if (delegate.hasWindows) return Appearance.colors.text
+                        return Appearance.colors.textSecondary
+                    }
+                }
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: Hyprland.dispatch("workspace " + delegate.wsId)
                 }
             }
         }

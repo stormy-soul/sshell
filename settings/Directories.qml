@@ -14,6 +14,7 @@ QtObject {
     readonly property string dataHome: Quickshell.env("XDG_DATA_HOME") || (home + "/.local/share")
     readonly property string cacheHome: Quickshell.env("XDG_CACHE_HOME") || (home + "/.cache")
     readonly property string cliphistDecode: cacheHome + "/sshell/cliphist"
+    readonly property string state: dataHome + "/sshell/state"
     
     readonly property var appDirs: [
         "/usr/share/applications",

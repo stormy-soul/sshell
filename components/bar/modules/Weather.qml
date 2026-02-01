@@ -11,63 +11,61 @@ Rectangle {
     color: "transparent"
     
     readonly property var weatherIconMap: ({
-        "113": "wb_sunny", // clear_day -> wb_sunny
+        "113": "wb_sunny", 
         "116": "partly_cloudy_day",
         "119": "cloud",
         "122": "cloud",
-        "143": "foggy", // fog?
-        "176": "rainy", // grain? or water_drop? rainy is usually "weather_rainy" or just "rainy"
-        "179": "rainy",
-        "182": "rainy",
-        "185": "rainy",
+        "143": "foggy", 
+        "176": "water_drop", 
+        "179": "water_drop",
+        "182": "water_drop",
+        "185": "water_drop",
         "200": "thunderstorm",
-        "227": "cloudy_snowing",
-        "230": "snowing", // snowing_heavy
+        "227": "weather_snowy",
+        "230": "weather_snowy", 
         "248": "foggy",
         "260": "foggy",
-        "263": "rainy",
-        "266": "rainy",
-        "281": "rainy",
-        "284": "rainy",
-        "293": "rainy",
-        "296": "rainy",
-        "299": "rainy",
-        "302": "weather_hail", // hail?
-        "305": "rainy",
+        "263": "water_drop",
+        "266": "water_drop",
+        "281": "water_drop",
+        "284": "water_drop",
+        "293": "water_drop",
+        "296": "water_drop",
+        "299": "water_drop",
+        "302": "weather_hail", 
+        "305": "water_drop",
         "308": "weather_hail",
-        "311": "rainy",
-        "314": "rainy",
-        "317": "rainy",
-        "320": "cloudy_snowing",
-        "323": "cloudy_snowing",
-        "326": "cloudy_snowing",
-        "329": "snowing", // snowing_heavy
-        "332": "snowing",
-        "335": "snowing",
-        "338": "snowing",
-        "350": "rainy",
-        "353": "rainy",
-        "356": "rainy",
+        "311": "water_drop",
+        "314": "water_drop",
+        "317": "water_drop",
+        "320": "weather_snowy",
+        "323": "weather_snowy",
+        "326": "weather_snowy",
+        "329": "weather_snowy", 
+        "332": "weather_snowy",
+        "335": "weather_snowy",
+        "338": "weather_snowy",
+        "350": "water_drop",
+        "353": "water_drop",
+        "356": "water_drop",
         "359": "weather_hail",
-        "362": "rainy",
-        "365": "rainy",
-        "368": "cloudy_snowing",
-        "371": "snowing",
-        "374": "rainy",
-        "377": "rainy",
+        "362": "water_drop",
+        "365": "water_drop",
+        "368": "weather_snowy",
+        "371": "weather_snowy",
+        "374": "water_drop",
+        "377": "water_drop",
         "386": "thunderstorm",
         "389": "thunderstorm",
         "392": "thunderstorm",
-        "395": "snowing"
+        "395": "weather_snowy"
     })
 
     function getIcon(code) {
         if (!code) return "question_mark"
         var c = String(code)
         if (root.weatherIconMap[c]) {
-            var name = root.weatherIconMap[c]
-            if (name === "clear_day") return "wb_sunny"
-            return name
+            return root.weatherIconMap[c]
         } 
         return "cloud" // Default
     }
@@ -77,9 +75,10 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         spacing: Appearance.sizes.padding
         
-        MaterialSymbol {
-            text: getIcon(Services.Weather.data.iconCode)
-            size: Appearance.font.pixelSize.large
+        MaterialIcon {
+            icon: getIcon(Services.Weather.data.iconCode)
+            width: Appearance.font.pixelSize.large
+            height: Appearance.font.pixelSize.large
             color: Appearance.colors.text
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -88,7 +87,7 @@ Rectangle {
             text: Services.Weather.data.temp
             color: Appearance.colors.text
             font.family: Appearance.font.family.main
-            font.pixelSize: Appearance.font.pixelSize.small
+            font.pixelSize: Appearance.font.pixelSize.normal
             anchors.verticalCenter: parent.verticalCenter
         }
     }

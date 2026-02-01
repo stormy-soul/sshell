@@ -1,22 +1,52 @@
 import QtQuick
+import Qt5Compat.GraphicalEffects
 import "../../../settings"
 import "../../../services"
 import "../../common"
 
 Rectangle {
     id: launcherButton
-    width: symbolic.width
-    height: symbolic.height
+    width: iconItem.width
+    height: iconItem.height
     color: "transparent"
     radius: Appearance.sizes.cornerRadiusSmall
     
-    MaterialSymbol {
-        id: symbolic
+    Item {
+        id: iconItem
         anchors.centerIn: parent
-        text: "apps"
-        size: 18
-        color: hoverArea.containsMouse ? Appearance.colors.accent : Appearance.colors.text
-        fill: hoverArea.containsMouse ? 1 : 0
+        width: 18
+        height: 18
+        
+        property string iconSource: {
+             var path = SystemInfo.osIconPath
+             // We can't synchronously check existence easily, but we can handle error
+             return path
+        }
+        
+        Image {
+            id: img
+            anchors.fill: parent
+            source: parent.iconSource
+            sourceSize.width: width
+            sourceSize.height: height
+            visible: false
+            smooth: true
+            mipmap: true
+            fillMode: Image.PreserveAspectFit
+            
+            onStatusChanged: {
+                if (status === Image.Error) {
+                    source = Quickshell.shellPath("assets/icons/linux-symbolic.svg")
+                }
+            }
+        }
+        
+        ColorOverlay {
+            anchors.fill: img
+            source: img
+            color: hoverArea.containsMouse ? Appearance.colors.accent : Appearance.colors.text
+            visible: img.status === Image.Ready
+        }
     }
     
     MouseArea {

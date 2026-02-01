@@ -11,6 +11,9 @@ Singleton {
     property string ssid: ""
     property int signalStrength: 0
 
+    property bool ethernetConnected: false
+    property string ethernetDevice: ""
+
     
     function update() {
         detailsProc.running = true
@@ -27,15 +30,31 @@ Singleton {
     Process {
         id: detailsProc
         
-        command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi | grep '^yes' | head -1"]
+        command: ["bash", "-c", "nmcli -t -f TYPE,DEVICE,STATE,CONNECTION device | grep '^ethernet.*connected' | head -1; nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi | grep '^yes' | head -1"]
         
         stdout: SplitParser {
             onRead: data => {
-                var parts = data.split(":")
-                if (parts.length >= 3) {
-                    root.wifiStatus = "connected"
-                    root.ssid = parts[1]
-                    root.signalStrength = parseInt(parts[2]) || 0
+                var lines = data.split("\n")
+                root.ethernetConnected = false
+                
+                for (var i=0; i<lines.length; i++) {
+                    var line = lines[i]
+                    if (!line) continue
+                    
+                    if (line.startsWith("ethernet")) {
+                         var parts = line.split(":")
+                         if (parts[2] === "connected") {
+                             root.ethernetConnected = true
+                             root.ethernetDevice = parts[1]
+                         }
+                    } else {
+                         var parts = line.split(":")
+                         if (parts.length >= 3 && parts[0] === "yes") {
+                            root.wifiStatus = "connected"
+                            root.ssid = parts[1]
+                            root.signalStrength = parseInt(parts[2]) || 0
+                         }
+                    }
                 }
             }
         }

@@ -42,10 +42,11 @@ Rectangle {
                     height: btIcon.height
                     anchors.verticalCenter: parent.verticalCenter
                     
-                    MaterialSymbol {
+                    MaterialIcon {
                         id: btIcon
-                        text: bluetoothItem.getIcon()
-                        size: Appearance.font.pixelSize.large
+                        icon: bluetoothItem.getIcon()
+                        width: Appearance.font.pixelSize.extraLarge
+                        height: Appearance.font.pixelSize.extraLarge
                         color: Appearance.colors.text
                     }
                     
@@ -85,16 +86,13 @@ Rectangle {
             function getIcon() {
                 if (!Services.Network.wifiEnabled) return "wifi_off"
                 if (Services.Network.wifiStatus === "disconnected") return "wifi_find"
-                if (Services.Network.wifiStatus === "connecting") return "signal_wifi_statusbar_not_connected"
+                if (Services.Network.wifiStatus === "connecting") return "wifi_find" // signal_wifi_statusbar_not_connected not found in list? using wifi_find or signal_wifi_bad
                 
                 var s = Services.Network.signalStrength
                 if (s >= 80) return "signal_wifi_4_bar"
                 if (s >= 60) return "network_wifi" 
                 if (s >= 40) return "network_wifi_3_bar" 
-                if (s >= 80) return "signal_wifi_4_bar"
-                if (s >= 60) return "signal_wifi_3_bar"
-                if (s >= 40) return "signal_wifi_2_bar"
-                if (s >= 20) return "signal_wifi_1_bar"
+                if (s >= 20) return "signal_wifi_1_bar" // Fallback mostly
                 return "signal_wifi_0_bar"
             }
             
@@ -103,9 +101,10 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: Appearance.sizes.padding
                 
-                MaterialSymbol {
-                    text: networkItem.getIcon()
-                    size: Appearance.font.pixelSize.large
+                MaterialIcon {
+                    icon: networkItem.getIcon()
+                    width: Appearance.font.pixelSize.extraLarge
+                    height: Appearance.font.pixelSize.extraLarge
                     color: Appearance.colors.text
                     anchors.verticalCenter: parent.verticalCenter
                 }
