@@ -22,15 +22,16 @@ Singleton {
         readonly property int barPadding: 5
         
         readonly property int launcherWidth: 600
-        readonly property int launcherInitialHeight: 32
-        readonly property int searchBarWidth: 400
-        readonly property int searchBarHeight: 40
+        readonly property int launcherInitialHeight: 40
+        readonly property int searchBarWidth: 500
+        readonly property int searchBarWidthShort: 400
+        readonly property int searchBarHeight: 36
         readonly property int searchBarRadius: 22
         readonly property int searchIconSize: 24
         
-        readonly property int resultItemHeight: 56
+        readonly property int resultItemHeight: 50
         readonly property int resultIconSize: 32
-        readonly property int resultListMaxHeight: 400
+        readonly property int resultListMaxHeight: 500
         
         readonly property int controlCenterWidth: 400
         
@@ -48,9 +49,7 @@ Singleton {
         readonly property color surface: Qt.rgba(background.r, background.g, background.b, 0.9)
         readonly property color surfaceVariant: "#45475a"
         readonly property color surfaceHover: "#3a3d4d"
-        
-        readonly property color inputBackground: "#252536"
-        
+                
         readonly property color text: "#cdd6f4"
         readonly property color textSecondary: "#a6adc8"
         readonly property color textDisabled: "#6c7086"

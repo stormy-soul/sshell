@@ -56,6 +56,13 @@ Item {
             }
         }
         
+        Behavior on implicitWidth {
+            NumberAnimation {
+                duration: Appearance.animation.duration
+                easing.type: Appearance.animation.easingDefault
+            }
+        }
+        
         Column {
             id: contentColumn
             anchors.centerIn: parent
@@ -67,7 +74,7 @@ Item {
                 id: searchBar
                 resultsList: resultsList
                 
-                height: Appearance.sizes.searchBarHeight || 40
+                height: Appearance.sizes.searchBarHeight || 30
                 width: parent.width
                 
                 onAccepted: {

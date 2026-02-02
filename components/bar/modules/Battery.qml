@@ -10,19 +10,35 @@ Rectangle {
     color: "transparent"
     
     property bool lowBatteryWarned: false
+    property bool fullBatteryWarned: false
     
     Connections {
         target: Battery
         function onPercentageChanged() {
-            if (Battery.percentage <= 0.10 && !Battery.isCharging && !batteryModule.lowBatteryWarned) {
-                NotificationService.push(
-                    "Low Battery",
-                    "Battery is at " + Math.round(Battery.percentage * 100) + "%. Please plug in your charger.",
-                    "battery_alert"
-                )
-                batteryModule.lowBatteryWarned = true
-            } else if (Battery.percentage > 0.10 || Battery.isCharging) {
+            if (Battery.percentage <= 0.10 && !Battery.isCharging) {
+                if (!batteryModule.lowBatteryWarned) {
+                    NotificationService.push(
+                        "Low Battery",
+                        "Battery is at " + Math.round(Battery.percentage * 100) + "%. Please plug in your charger!",
+                        "battery_alert"
+                    )
+                    batteryModule.lowBatteryWarned = true
+                }
+            } else {
                 batteryModule.lowBatteryWarned = false
+            }
+
+            if (Battery.percentage >= 0.99 && Battery.isCharging) {
+                if (!batteryModule.fullBatteryWarned) {
+                    NotificationService.push(
+                        "Battery Full",
+                        "Battery is at 100%. You can unplug your charger!",
+                        "battery_full"
+                    )
+                    batteryModule.fullBatteryWarned = true
+                }
+            } else if (!Battery.isCharging && Battery.percentage < 0.99) {
+                batteryModule.fullBatteryWarned = false
             }
         }
     }

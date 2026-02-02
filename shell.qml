@@ -10,7 +10,9 @@ import "./services"
 import "./components/bar"
 import "./components/controlcenter"
 import "./components/launcher"
+import "./components/launcher"
 import "./components/notifications"
+import "./components"
 import "./components/common" as Common
 
 ShellRoot {
@@ -127,6 +129,7 @@ ShellRoot {
         
         WlrLayershell.namespace: "sshell:launcher"
         WlrLayershell.layer: WlrLayer.Overlay
+        WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
         
         anchors {
             top: true
@@ -166,7 +169,6 @@ ShellRoot {
                 if (ModuleLoader.launcherVisible) {
                     LauncherSearch.query = ""
                     delayedGrabTimer.start()
-                    // Focus the input
                     Qt.callLater(function() {
                         appLauncher.focusSearchInput()
                     })
@@ -227,6 +229,19 @@ ShellRoot {
             anchors.horizontalCenter: parent.horizontalCenter
             y: Appearance.sizes.barHeight + Appearance.sizes.barMargin + 10
         }
+    }
+    
+    Variants {
+        model: Quickshell.screens
+        Background {
+            screen: modelData
+        }
+    }
+    
+    WallpaperSelector {
+        id: wallpaperSelector
+        screen: Quickshell.screens[0]
+        shown: false
     }
     
     GlobalShortcut {
@@ -291,5 +306,17 @@ ShellRoot {
         name: "shellStateToggle"
         description: "Toggle Shell State"
         onPressed: ShellState.toggle()
+    }
+
+    GlobalShortcut {
+        name: "wallpaperSelectorToggle"
+        description: "Toggle Wallpaper Selector"
+        onPressed: wallpaperSelector.shown = !wallpaperSelector.shown
+    }
+
+    GlobalShortcut {
+        name: "backgroundToggle"
+        description: "Toggle Wallpaper Visibility"
+        onPressed: WallpaperService.toggleVisible()
     }
 }

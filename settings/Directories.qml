@@ -16,6 +16,10 @@ QtObject {
     readonly property string cliphistDecode: cacheHome + "/sshell/cliphist"
     readonly property string state: dataHome + "/sshell/state"
     
+    readonly property string cacheDir: home + "/.cache/sshell"
+    readonly property string thumbDir: cacheDir + "/thumbs"
+    readonly property string configFile: cacheDir + "/wallpaper_config.json"
+
     readonly property var appDirs: [
         "/usr/share/applications",
         dataHome + "/applications"

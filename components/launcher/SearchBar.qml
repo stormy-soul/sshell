@@ -38,19 +38,21 @@ Row {
             return "search"
         }
         shape: {
-            if (LauncherSearch.searchMode === 1) return MaterialShape.Shape.Clover4Leaf
-            if (LauncherSearch.searchMode === 2) return MaterialShape.Shape.PuffyDiamond
-            if (LauncherSearch.searchMode === 3) return MaterialShape.Shape.Gem
+            if (LauncherSearch.searchMode === 1) return MaterialShape.Shape.Gem
+            if (LauncherSearch.searchMode === 2) return MaterialShape.Shape.Cookie6Sided
+            if (LauncherSearch.searchMode === 3) return MaterialShape.Shape.Cookie7Sided
             return MaterialShape.Shape.Cookie7Sided
         }
     }
     
     Rectangle {
-        width: Appearance.sizes.searchBarWidth
+        width: searchInput.text.length > 0 ? Appearance.sizes.searchBarWidth : Appearance.sizes.searchBarWidthShort
+        Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+        
         height: Appearance.sizes.searchBarHeight
         anchors.verticalCenter: parent.verticalCenter
         radius: height / 2
-        color: Appearance.colors.inputBackground
+        color: "transparent"
         
         TextInput {
             id: searchInput
@@ -73,7 +75,7 @@ Row {
             
             Text {
                 visible: parent.text.length === 0
-                text: "Search apps, calculate, or clipboard..."
+                text: "Search for apps, calculate, or clipboard..."
                 font: parent.font
                 color: Appearance.colors.textSecondary
                 anchors.verticalCenter: parent.verticalCenter

@@ -118,6 +118,8 @@ DetailWindow {
             if (name.indexOf("headphone") !== -1) return "headphones"
             if (name.indexOf("speaker") !== -1) return "speaker"
             if (name.indexOf("bluetooth") !== -1) return "bluetooth"
+            if (name.indexOf("bluez") !== -1) return "bluetooth"
+            if (name.indexOf("usb") !== -1) return "usb"
             return "volume_up"
         }
         

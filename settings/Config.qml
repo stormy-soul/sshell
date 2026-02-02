@@ -16,6 +16,8 @@ Scope {
     property alias weather: configAdapter.weather
     property alias tray: configAdapter.tray
     property alias osd: configAdapter.osd
+    property alias background: configAdapter.background
+    property alias mpris: configAdapter.mpris
 
     property bool ready: false
     property var parsedConfig: ({})
@@ -93,7 +95,8 @@ Scope {
                 theme: { accentColor: "#a6e3a1", cornerRadius: 10, animationDuration: 200, useSystemTheme: true },
                 weather: { interval: 3600, unit: "metric", city: "", useUSCS: false, enableGPS: false },
                 tray: { showNetworkName: false, showBluetoothName: false },
-                osd: { enabled: true, timeout: 1500, position: "top-center" }
+                osd: { enabled: true, timeout: 1500, position: "top-center" },
+                background: { wallpaperPaths: ["~/Pictures/wallpapers"], visible: true }
             }
 
             function deepMerge(target, source) {
@@ -233,6 +236,16 @@ Scope {
             property bool enabled: true
             property int timeout: 1500
             property string position: "top-center"
+        }
+
+        property JsonObject background: JsonObject {
+            property var wallpaperPaths: ["~/Pictures/wallpapers"]
+            property bool visible: true
+        }
+
+        property JsonObject mpris: JsonObject {
+            property bool showArtist: false
+            property var ignore: []
         }
     }
 

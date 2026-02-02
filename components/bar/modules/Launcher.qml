@@ -14,7 +14,7 @@ Rectangle {
     Item {
         id: iconItem
         anchors.centerIn: parent
-        width: 18
+        width: 18 + Appearance.sizes.padding * 2
         height: 18
         
         property string iconSource: {

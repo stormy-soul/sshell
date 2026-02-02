@@ -12,6 +12,10 @@ Rectangle {
 
     anchors.verticalCenter: parent.verticalCenter
 
+    Behavior on color {
+        ColorAnimation { duration: Appearance.animation.duration }
+    }
+
     Row {
         id: row
         spacing: Appearance.sizes.padding

@@ -1,141 +1,182 @@
 import QtQuick
+import Quickshell
 import Quickshell.Hyprland
 import "../../../settings"
 import "../../../services"
 
-Row {
-    id: workspaces
-    spacing: 0
-
+Item {
+    id: root
+    
+    readonly property int buttonHeight: (Config.bar.height || 40) - (Appearance.sizes.padding * 2)
+    readonly property int buttonWidth: buttonHeight
+    readonly property int buttonRadius: Appearance.sizes.cornerRadiusSmall
+    
+    implicitWidth: row.width
+    implicitHeight: buttonHeight
+    
     function getSortedWorkspaceIds() {
-        var _trigger = Hyprland.workspaces.length 
-        let ids = new Set(Config.workspaces.persistent)
+        if (!Hyprland.workspaces || !Hyprland.workspaces.values) return Config.workspaces.persistent
         
-        for (let i = 0; i < Hyprland.workspaces.length; i++) {
-            ids.add(Hyprland.workspaces[i].id)
+        let ids = new Set(Config.workspaces.persistent)
+        const wsList = Hyprland.workspaces.values
+        
+        for (let i = 0; i < wsList.length; i++) {
+            ids.add(wsList[i].id)
         }
         
         return Array.from(ids).sort((a, b) => a - b)
     }
-
-    function getHyprlandWorkspace(id) {
-        var _trigger = Hyprland.workspaces.length
-        for (let i = 0; i < Hyprland.workspaces.length; i++) {
-            if (Hyprland.workspaces[i].id === id) return Hyprland.workspaces[i]
-        }
-        return null
-    }
-
-    function getWorkspaceLabel(id) {
-        var style = Config.configAdapter.workspaces.style || "arabic" 
-        style = Config.workspaces.style || "arabic"
-        
-        if (style === "arabic") return id.toString()
-        
-        if (style === "roman") {
-            var romals = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
-            if (id > 0 && id <= 10) return romals[id]
-            return id.toString()
-        }
-        
-        if (style === "han") {
-            var hans = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
-            if (id > 0 && id <= 10) return hans[id]
-            return id.toString()
-        }
-        
-        if (style === "dot") {
-            return "●" // or "•"
-        }
-        
-        return id.toString()
-    }
     
     function checkOccupied(id) {
+        if (!Hyprland.workspaces || !Hyprland.workspaces.values) return false
         var params = Hyprland.workspaces.values
         for (let i = 0; i < params.length; i++) {
-             if (params[i].id === id) return params[i].clients.length > 0
+             if (params[i].id === id) return true
         }
         return false
     }
 
-    function checkFocused(id) {
-        return Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === id
+    function getIndexOf(id) {
+        var ids = root.workspaceIds
+        return ids.indexOf(id)
     }
 
-    Repeater {
-        id: repeater
-        model: workspaces.getSortedWorkspaceIds()
+    property var workspaceIds: {
+        if (Hyprland.workspaces) {
+             var _trigger = Hyprland.workspaces.values
+        }
+        return getSortedWorkspaceIds()
+    }
+
+    Row {
+        id: bgRow
+        anchors.fill: parent
+        spacing: 0
         
-        Item {
-            id: delegate
-            readonly property int wsId: modelData
-            property var activeWsObject: workspaces.getHyprlandWorkspace(wsId)
-            
-            property int coreHeight: (Config.bar.height || 40) - (Appearance.sizes.padding * 2)
-            
-            property bool isFocused: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
-            property bool hasWindows: activeWsObject ? (activeWsObject.clients.length > 0) : false
-            property bool existsInHyprland: activeWsObject !== null             
-
-            property int leftId: index > 0 ? (workspaces.getSortedWorkspaceIds()[index - 1] ?? -999) : -999
-            property int rightId: index < repeater.count - 1 ? (workspaces.getSortedWorkspaceIds()[index + 1] ?? -999) : -999
-            
-            property bool leftNeighborConnected: !isFocused && hasWindows && workspaces.checkOccupied(leftId) && !workspaces.checkFocused(leftId)
-            property bool rightNeighborConnected: !isFocused && hasWindows && workspaces.checkOccupied(rightId) && !workspaces.checkFocused(rightId)
-
-            property color backgroundColor: {
-                if (isFocused) return Appearance.colors.accent
-                if (hasWindows) {
-                    var c = Appearance.colors.surface
-                    return Qt.rgba(c.r, c.g, c.b, 0.4)
-                }
-                if (existsInHyprland) return Appearance.colors.surface
-                return "transparent" 
-            }
-            
-            width: coreHeight + (rightNeighborConnected ? 0 : Appearance.sizes.padding)
-            height: coreHeight
-            
+        Repeater {
+            model: root.workspaceIds
             
             Rectangle {
-                id: wsRect
-                width: parent.coreHeight
-                height: parent.coreHeight
-                anchors.left: parent.left
+                id: bgRect
+                readonly property int wsId: modelData
                 
-                property real r: Appearance.sizes.cornerRadiusSmall
+                property bool isOccupied: {
+                    if (Hyprland.workspaces) var _t = Hyprland.workspaces.values
+                    return root.checkOccupied(wsId)
+                }
                 
-                topLeftRadius: delegate.leftNeighborConnected ? 0 : r
-                bottomLeftRadius: delegate.leftNeighborConnected ? 0 : r
+                readonly property bool isActive: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
                 
-                topRightRadius: delegate.rightNeighborConnected ? 0 : r
-                bottomRightRadius: delegate.rightNeighborConnected ? 0 : r
+                width: root.buttonWidth
+                height: root.buttonHeight
                 
-                color: delegate.backgroundColor
+                readonly property int prevId: index > 0 ? root.workspaceIds[index - 1] : -999
+                readonly property int nextId: index < root.workspaceIds.length - 1 ? root.workspaceIds[index + 1] : -999
                 
-                Behavior on color { ColorAnimation { duration: Appearance.animation.duration } }
+                readonly property bool prevOccupied: index > 0 && root.checkOccupied(prevId)
+                readonly property bool nextOccupied: index < root.workspaceIds.length - 1 && root.checkOccupied(nextId)
+                
+                color: isOccupied ? Appearance.colors.surfaceVariant : "transparent"
+                opacity: isOccupied ? 0.5 : 0
+                
+                property real r: root.buttonRadius
+                
+                topLeftRadius: prevOccupied ? 0 : r
+                bottomLeftRadius: prevOccupied ? 0 : r
+                topRightRadius: nextOccupied ? 0 : r
+                bottomRightRadius: nextOccupied ? 0 : r
+                
+                Behavior on opacity { NumberAnimation { duration: Appearance.animation.duration } }
                 Behavior on topLeftRadius { NumberAnimation { duration: Appearance.animation.duration } }
-                Behavior on bottomLeftRadius { NumberAnimation { duration: Appearance.animation.duration } }
                 Behavior on topRightRadius { NumberAnimation { duration: Appearance.animation.duration } }
+                Behavior on bottomLeftRadius { NumberAnimation { duration: Appearance.animation.duration } }
                 Behavior on bottomRightRadius { NumberAnimation { duration: Appearance.animation.duration } }
+                Behavior on color { ColorAnimation { duration: Appearance.animation.duration } }
+            }
+        }
+    }
+    
+    Rectangle {
+        id: indicator
+        
+        property int activeIndex: {
+            if (!Hyprland.focusedWorkspace) return -1
+            return root.getIndexOf(Hyprland.focusedWorkspace.id)
+        }
+        
+        visible: activeIndex !== -1
+        
+        x: activeIndex * root.buttonWidth
+        y: 0
+        width: root.buttonWidth
+        height: root.buttonHeight
+        
+        radius: root.buttonRadius
+        color: Appearance.colors.accent
+        
+        Behavior on x { 
+            NumberAnimation { 
+                duration: Appearance.animation.duration 
+                easing.type: Easing.OutCubic
+            } 
+        }
+    }
+    
+    Row {
+        id: row
+        spacing: 0
+        
+        Repeater {
+            model: root.workspaceIds
+            
+            Item {
+                id: fgDelegate
+                readonly property int wsId: modelData
+                readonly property bool isActive: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
+                readonly property bool isOccupied: root.checkOccupied(wsId)
+                
+                width: root.buttonWidth
+                height: root.buttonHeight
+                
+                function getLabel(id) {
+                    var style = Config.workspaces.style || "arabic"
+                    if (style === "roman") {
+                        var romals = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
+                        return (id > 0 && id <= 10) ? romals[id] : id.toString()
+                    }
+                    if (style === "han") {
+                        var hans = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
+                        return (id > 0 && id <= 10) ? hans[id] : id.toString()
+                    }
+                    if (style === "dot") return ""
+                    return id.toString()
+                }
 
                 Text {
                     anchors.centerIn: parent
-                    text: workspaces.getWorkspaceLabel(delegate.wsId)
+                    text: fgDelegate.getLabel(wsId)
+                    
                     font.family: Appearance.font.family.main
                     font.pixelSize: Appearance.font.pixelSize.normal
-                    font.weight: delegate.isFocused ? Font.Bold : Font.DemiBold
+                    font.weight: isActive ? Font.Bold : Font.DemiBold
+                    
                     color: {
-                        if (delegate.isFocused) return Colors.isDark(delegate.backgroundColor) ? Appearance.colors.text : Appearance.colors.colOnPrimary
-                        if (delegate.hasWindows) return Appearance.colors.text
-                        return Appearance.colors.textSecondary
+                        if (isActive) return Appearance.colors.colOnPrimary
+                        if (isOccupied) return Appearance.colors.text       
+                        return Appearance.colors.textSecondary              
                     }
+                    
+                    Behavior on color { ColorAnimation { duration: 150 } }
                 }
                 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: Hyprland.dispatch("workspace " + delegate.wsId)
+                    hoverEnabled: true
+                    onClicked: Hyprland.dispatch("workspace " + wsId)
+                    onEntered: {
+                        if (!isActive) {
+                        }
+                    }
                 }
             }
         }

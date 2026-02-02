@@ -15,13 +15,17 @@
                 "enabled": true
             },
             {
-                "module": "Weather",
+                "module": "Mpris",
                 "enabled": true
             }
         ],
         "center": [
             {
                 "module": "Clock",
+                "enabled": true
+            },
+            {
+                "module": "Weather",
                 "enabled": true
             }
         ],
@@ -90,5 +94,14 @@
         "enabled": true,
         "timeout": 1500,
         "position": "top-center"
+    },
+    "background": {
+        "wallpaperPaths": [
+            "~/Pictures/wallpapers"
+        ]
+    },
+    "mpris": {
+        "showArtist": false,
+        "ignore": []
     }
 }

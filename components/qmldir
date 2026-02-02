@@ -7,3 +7,6 @@ Bar 1.0 bar/Bar.qml
 AppLauncher 1.0 launcher/AppLauncher.qml
 SearchBar 1.0 launcher/SearchBar.qml
 SearchItem 1.0 launcher/SearchItem.qml
+
+Background 1.0 Background.qml
+WallpaperSelector 1.0 WallpaperSelector.qml
