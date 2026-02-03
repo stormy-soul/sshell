@@ -157,7 +157,7 @@ Rectangle {
                 
                 Repeater {
                     model: [
-                        { icon: root.editMode ? "check" : "add", cmd: () => root.editMode = !root.editMode },
+                        { icon: root.editMode ? "check" : "edit", cmd: () => root.editMode = !root.editMode },
                         { icon: "settings", cmd: "gnome-control-center" }, 
                         { icon: "sync", cmd: () => Quickshell.reload(true) },
                         { icon: "power_settings_new", cmd: "wlogout" }
@@ -196,20 +196,57 @@ Rectangle {
             }
         }
         
-        GridLayout {
+        Column {
+            id: controlGrid
             Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.preferredHeight: 12
+            spacing: Appearance.sizes.padding
             
-            columns: 4
-            columnSpacing: Appearance.sizes.padding
-            rowSpacing: Appearance.sizes.padding
+            property real cellWidth: (width - (spacing * 3)) / 4
+            property real controlHeight: 60
+            
+            property var controlRows: {
+                var rows = []
+                var row = []
+                var cols = 0
+                var controls = QuickControlsService.activeControls
+                
+                for (var i = 0; i < controls.length; i++) {
+                    var span = controls[i].expanded ? 2 : 1
+                    if (cols + span > 4) {
+                        rows.push(row)
+                        row = []
+                        cols = 0
+                    }
+                    row.push({ index: i, control: controls[i], span: span })
+                    cols += span
+                }
+                if (row.length > 0) rows.push(row)
+                return rows
+            }
             
             Repeater {
-                model: QuickControlsService.activeControls.length
-                delegate: ControlDelegate {
-                    editMode: root.editMode
-                    onDetailsRequested: root.activeDetail = controlId
+                model: controlGrid.controlRows.length
+                delegate: Row {
+                    id: controlRow
+                    spacing: controlGrid.spacing
+                    
+                    property var rowData: controlGrid.controlRows[index]
+                    
+                    Repeater {
+                        model: rowData.length
+                        delegate: ControlDelegate {
+                            property var cellData: controlRow.rowData[index]
+                            
+                            controlIndex: cellData.index
+                            editMode: root.editMode
+                            onDetailsRequested: root.activeDetail = controlId
+                            
+                            width: (controlGrid.cellWidth * cellData.span) + (cellData.span > 1 ? controlGrid.spacing : 0)
+                            height: controlGrid.controlHeight
+                            
+                            Behavior on width { NumberAnimation { duration: Appearance.animation.duration; easing.type: Easing.OutCubic } }
+                        }
+                    }
                 }
             }
         }
@@ -640,7 +677,7 @@ Rectangle {
     }
     
     component SliderRow: RowLayout {
-        id: root
+        id: sliderRoot
         property string icon
         property real value
         signal moved(real val)
@@ -649,7 +686,7 @@ Rectangle {
         spacing: 10
         
         MaterialIcon {
-            icon: root.icon
+            icon: sliderRoot.icon
             width: Appearance.font.pixelSize.small
             height: Appearance.font.pixelSize.small
             color: Appearance.colors.text
@@ -660,8 +697,24 @@ Rectangle {
             Layout.fillWidth: true
             from: 0
             to: 1
-            value: parent.value
-            onMoved: parent.moved(value)
+            value: sliderRoot.value
+            onMoved: sliderRoot.moved(value)
+            
+            Connections {
+                target: sliderRoot
+                function onValueChanged() {
+                    if (!control.pressed) control.value = sliderRoot.value
+                }
+            }
+        }
+        
+        Text {
+            text: Math.round(sliderRoot.value * 100) + "%"
+            color: Appearance.colors.text
+            font.family: Appearance.font.family.main
+            font.pixelSize: Appearance.font.pixelSize.small
+            Layout.preferredWidth: 25
+            horizontalAlignment: Text.AlignRight
         }
     }
 }

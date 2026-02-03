@@ -1,6 +1,8 @@
 Icon 1.0 common/Icon.qml
 MaterialIcon 1.0 common/MaterialIcon.qml
+MaterialSymbol 1.0 common/MaterialSymbol.qml
 FluentIcon 1.0 common/FluentIcon.qml
+AudioVisualizer 1.0 common/AudioVisualizer.qml
 
 Bar 1.0 bar/Bar.qml
 

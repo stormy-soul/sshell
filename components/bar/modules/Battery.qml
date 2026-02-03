@@ -2,6 +2,7 @@ import QtQuick
 import "../../../settings"
 import "../../../services"
 import "../../common"
+import "../modules/popups"
 
 Rectangle {
     id: batteryModule
@@ -11,6 +12,27 @@ Rectangle {
     
     property bool lowBatteryWarned: false
     property bool fullBatteryWarned: false
+    property bool hovered: mouseArea.containsMouse
+    property bool shouldShowPopup: batteryModule.hovered || popup.popupHovered
+    
+    Timer {
+        id: closeDelayTimer
+        interval: 150
+        onTriggered: {
+            if (!batteryModule.shouldShowPopup) {
+                popup.shown = false
+            }
+        }
+    }
+    
+    onShouldShowPopupChanged: {
+        if (shouldShowPopup) {
+            closeDelayTimer.stop()
+            popup.shown = true
+        } else {
+            closeDelayTimer.restart()
+        }
+    }
     
     Connections {
         target: Battery
@@ -41,6 +63,13 @@ Rectangle {
                 batteryModule.fullBatteryWarned = false
             }
         }
+    }
+    
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        hoverEnabled: true
     }
     
     Row {
@@ -85,5 +114,10 @@ Rectangle {
             color: Appearance.colors.text
             anchors.verticalCenter: parent.verticalCenter
         }
+    }
+    
+    BatteryPopup {
+        id: popup
+        sourceItem: batteryModule
     }
 }

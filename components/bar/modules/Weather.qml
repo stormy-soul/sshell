@@ -3,6 +3,7 @@ import QtQuick
 import "../../../settings"
 import "../../../services" as Services
 import "../../common"
+import "../modules/popups"
 
 Rectangle {
     id: root
@@ -10,6 +11,28 @@ Rectangle {
     implicitHeight: 30
     implicitWidth: row.implicitWidth
     color: "transparent"
+    
+    property bool hovered: mouseArea.containsMouse
+    property bool shouldShowPopup: root.hovered || popup.popupHovered
+    
+    Timer {
+        id: closeDelayTimer
+        interval: 150
+        onTriggered: {
+            if (!root.shouldShowPopup) {
+                popup.shown = false
+            }
+        }
+    }
+    
+    onShouldShowPopupChanged: {
+        if (shouldShowPopup) {
+            closeDelayTimer.stop()
+            popup.shown = true
+        } else {
+            closeDelayTimer.restart()
+        }
+    }
     
     readonly property var weatherIconMap: ({
         "113": "clear_day",
@@ -93,8 +116,10 @@ Rectangle {
     }
     
     MouseArea {
+        id: mouseArea
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
+        hoverEnabled: true
         acceptedButtons: Qt.RightButton
         
         onClicked: (mouse) => {
@@ -108,5 +133,10 @@ Rectangle {
                  )
              }
         }
+    }
+    
+    WeatherPopup {
+        id: popup
+        sourceItem: root
     }
 }

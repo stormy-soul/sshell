@@ -5,10 +5,15 @@ USER=$(whoami)
 
 if command -v hostnamectl &> /dev/null; then
     HOST=$(hostnamectl | grep "Static hostname" | cut -d: -f2 | xargs)
+    CHASSIS=$(hostnamectl | grep "Chassis" | cut -d: -f2 | xargs)
 fi
 
 if [ -z "$HOST" ]; then
     HOST=$(uname -n)
+fi
+
+if [ -z "$CHASSIS" ]; then
+    CHASSIS="desktop"
 fi
 
 PFP=""
@@ -21,4 +26,5 @@ elif [ -f "/var/lib/AccountsService/icons/$USER" ]; then
     PFP="/var/lib/AccountsService/icons/$USER"
 fi
 
-echo "{\"os\": \"$OS_ID\", \"user\": \"$USER\", \"host\": \"$HOST\", \"pfp\": \"$PFP\"}"
+echo "{\"os\": \"$OS_ID\", \"user\": \"$USER\", \"host\": \"$HOST\", \"pfp\": \"$PFP\", \"chassis\": \"$CHASSIS\"}"
+

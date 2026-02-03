@@ -4,9 +4,9 @@ import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Services.SystemTray
 import Quickshell.Wayland
-import "../../../settings"
-import "../../../services"
-import "../common"
+import "../../../../settings"
+import "../../../../services"
+import "../../../common"
 
 PanelWindow {
     id: root

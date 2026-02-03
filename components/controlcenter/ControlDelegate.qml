@@ -8,7 +8,7 @@ import "../common"
 ToggleBtn {
     id: root
 
-    readonly property int controlIndex: index
+    property int controlIndex: 0
     readonly property var controlData: QuickControlsService.getControl(controlIndex)
     readonly property string controlId: controlData ? controlData.id : "error"
 
@@ -20,10 +20,6 @@ ToggleBtn {
         console.log("ControlDelegate[" + controlIndex + "]: Created with ID " + controlId)
     }
     
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-    Layout.columnSpan: root.expanded ? 2 : 1
-
     property var def: QuickControlsService.getDefinition(controlId)
     title: def ? def.title : ""
     icon: def ? def.icon : "" 

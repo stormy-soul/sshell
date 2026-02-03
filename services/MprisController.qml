@@ -121,8 +121,8 @@ Singleton {
     property bool isPlaying: root.activePlayer && root.activePlayer.playbackState === MprisPlaybackState.Playing
     
     function togglePlaying() {
-        if (root.activePlayer && root.activePlayer.canControl) {
-            root.activePlayer.playPause()
+        if (root.activePlayer && root.activePlayer.canTogglePlaying) {
+            root.activePlayer.togglePlaying()
         }
     }
     

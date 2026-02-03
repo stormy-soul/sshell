@@ -37,6 +37,9 @@ Singleton {
         
         readonly property int notificationWidth: 350
         readonly property int notificationHeight: 80
+
+        readonly property int mprisPopupWidth: 400
+        readonly property int mprisPopupHeight: 165
         
         readonly property int elevationMargin: 8
         readonly property int shadowRadius: 10
@@ -89,6 +92,7 @@ Singleton {
         }
         
         readonly property QtObject pixelSize: QtObject {
+            readonly property int teenie: 5
             readonly property int tiny: 10
             readonly property int small: 12
             readonly property int normal: 14

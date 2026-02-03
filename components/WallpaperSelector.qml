@@ -86,7 +86,7 @@ PanelWindow {
                 highlight: Rectangle {
                     color: Appearance.colors.surfaceVariant
                     radius: Appearance.sizes.cornerRadiusSmall
-                    opacity: 0.5
+                    opacity: 0.8
                 }
                 highlightFollowsCurrentItem: true
                 

@@ -18,6 +18,7 @@ Scope {
     property alias osd: configAdapter.osd
     property alias background: configAdapter.background
     property alias mpris: configAdapter.mpris
+    property alias clock: configAdapter.clock
 
     property bool ready: false
     property var parsedConfig: ({})
@@ -188,6 +189,7 @@ Scope {
         property JsonObject workspaces: JsonObject {
             property var persistent: [1, 2, 3, 4, 5] 
             property string style: "arabic"
+            property string radius: "squircle"
         }
 
         property JsonObject controlCenter: JsonObject {
@@ -225,6 +227,7 @@ Scope {
             property string city: ""
             property bool useUSCS: false
             property bool enableGPS: false
+            property bool hideLocation: false
         }
 
         property JsonObject tray: JsonObject {
@@ -246,6 +249,13 @@ Scope {
         property JsonObject mpris: JsonObject {
             property bool showArtist: false
             property var ignore: []
+            property bool barVisualizer: true
+            property bool popupVisualizer: true
+        }
+
+        property JsonObject clock: JsonObject {
+            property bool showDate: true
+            property int format: 24
         }
     }
 

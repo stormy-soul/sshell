@@ -7,6 +7,7 @@ Singleton {
     id: root
 
     property real brightness: 0.5
+    property bool ready: false
     
     Process {
         id: maxProc
@@ -16,6 +17,8 @@ Singleton {
             onRead: data => {
                 root._max = parseInt(data.trim()) || 255
                 console.log("BrightnessService: Max brightness detected as", root._max)
+                // Now fetch current brightness after max is known
+                getProc.running = true
             }
         }
     }
@@ -23,11 +26,14 @@ Singleton {
     Process {
         id: getProc
         command: ["brightnessctl", "g"]
-        running: true
+        running: false  // Don't run until max is fetched
         stdout: SplitParser {
             onRead: data => {
                 var current = parseInt(data.trim()) || 0
-                if (root._max > 0) root.brightness = current / root._max
+                if (root._max > 0) {
+                    root.brightness = current / root._max
+                    root.ready = true
+                }
             }
         }
     }

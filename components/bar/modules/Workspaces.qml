@@ -9,7 +9,7 @@ Item {
     
     readonly property int buttonHeight: (Config.bar.height || 40) - (Appearance.sizes.padding * 2)
     readonly property int buttonWidth: buttonHeight
-    readonly property int buttonRadius: Appearance.sizes.cornerRadiusSmall
+    readonly property int buttonRadius: Config.workspaces.radius === "circle" ? Appearance.sizes.cornerRadiusLarge : Config.workspaces.radius === "rounded" ? Appearance.sizes.cornerRadiusSmall : 0
     
     implicitWidth: row.width
     implicitHeight: buttonHeight

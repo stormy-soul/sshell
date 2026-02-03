@@ -5,6 +5,9 @@ import "../../settings"
 Button {
     id: control
     
+    leftPadding: 16
+    rightPadding: 16
+    
     contentItem: Text {
         text: control.text
         font: control.font

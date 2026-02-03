@@ -52,7 +52,40 @@
             4,
             5
         ],
-        "style": "han" // arabic/roman/han/dot
+        "style": "han", // arabic/roman/han/dot
+        "radius": "rounded" // circle/rounded/sharp
+    },
+    "weather": {
+        "interval": 3600,
+        "unit": "metric",
+        "city": "Anuradhapura, LK",
+        "useUSCS": false,
+        "enableGPS": false,
+        "hideLocation": false
+    },
+    "tray": {
+        "showNetworkName": true,
+        "showBluetoothName": true
+    },
+    "osd": {
+        "enabled": true,
+        "timeout": 1500,
+        "position": "top-center"
+    },
+    "background": {
+        "wallpaperPaths": [
+            "~/Pictures/wallpapers"
+        ]
+    },
+    "mpris": {
+        "barVisualizer": false,
+        "popupVisualizer": true,
+        "showArtist": false,
+        "ignore": []
+    },
+    "clock": {
+        "showDate": true,
+        "format": 12 // 12/24
     },
     "controlCenter": {
         "enabled": true,
@@ -78,30 +111,5 @@
         "cornerRadius": 10,
         "animationDuration": 200,
         "useSystemTheme": true
-    },
-    "weather": {
-        "interval": 3600,
-        "unit": "metric",
-        "city": "Anuradhapura, LK",
-        "useUSCS": false,
-        "enableGPS": false
-    },
-    "tray": {
-        "showNetworkName": true,
-        "showBluetoothName": true
-    },
-    "osd": {
-        "enabled": true,
-        "timeout": 1500,
-        "position": "top-center"
-    },
-    "background": {
-        "wallpaperPaths": [
-            "~/Pictures/wallpapers"
-        ]
-    },
-    "mpris": {
-        "showArtist": false,
-        "ignore": []
     }
 }

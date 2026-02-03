@@ -59,20 +59,17 @@ Singleton {
         
         var currentCol = 0
         var maxCols = 4
-        for (var i = 0; i < root.activeControls.length; i++) {
-            var item = root.activeControls[i]
-            var span = item.expanded ? 2 : 1
-            
-            if (currentCol + span > maxCols) {
-                currentCol = 0
-            }
+        var newControls = root.activeControls.slice()
+        
+        for (var i = 0; i < newControls.length; i++) {
+            var span = newControls[i].expanded ? 2 : 1
+            if (currentCol + span > maxCols) currentCol = 0
             currentCol += span
         }
         
         var remaining = maxCols - currentCol
-        var isExpanded = remaining >= 2
+        var isExpanded = (remaining === 0) ? true : (remaining >= 2)
         
-        var newControls = root.activeControls.slice() // Copy
         newControls.push({ "id": id, "expanded": isExpanded })
         root.activeControls = newControls
         save()

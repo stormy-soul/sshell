@@ -2,6 +2,7 @@ import QtQuick
 import "../../../settings"
 import "../../../services" as Services
 import "../../common"
+import "../modules/popups"
 
 Rectangle {
     id: root

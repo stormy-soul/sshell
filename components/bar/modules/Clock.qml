@@ -1,15 +1,38 @@
 import QtQuick
 import "../../../settings"
 import "../../../services"
+import "../modules/popups"
 
 Rectangle {
     id: clockModule
 
     implicitWidth: row.implicitWidth + Appearance.sizes.padding * 2
-    implicitHeight: parent.height - Appearance.sizes.paddingSmall
+    implicitHeight: 30
 
     radius: Appearance.sizes.cornerRadiusSmall
     color: "transparent"
+    
+    property bool hovered: mouseArea.containsMouse
+    property bool shouldShowPopup: clockModule.hovered || popup.popupHovered
+    
+    Timer {
+        id: closeDelayTimer
+        interval: 150
+        onTriggered: {
+            if (!clockModule.shouldShowPopup) {
+                popup.shown = false
+            }
+        }
+    }
+    
+    onShouldShowPopupChanged: {
+        if (shouldShowPopup) {
+            closeDelayTimer.stop()
+            popup.shown = true
+        } else {
+            closeDelayTimer.restart()
+        }
+    }
     
     Row {
         id: row
@@ -17,7 +40,7 @@ Rectangle {
         spacing: Appearance.sizes.padding
 
         Text {
-            text: Qt.formatTime(Clock.now, "hh:mm")
+            text: Qt.formatTime(Clock.now, Config.clock.format === 24 ? "hh:mm" : "hh:mm AP")
             font.family: Appearance.font.family.main
             font.pixelSize: Appearance.font.pixelSize.normal
             font.weight: Font.Medium
@@ -26,6 +49,7 @@ Rectangle {
         }
 
         Text {
+            visible: Config.clock.showDate
             text: Qt.formatDate(Clock.now, "MMM dd")
             font.family: Appearance.font.family.main
             font.pixelSize: Appearance.font.pixelSize.normal
@@ -35,10 +59,15 @@ Rectangle {
     }
 
     MouseArea {
+        id: mouseArea
+        z: 1
         anchors.fill: parent
         hoverEnabled: true
-        
-        onEntered: parent.color = Appearance.colors.surfaceVariant
-        onExited: parent.color = "transparent"
+        cursorShape: Qt.PointingHandCursor
+    }
+    
+    ClockPopup {
+        id: popup
+        sourceItem: clockModule
     }
 }

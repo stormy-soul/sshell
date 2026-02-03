@@ -1,5 +1,0 @@
-cliphist  # Clipboard Manager
-matugen-bin  # Material You Color Generator
-ttf-jetbrains-mono-nerd  # Monospace Font
-ttf-material-symbols-variable-git  # Icon Font
-libdbusmenu-qt5  # System Tray Menu Support
