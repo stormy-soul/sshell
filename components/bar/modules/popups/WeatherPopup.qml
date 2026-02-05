@@ -5,6 +5,8 @@ import Quickshell.Wayland
 import "../../../../settings"
 import "../../../../services"
 import "../../../common"
+import QtMultimedia
+import Qt5Compat.GraphicalEffects
 
 PanelWindow {
     id: root
@@ -45,18 +47,18 @@ PanelWindow {
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
     
     readonly property var weatherIconMap: ({
-        "113": "clear_day", "116": "partly_cloudy_day", "119": "cloud", "122": "cloud",
+        "113": "clear_day", "116": "partly_cloudy", "119": "cloudy", "122": "cloudy",
         "143": "foggy", "176": "rainy", "179": "rainy", "182": "rainy", "185": "rainy",
         "200": "thunderstorm", "227": "cloudy_snowing", "230": "snowing_heavy",
         "248": "foggy", "260": "foggy", "263": "rainy", "266": "rainy", "281": "rainy",
         "284": "rainy", "293": "rainy", "296": "rainy", "299": "rainy", "302": "weather_hail",
         "305": "rainy", "308": "weather_hail", "311": "rainy", "314": "rainy", "317": "rainy",
         "320": "cloudy_snowing", "323": "cloudy_snowing", "326": "cloudy_snowing",
-        "329": "snowing_heavy", "332": "snowing_heavy", "335": "snowing", "338": "snowing_heavy",
+        "329": "snowing_heavy", "332": "snowing_heavy", "335": "snowing_heavy", "338": "snowing_heavy",
         "350": "rainy", "353": "rainy", "356": "rainy", "359": "weather_hail",
-        "362": "rainy", "365": "rainy", "368": "cloudy_snowing", "371": "snowing",
+        "362": "rainy", "365": "rainy", "368": "cloudy_snowing", "371": "snowing_heavy",
         "374": "rainy", "377": "rainy", "386": "thunderstorm", "389": "thunderstorm",
-        "392": "thunderstorm", "395": "snowing"
+        "392": "thunderstorm", "395": "snowing_heavy"
     })
     
     function getIcon(code) {
@@ -90,7 +92,7 @@ PanelWindow {
         var mins = diff % 60
         return hours + "h " + mins + "m"
     }
-    
+
     property bool popupHovered: hoverHandler.hovered
     
     HoverHandler {
@@ -116,6 +118,59 @@ PanelWindow {
                 Layout.preferredHeight: weatherColumn.implicitHeight + (Appearance.sizes.padding * 2)
                 color: Appearance.colors.overlayBackground
                 radius: Appearance.sizes.cornerRadius
+                clip: true
+
+                Item {
+                    id: videoContainer
+                    anchors.fill: parent
+                    visible: true
+                    layer.enabled: true
+                    layer.effect: OpacityMask {
+                        maskSource: LinearGradient {
+                            width: videoContainer.width
+                            height: videoContainer.height
+                            start: Qt.point(width, 0)
+                            end: Qt.point(0, height)
+                            gradient: Gradient {
+                                GradientStop { position: 0.0; color: "white" }
+                                GradientStop { position: 0.85; color: "transparent" }
+                            }
+                            source: Rectangle {
+                                width: videoContainer.width
+                                height: videoContainer.height
+                                radius: Appearance.sizes.cornerRadius
+                                color: "black"
+                            }
+                        }
+                    }
+
+                    MediaPlayer {
+                        id: player
+                        source: root.shown ? "file://" + Directories.assetsPath + "/weather/" + getIcon(Weather.data.iconCode) + ".mp4" : ""
+                        audioOutput: AudioOutput { muted: true }
+                        videoOutput: videoOut
+                        autoPlay: false
+                        loops: MediaPlayer.Infinite
+                        
+                        onSourceChanged: {
+                            if (source != "") {
+                                play()
+                            }
+                        }
+                    }
+
+                    VideoOutput {
+                        id: videoOut
+                        anchors.fill: parent
+                        fillMode: VideoOutput.PreserveAspectCrop
+                    }
+                    
+                    FastBlur {
+                        anchors.fill: videoOut
+                        source: videoOut
+                        radius: 12
+                    }
+                }
                 
                 ColumnLayout {
                     id: weatherColumn
@@ -127,36 +182,29 @@ PanelWindow {
                         Layout.fillWidth: true
                         spacing: Appearance.sizes.paddingLarge
                         
-                        MaterialSymbol {
-                            text: getIcon(Weather.data.iconCode)
-                            size: 48
-                            color: Appearance.colors.accent
+                        Item {
+                            width: 64
+                            height: 64
+                            
+                            MaterialSymbol {
+                                anchors.centerIn: parent
+                                visible: true
+                                text: getIcon(Weather.data.iconCode)
+                                size: 48
+                                color: Appearance.colors.accent
+                            }
                         }
                         
                         ColumnLayout {
                             Layout.fillWidth: true
                             spacing: 2
 
-                            RowLayout {
-                                Layout.fillWidth: true
-                                
-
-                                Text {
-                                    text: Weather.data.condition || "Unknown"
-                                    font.family: Appearance.font.family.main
-                                    font.pixelSize: Appearance.font.pixelSize.large
-                                    font.weight: Font.Bold
-                                    color: Appearance.colors.text
-                                }
-
-                                Text {
-                                    visible: !Config.weather.hideLocation
-                                    text: Weather.data.tempFeelsLike || "--"
-                                    font.family: Appearance.font.family.main
-                                    font.pixelSize: Appearance.font.pixelSize.large
-                                    font.weight: Font.Bold
-                                    color: Appearance.colors.textSecondary
-                                }
+                            Text {
+                                text: Weather.data.condition || "Unknown"
+                                font.family: Appearance.font.family.main
+                                font.pixelSize: Appearance.font.pixelSize.large
+                                font.weight: Font.Bold
+                                color: Appearance.colors.text
                             }
                             
                             Text {
@@ -293,7 +341,7 @@ PanelWindow {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 30
-                            color: Appearance.colors.surfaceVariant
+                            color: "transparent"
                             radius: Appearance.sizes.cornerRadius
                             
                             RowLayout {
@@ -318,7 +366,7 @@ PanelWindow {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 30
-                            color: Appearance.colors.surfaceVariant
+                            color: "transparent"
                             radius: Appearance.sizes.cornerRadius
                             
                             RowLayout {
@@ -343,7 +391,7 @@ PanelWindow {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 30
-                            color: Appearance.colors.surfaceVariant
+                            color: "transparent"
                             radius: Appearance.sizes.cornerRadius
                             
                             RowLayout {
@@ -376,8 +424,8 @@ PanelWindow {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: forecastCol.implicitHeight + (Appearance.sizes.padding * 2)
-                                color: Appearance.colors.surfaceVariant
-                                opacity: modelData.isToday ? 1.0 : 0.7
+                                color: Appearance.colors.surface
+                                opacity: modelData.isToday ? 0.8 : 0.6
                                 radius: Appearance.sizes.cornerRadius
                                 
                                 ColumnLayout {

@@ -31,7 +31,6 @@ PanelWindow {
     
     property bool shown: false
     visible: shown
-    opacity: ShellState.masterVisible ? 1 : 0
     mask: Region {
         item: ShellState.masterVisible ? background : null
     } 

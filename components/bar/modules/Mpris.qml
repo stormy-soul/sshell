@@ -1,4 +1,5 @@
 import QtQuick
+import Qt5Compat.GraphicalEffects
 import "../../../settings"
 import "../../../services"
 import "../../common"
@@ -9,7 +10,7 @@ Rectangle {
     
     visible: MprisController.isPlaying && MprisController.activeTrack.title && MprisController.activeTrack.title !== "Unknown Title"
     
-    implicitWidth: Math.min(250, contentRow.implicitWidth + Appearance.sizes.padding * 2)
+    implicitWidth: contentRow.implicitWidth + Appearance.sizes.padding * 2
     implicitHeight: 30
     color: "transparent"
     clip: true
@@ -38,20 +39,83 @@ Rectangle {
     
     Row {
         id: contentRow
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: Appearance.sizes.padding
+        anchors.centerIn: parent
         spacing: Appearance.sizes.paddingSmall
-        width: parent.width - Appearance.sizes.padding * 2
         
         MaterialIcon {
-            icon: "audiotrack"
-            width: Appearance.font.pixelSize.large
-            height: Appearance.font.pixelSize.large
+            visible: !Config.mpris.barVisualizer
+            icon: "music_note"
+            width: Appearance.font.pixelSize.huge
+            height: Appearance.font.pixelSize.huge
             color: Appearance.colors.accent
             anchors.verticalCenter: parent.verticalCenter
         }
         
+        Rectangle {
+            id: coverContainer
+            visible: Config.mpris.barVisualizer
+
+            width: Appearance.font.pixelSize.massive
+            height: Appearance.font.pixelSize.massive
+            radius: Appearance.sizes.cornerRadiusSmall
+            color: Appearance.colors.surfaceVariant
+            
+            layer.enabled: true
+            layer.effect: OpacityMask {
+                maskSource: Rectangle {
+                    width: coverContainer.width
+                    height: coverContainer.height
+                    radius: coverContainer.radius
+                }
+            }
+            
+            Image {
+                id: coverArt
+                anchors.fill: parent
+                source: MprisController.activeTrack.artUrl || ""
+                fillMode: Image.PreserveAspectCrop
+                visible: false
+            }
+            
+            FastBlur {
+                anchors.fill: coverArt
+                source: coverArt
+                radius: 8
+                visible: true
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                color: "black"
+                opacity: 0.2
+            }
+            
+            Rectangle {
+                anchors.fill: parent
+                color: "transparent"
+                radius: Appearance.sizes.cornerRadiusSmall
+                border.width: 1
+                border.color: Qt.rgba(1, 1, 1, 0.1)
+            }
+
+            Loader {
+                id: visualizerLoader
+                anchors.centerIn: parent
+                active: Config.mpris.barVisualizer
+                sourceComponent: Component {
+                    AudioVisualizer {
+                        onBar: true
+                        maxBarHeight: 10
+                        minBarHeight: 2
+                        barWidth: 2
+                        barGap: 1
+                        animationDuration: 35
+                        source: MprisController.activeTrack.artUrl || ""
+                    }
+                }
+            }
+        }
+
         Text {
             anchors.verticalCenter: parent.verticalCenter
             text: !Config.mpris.showArtist && Config.mpris.barVisualizer ? MprisController.activeTrack.title + " " : MprisController.activeTrack.title || "Unknown" 
@@ -72,18 +136,6 @@ Rectangle {
             width: Math.min(implicitWidth, 80)
             elide: Text.ElideRight
             maximumLineCount: 1
-        }
-
-        AudioVisualizer {
-            visible: Config.mpris.barVisualizer
-            id: visualizer
-            onBar: true
-            maxBarHeight: 20
-            minBarHeight: 4
-            barWidth: 3
-            barGap: 2
-            animationDuration: 35
-            source: MprisController.activeTrack.artUrl || ""
         }
     }
     

@@ -57,8 +57,8 @@ Item {
         BrightnessContrast {
             anchors.fill: levels
             source: levels
-            brightness: root.onBar ? 0.1 : 0.0
-            contrast: root.onBar ? 0.1 : 0.15
+            brightness: root.onBar ? 0.15 : 0.0
+            contrast: root.onBar ? 0.2 : 0.15
         }
         
         Rectangle {

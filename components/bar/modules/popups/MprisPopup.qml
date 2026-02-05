@@ -64,13 +64,19 @@ PanelWindow {
     }
     
     function getClampedPosition() {
-        var pos = MprisController.activePlayer?.position || 0
-        var len = MprisController.activePlayer?.length || 1
+        var scale = MprisController.activeTrack.timeScale || 1.0
+        var offset = MprisController.activeTrack.startOffset || 0
+        
+        var rawPos = MprisController.activePlayer?.position || 0
+        var effectivePos = rawPos - offset
+        var pos = effectivePos * scale
+        
+        var len = MprisController.activeTrack.length || 1
         return Math.max(0, Math.min(pos, len))
     }
     
     function getTrackLength() {
-        return MprisController.activePlayer?.length || 1
+        return MprisController.activeTrack.length || 1
     }
     
     Rectangle {
@@ -177,16 +183,21 @@ PanelWindow {
                         Layout.fillWidth: true
                         maximumLineCount: 1
                     }
-                    
-                    AudioVisualizer {
-                        visible: Config.mpris.popupVisualizer
-                        id: visualizer
-                        maxBarHeight: 20
-                        minBarHeight: 4
-                        barWidth: 3
-                        barGap: 2
-                        animationDuration: 15
-                        source: MprisController.activeTrack.artUrl || ""
+
+                    Loader {
+                        id: visualizerLoader
+                        active: Config.mpris.popupVisualizer
+                        sourceComponent: Component {
+                            AudioVisualizer {
+                                onBar: false
+                                maxBarHeight: 20
+                                minBarHeight: 4
+                                barWidth: 3
+                                barGap: 2
+                                animationDuration: 15
+                                source: MprisController.activeTrack.artUrl || ""
+                            }
+                        }
                     }
                 }
 

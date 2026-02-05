@@ -12,6 +12,8 @@ Singleton {
     property bool backgroundVisible: true
     property bool isLoading: false
     
+    property var extensions: []
+    
     readonly property string cacheDir: Directories.cacheDir
     readonly property string thumbDir: Directories.thumbDir
     readonly property string configFile: Directories.configFile
@@ -24,51 +26,80 @@ Singleton {
         refresh()
     }
 
+
+    Connections {
+        target: Config
+        function onReadyChanged() {
+            if (Config.ready) {
+                 refresh()
+            }
+        }
+    }
+
+    Connections {
+        target: Config.background
+        function onWallpaperPathsChanged() {
+            refresh()
+        }
+    }
+
     Component.onCompleted: init()
 
     function refresh() {
         if (root.isLoading) return
         root.isLoading = true
         root.wallpapers.clear()
+        root.extensions = []
 
         const paths = Config.background?.wallpaperPaths || []
+        
         if (paths.length === 0) {
+            console.warn("WallpaperService: No wallpaper paths configured")
             root.isLoading = false
             return
         }
 
         const expandedPaths = paths.map(p => p.replace("~", Quickshell.env("HOME")))
-
+        const findCmd = expandedPaths.map(p => `find "${p}" -type f \\( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" -o -iname "*.webp" -o -iname "*.gif" \\) 2>/dev/null`).join("; ")
         
-        let cmd = ["find"]
-        cmd = cmd.concat(expandedPaths)
-        cmd = cmd.concat(["-type", "f", "\\(", "-iname", "*.jpg", "-o", "-iname", "*.png", "-o", "-iname", "*.jpeg", "-o", "-iname", "*.webp", "\\)"])
-        
-        var proc = Quickshell.execDetached(cmd)
-        
-        scanProcess.paths = expandedPaths
+        scanProcess.command = ["bash", "-c", findCmd]
         scanProcess.running = true
     }
 
     Process {
         id: scanProcess
-        property var paths: []
         
-        command: ["bash", "-c", "find " + paths.map(p => `"${p}"`).join(" ") + " -type f \\( -iname '*.jpg' -o -iname '*.png' -o -iname '*.jpeg' -o -iname '*.webp' \\) 2>/dev/null"]
+        property string outputBuffer: ""
         
         stdout: SplitParser {
             onRead: data => {
-                const lines = data.split("\n")
+                scanProcess.outputBuffer += data + "\n"
+            }
+        }
+        
+        onExited: (exitCode) => {
+            if (exitCode === 0) {
+                const lines = scanProcess.outputBuffer.split("\n")
+                
+                var extSet = new Set()
+                
                 for (let i = 0; i < lines.length; i++) {
                     const path = lines[i].trim()
                     if (path.length > 0) {
                         addWallpaper(path)
+                        
+                        const ext = path.split(".").pop().toLowerCase()
+                        extSet.add(ext)
                     }
                 }
+                
+                root.extensions = Array.from(extSet).sort()
+                root.extensions = Array.from(extSet).sort()
+            } else {
+                console.error("WallpaperService: Scan failed with exit code:", exitCode)
             }
-        }
-        
-        onExited: {
+            
+            scanProcess.outputBuffer = ""
             root.isLoading = false
             startThumbnailGeneration()
         }
@@ -76,10 +107,12 @@ Singleton {
 
     function addWallpaper(path) {
         const name = path.split("/").pop()
+        const ext = path.split(".").pop().toLowerCase()
         
         root.wallpapers.append({
             "path": path,
             "name": name,
+            "extension": ext,
             "thumb": "" 
         })
     }
@@ -87,20 +120,28 @@ Singleton {
     property int thumbIndex: 0
     Process {
         id: thumbGenProcess
-        command: ["bash", "-c", ""]
         
-        stdout: StdioCollector {
-            onStreamFinished: output => {
-                 if (!output) return
-                 const thumbPath = output.trim()
-                 if (thumbPath) {
-                    root.wallpapers.setProperty(root.thumbIndex, "thumb", thumbPath)
-                 }
+        property string outputBuffer: ""
+        
+        stdout: SplitParser {
+            onRead: data => {
+                thumbGenProcess.outputBuffer += data + "\n"
             }
         }
-        
-        onExited: {
+
+        onExited: (exitCode) => {
+            const thumbPath = thumbGenProcess.outputBuffer.trim()
+            
+            const lines = thumbPath.split("\n")
+            const lastLine = lines[lines.length - 1].trim()
+            
+            if (lastLine && lastLine.startsWith("/")) {
+                 root.wallpapers.setProperty(root.thumbIndex, "thumb", lastLine)
+            }
+            
+            thumbGenProcess.outputBuffer = ""
             root.thumbIndex++
+            
             if (root.thumbIndex < root.wallpapers.count) {
                 processNextThumb()
             }
@@ -117,14 +158,20 @@ Singleton {
         
         const item = root.wallpapers.get(root.thumbIndex)
         const path = item.path
+        const ext = item.extension
         
         const script = `
             HASH=$(echo -n "${path}" | md5sum | cut -d' ' -f1)
+            HASH=$(echo -n "${path}" | md5sum | cut -d' ' -f1)
             THUMB="${root.thumbDir}/$HASH.jpg"
             if [ ! -f "$THUMB" ]; then
-                convert "${path}" -resize 400x400^ -gravity center -extent 400x400 "$THUMB"
+                if [ "${ext}" = "gif" ]; then
+                    convert "${path}[0]" -resize 400x400^ -gravity center -extent 400x400 "$THUMB" 2>/dev/null || echo ""
+                else
+                    convert "${path}" -resize 400x400^ -gravity center -extent 400x400 "$THUMB" 2>/dev/null || echo ""
+                fi
             fi
-            echo "$THUMB"
+            [ -f "$THUMB" ] && echo "$THUMB"
         `
         
         thumbGenProcess.command = ["bash", "-c", script]
@@ -142,16 +189,7 @@ Singleton {
         
         onLoaded: {
             if (configFileView.adapter.currentWallpaper !== "") {
-                let exists = false
-                try {
-                    exists = Quickshell.io ? Quickshell.io.fileExists(configFileView.adapter.currentWallpaper) : true
-                } catch(e) {
-                    exists = true
-                }
-
-                if (exists) {
-                    root.currentWallpaper = configFileView.adapter.currentWallpaper
-                }
+                root.currentWallpaper = configFileView.adapter.currentWallpaper
             }
             
             if (configFileView.adapter.backgroundVisible !== undefined) {
@@ -184,30 +222,6 @@ Singleton {
         root.backgroundVisible = !root.backgroundVisible
     }
 
-    function readFile(path) {
-        const xhr = new XMLHttpRequest()
-        xhr.open("GET", "file://" + path, false)
-        xhr.send()
-        return xhr.responseText
-    }
-
     function restore() {
-        try {
-            const content = readFile(root.configFile)
-            if (!content) return
-
-            const data = JSON.parse(content)
-            
-            if (data.currentWallpaper) {
-                root.currentWallpaper = data.currentWallpaper
-                console.log("[WallpaperService] Synchronously restored:", root.currentWallpaper)
-            }
-            
-            if (data.backgroundVisible !== undefined) {
-                root.backgroundVisible = data.backgroundVisible
-            }
-        } catch (e) {
-            console.warn("[WallpaperService] Sync restore failed:", e)
-        }
     }
 }

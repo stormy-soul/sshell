@@ -17,7 +17,6 @@ Singleton {
             onRead: data => {
                 root._max = parseInt(data.trim()) || 255
                 console.log("BrightnessService: Max brightness detected as", root._max)
-                // Now fetch current brightness after max is known
                 getProc.running = true
             }
         }

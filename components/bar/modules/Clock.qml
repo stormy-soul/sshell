@@ -46,6 +46,7 @@ Rectangle {
             font.weight: Font.Medium
             color: Appearance.colors.text
             verticalAlignment: Text.AlignVCenter
+            anchors.verticalCenter: parent.verticalCenter
         }
 
         Text {
@@ -55,6 +56,7 @@ Rectangle {
             font.pixelSize: Appearance.font.pixelSize.normal
             color: Appearance.colors.textSecondary
             verticalAlignment: Text.AlignVCenter
+            anchors.verticalCenter: parent.verticalCenter
         }
     }
 

@@ -17,11 +17,10 @@ Singleton {
     
     property MprisPlayer trackedPlayer: null
     property MprisPlayer activePlayer: trackedPlayer ?? Mpris.players.values[0] ?? null
-    
-    onActivePlayerChanged: root.updateTrack()
-    
+        
     signal trackChanged(reverse: bool)
     property bool __reverse: false
+    property real trackStartOffset: 0
     
     property var activeTrack: ({})
 
@@ -90,14 +89,33 @@ Singleton {
         }
     }
 
+    onActivePlayerChanged: {
+        root.trackStartOffset = 0
+        root.updateTrack()
+    }
+    
+
+    
     Connections {
         target: activePlayer
         ignoreUnknownSignals: true
 
-        function onTrackTitleChanged() { root.updateTrack() }
+        function onTrackTitleChanged() { 
+            if (!root.activePlayer.trackTitle) return
+            
+            root.trackStartOffset = root.activePlayer.position
+            root.updateTrack() 
+        }
         function onTrackArtistChanged() { root.updateTrack() }
         function onTrackAlbumChanged() { root.updateTrack() }
         function onTrackArtUrlChanged() { root.updateTrack() }
+        
+        function onPositionChanged() {
+             if (root.activePlayer.position < root.trackStartOffset && root.trackStartOffset > 0) {
+                 root.trackStartOffset = 0
+                 root.updateTrack()
+             }
+        }
     }
 
     function updateTrack() {
@@ -106,12 +124,20 @@ Singleton {
              return
         }
 
+        var rawLen = root.activePlayer.length || 1
+        var scale = (rawLen > 1000000) ? 0.000001 : 1.0
+        var normLen = rawLen * scale
+
         root.activeTrack = {
             uniqueId: root.activePlayer.identity,
             artUrl: root.activePlayer.trackArtUrl ?? "",
             title: root.activePlayer.trackTitle || "Unknown Title",
             artist: root.activePlayer.trackArtist || "Unknown Artist",
-            album: root.activePlayer.trackAlbum || "Unknown Album"
+            album: root.activePlayer.trackAlbum || "Unknown Album",
+            length: normLen,
+            length: normLen,
+            timeScale: scale,
+            startOffset: root.trackStartOffset
         }
         
         root.trackChanged(__reverse)

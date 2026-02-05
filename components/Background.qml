@@ -24,20 +24,55 @@ PanelWindow {
 
     color: "black"
 
-    Image {
-        id: wallpaper
+    readonly property bool isGif: WallpaperService.currentWallpaper.toLowerCase().endsWith(".gif")
+
+    Loader {
+        id: wallpaperLoader
         anchors.fill: parent
-        source: WallpaperService.currentWallpaper && WallpaperService.currentWallpaper !== "" ? "file://" + WallpaperService.currentWallpaper : ""
-        fillMode: Image.PreserveAspectCrop
-        asynchronous: true
-        smooth: true
-        mipmap: true
         
-        Behavior on source {
-            SequentialAnimation {
-                NumberAnimation { target: wallpaper; property: "opacity"; to: 0; duration: 200 }
-                PropertyAction { target: wallpaper; property: "source" }
-                NumberAnimation { target: wallpaper; property: "opacity"; to: 1; duration: 500 }
+        sourceComponent: root.isGif ? animatedWallpaper : staticWallpaper
+        
+        property string wallpaperSource: WallpaperService.currentWallpaper && WallpaperService.currentWallpaper !== "" ? "file://" + WallpaperService.currentWallpaper : ""
+    }
+    
+    Component {
+        id: staticWallpaper
+        
+        Image {
+            id: wallpaper
+            source: wallpaperLoader.wallpaperSource
+            fillMode: Image.PreserveAspectCrop
+            asynchronous: true
+            smooth: true
+            mipmap: true
+            
+            Behavior on source {
+                SequentialAnimation {
+                    NumberAnimation { target: wallpaper; property: "opacity"; to: 0; duration: 200 }
+                    PropertyAction { target: wallpaper; property: "source" }
+                    NumberAnimation { target: wallpaper; property: "opacity"; to: 1; duration: 500 }
+                }
+            }
+        }
+    }
+    
+    Component {
+        id: animatedWallpaper
+        
+        AnimatedImage {
+            id: animWallpaper
+            source: wallpaperLoader.wallpaperSource
+            fillMode: Image.PreserveAspectCrop
+            asynchronous: true
+            smooth: true
+            playing: true
+            
+            Behavior on source {
+                SequentialAnimation {
+                    NumberAnimation { target: animWallpaper; property: "opacity"; to: 0; duration: 200 }
+                    PropertyAction { target: animWallpaper; property: "source" }
+                    NumberAnimation { target: animWallpaper; property: "opacity"; to: 1; duration: 500 }
+                }
             }
         }
     }

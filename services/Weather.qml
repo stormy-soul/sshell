@@ -113,35 +113,23 @@ Singleton {
     }
     
     function getData() {
-        var cmd = "curl -s 'wttr.in"
-
-        if (root.city) {
-            cmd += "/" + formatCityName(root.city)
-        }
+        if (updateProc.running) return
         
-        cmd += "?format=j1'"
-        
-        fetchProc.command = ["bash", "-c", cmd]
-        fetchProc.running = true
+        root.outputBuffer = ""
+        var cmd = "curl -m 10 -s 'wttr.in/" + (root.city ? formatCityName(root.city) : "") + "?format=j1'"
+        updateProc.command = ["bash", "-c", cmd]
+        updateProc.running = true
+        console.log("WeatherService: Fetching data...")
     }
     
     function formatCityName(name) {
         return name.trim().split(/\s+/).join('+')
     }
     
-    Process {
-        id: fetchProc
-        
-        stdout: SplitParser {
-            onRead: data => { }
-        }
-    }
-    
     property string outputBuffer: ""
     
     Process {
-        id: curlProc
-        command: ["bash", "-c", "curl -s 'wttr.in/" + (root.city ? formatCityName(root.city) : "") + "?format=j1'"]
+        id: updateProc
         
         stdout: SplitParser {
             onRead: data => {
@@ -156,7 +144,10 @@ Singleton {
                     root.refineData(json)
                 } catch (e) {
                     console.error("WeatherService: Failed to parse JSON", e)
+                    console.error("Buffer was:", root.outputBuffer)
                 }
+            } else {
+                 console.error("WeatherService: Fetch failed with code", exitCode)
             }
             root.outputBuffer = ""
         }
@@ -168,12 +159,7 @@ Singleton {
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            root.outputBuffer = ""
-            curlProc.running = true
+            root.getData()
         }
-    }
-    
-    Component.onCompleted: {
-        // Initial fetch handled by Timer triggeredOnStart
     }
 }

@@ -45,7 +45,7 @@ Rectangle {
     Loader {
         id: trayPopupLoader
         active: false
-        source: "TrayPopup.qml"
+        source: "popups/TrayPopup.qml"
         onLoaded: {
              item.sourceCenter = Qt.binding(function() { return root.globalCenterX })
         }

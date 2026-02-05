@@ -50,7 +50,7 @@ Rectangle {
                 batteryModule.lowBatteryWarned = false
             }
 
-            if (Battery.percentage >= 0.99 && Battery.isCharging) {
+            if (Battery.percentage === 1 && Battery.isCharging) {
                 if (!batteryModule.fullBatteryWarned) {
                     NotificationService.push(
                         "Battery Full",

@@ -10,7 +10,8 @@ import "../notifications"
 Rectangle {
     id: root
     implicitWidth: Config.controlCenter.width
-    implicitHeight: Screen.height - Appearance.sizes.barHeight - (Appearance.sizes.barMargin * 2)
+    implicitHeight: Screen.height - Appearance.sizes.barHeight
+    anchors.topMargin: Appearance.sizes.barHeight - (Appearance.bar.margins * 2)
 
     color: Appearance.colors.overlayBackground
     radius: Appearance.sizes.cornerRadiusLarge

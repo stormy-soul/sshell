@@ -36,7 +36,7 @@ Rectangle {
     
     readonly property var weatherIconMap: ({
         "113": "clear_day",
-        "116": "partly_cloudy_day",
+        "116": "partly_cloudy",
         "119": "cloud",
         "122": "cloud",
         "143": "foggy",
@@ -91,7 +91,7 @@ Rectangle {
         if (root.weatherIconMap[c]) {
             return root.weatherIconMap[c]
         } 
-        return "cloud" // Default
+        return "cloud"
     }
 
     Row {

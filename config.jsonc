@@ -2,8 +2,9 @@
     "bar": {
         "enabled": true,
         "position": "top",
-        "height": 40,
+        "height": 36,
         "margin": 10,
+        "style": "islands", // floating/full/islands/pills
         "padding": 5,
         "left": [
             {
@@ -61,7 +62,9 @@
         "city": "Anuradhapura, LK",
         "useUSCS": false,
         "enableGPS": false,
-        "hideLocation": false
+        "hideLocation": true, // hides the location text in the popup
+        "iconStyle": "fill", // fill/line
+        "animated": true
     },
     "tray": {
         "showNetworkName": true,
@@ -74,7 +77,8 @@
     },
     "background": {
         "wallpaperPaths": [
-            "~/Pictures/wallpapers"
+            "~/Pictures/wallpapers",
+            "~/Pictures/gifs"
         ]
     },
     "mpris": {

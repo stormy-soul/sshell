@@ -64,6 +64,8 @@ Scope {
                     console.warn("applyToAdapter(): couldn't probe/create", key, ":", e)
                 }
 
+
+
                 try {
                     applyToAdapter(adapterObj[key], val)
                 } catch (e) {
@@ -75,7 +77,6 @@ Scope {
 
 
         function applyText(source) {
-            console.log("DEBUG:", source, "filePath ->", root.filePath)
             var fileText = getFileText()
 
             var defaults = {
@@ -135,6 +136,8 @@ Scope {
 
             try {
                 var cleanJson = fileText.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '')
+                cleanJson = cleanJson.replace(/,(\s*[}\]])/g, '$1')
+                
                 var user = JSON.parse(cleanJson)
 
                 var merged = JSON.parse(JSON.stringify(defaults))
@@ -180,6 +183,7 @@ Scope {
             property string position: "top"
             property int height: 40
             property int margin: 10
+            property string style: "floating"
             property int padding: 5
             property var left: [ { "module": "Workspaces", "enabled": true }, { "module": "Launcher", "enabled": true } ]
             property var center: [ { "module": "Clock", "enabled": true } ]
@@ -228,6 +232,8 @@ Scope {
             property bool useUSCS: false
             property bool enableGPS: false
             property bool hideLocation: false
+            property string iconStyle: "fill"
+            property bool animated: true
         }
 
         property JsonObject tray: JsonObject {
@@ -242,7 +248,7 @@ Scope {
         }
 
         property JsonObject background: JsonObject {
-            property var wallpaperPaths: ["~/Pictures/wallpapers"]
+            property var wallpaperPaths: []
             property bool visible: true
         }
 
@@ -264,6 +270,7 @@ Scope {
         property string position: configAdapter.bar?.position ?? "top"
         property int height: configAdapter.bar?.height ?? 40
         property int margin: configAdapter.bar?.margin ?? 10
+        property string style: configAdapter.bar?.style ?? "floating"
         property int padding: configAdapter.bar?.padding ?? 5
 
         property var left: configAdapter.bar?.left ?? [ { module: "Workspaces", enabled: true }, { module: "Launcher", enabled: true } ]
