@@ -155,43 +155,4 @@ ContentPage {
             }
         }
     }
-    
-    ContentSection {
-        title: "Details"
-        icon: "info"
-        space: root.gap
-
-        component InfoRow : RowLayout {
-            property string label
-            property string value
-            Layout.fillWidth: true
-            spacing: 10
-            
-            Text {
-                text: label
-                color: Appearance.colors.textSecondary
-                font.family: Appearance.font.family.main
-                font.pixelSize: Appearance.font.pixelSize.normal
-                Layout.preferredWidth: 100
-            }
-            
-            Text {
-                text: value
-                color: Appearance.colors.text
-                font.family: Appearance.font.family.main
-                font.pixelSize: Appearance.font.pixelSize.normal
-                font.weight: Font.Medium
-                Layout.fillWidth: true
-            }
-        }
-
-        ColumnLayout {
-            Layout.fillWidth: true
-            spacing: 12
-            
-            InfoRow { label: "OS"; value: SystemInfo.osName }
-            InfoRow { label: "Chassis"; value: SystemInfo.chassis }
-            InfoRow { label: "Uptime"; value: SystemInfo.uptime }
-        }
-    }
 }
