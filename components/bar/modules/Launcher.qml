@@ -6,8 +6,8 @@ import "../../common"
 
 Rectangle {
     id: launcherButton
-    width: iconItem.width
-    height: iconItem.height
+    implicitWidth: iconItem.width
+    implicitHeight: Config.bar.height
     color: "transparent"
     radius: Appearance.sizes.cornerRadiusSmall
     

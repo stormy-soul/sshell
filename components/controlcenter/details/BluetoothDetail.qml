@@ -10,7 +10,7 @@ DetailWindow {
     id: root
     title: "Bluetooth"
     
-    headerRightItem: Switch {
+    headerRightItem: StyledSwitch {
         checked: root.adapter ? root.adapter.enabled : false
         onToggled: {
             if (root.adapter) root.adapter.enabled = checked
@@ -102,30 +102,15 @@ DetailWindow {
                         }
                     }
                     
-                    // Buttons
-                    Button {
-                        text: device.connected ? "Disconnect" : "Connect"
+                    RippleButton {
+                        buttonText: device.connected ? "Disconnect" : "Connect"
                         Layout.preferredHeight: 30
+                        Layout.preferredWidth: 100
+                        buttonRadius: Appearance.sizes.cornerRadius
                         
-                        contentItem: Text {
-                            text: parent.text
-                            font: parent.font
-                            color: parent.hovered ? Appearance.colors.colOnPrimary : Appearance.colors.text
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
-                            Behavior on color { ColorAnimation { duration: Appearance.animation.duration } }
-                        }
-
-                        background: Rectangle {
-                            radius: Appearance.sizes.cornerRadius
-                            color: parent.hovered ? Appearance.colors.accent : "transparent"
-                            border.width: 1
-                            border.color: parent.hovered ? Appearance.colors.accent : Appearance.colors.border
-                            
-                            Behavior on color { ColorAnimation { duration: Appearance.animation.duration } }
-                            Behavior on border.color { ColorAnimation { duration: Appearance.animation.duration } }
-                        }
+                        colBackground: "transparent"
+                        colBackgroundHover: Appearance.colors.accent
+                        colRipple: Appearance.colors.colOnPrimary
 
                         onClicked: {
                             if (device.connected) device.disconnect()

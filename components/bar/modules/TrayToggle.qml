@@ -6,7 +6,7 @@ import Quickshell.Services.SystemTray
 Rectangle {
     id: root
     implicitWidth: 30
-    implicitHeight: 30
+    implicitHeight: Config.bar.height - Appearance.sizes.padding
     color: "transparent"
     radius: Appearance.sizes.cornerRadiusSmall
     

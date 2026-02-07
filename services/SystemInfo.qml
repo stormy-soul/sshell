@@ -11,6 +11,15 @@ Singleton {
     property string hostName: "host"
     property string profilePicture: ""
     property string chassis: "laptop"
+    property string kernelVersion: "unknown"
+    Process {
+        id: kernelProc
+        command: ["uname", "-r"]
+        stdout: SplitParser {
+            onRead: data => root.kernelVersion = data.trim()
+        }
+    }
+    
     property string uptime: "--:--"
     
     property string osIconPath: {
@@ -74,5 +83,8 @@ Singleton {
         onTriggered: uptimeProc.running = true
     }
     
-    Component.onCompleted: proc.running = true
+    Component.onCompleted: {
+        proc.running = true
+        kernelProc.running = true
+    }
 }

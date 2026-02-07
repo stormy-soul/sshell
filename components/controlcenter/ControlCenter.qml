@@ -37,6 +37,8 @@ Rectangle {
     property var groupExpandedState: ({})
     property var groupedNotifications: []
 
+    signal requestSessionScreen()
+
     function updateGroupedModel() {
         let raw = NotificationService.notifications
         let reversed = raw.slice().reverse()
@@ -78,7 +80,6 @@ Rectangle {
         root.groupedNotifications = displayList
     }
 
-    // Trigger update when source changes or component completed
     Connections {
         target: NotificationService
         function onNotificationsChanged() { root.updateGroupedModel() }
@@ -161,7 +162,7 @@ Rectangle {
                         { icon: root.editMode ? "check" : "edit", cmd: () => root.editMode = !root.editMode },
                         { icon: "settings", cmd: "gnome-control-center" }, 
                         { icon: "sync", cmd: () => Quickshell.reload(true) },
-                        { icon: "power_settings_new", cmd: "wlogout" }
+                        { icon: "power_settings_new", cmd: () => root.requestSessionScreen() }
                     ]
                     
                     Rectangle {

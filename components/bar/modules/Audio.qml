@@ -5,7 +5,7 @@ import "../../common"
 
 Rectangle {
     id: root
-    implicitHeight: 30
+    implicitHeight: Config.bar.height
     implicitWidth: row.implicitWidth
     color: "transparent"
 

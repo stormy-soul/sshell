@@ -211,8 +211,58 @@ Singleton {
         onTriggered: configFileView.writeAdapter()
     }
     
-    onCurrentWallpaperChanged: updateAdapter()
+    onCurrentWallpaperChanged: {
+        updateAdapter()
+        if (root.currentWallpaper !== "") {
+            generateColors(root.currentWallpaper)
+            persistWallpaper(root.currentWallpaper)
+        }
+    }
     onBackgroundVisibleChanged: updateAdapter()
+
+    function persistWallpaper(path) {
+        const absPath = path.replace("~", Quickshell.env("HOME"))
+        const destDir = Quickshell.env("HOME") + "/.local/state/quickshell/wallpaper"
+        const destFile = destDir + "/current"
+        
+        const cmd = `mkdir -p "${destDir}" && cp -f "${absPath}" "${destFile}"`
+        Quickshell.execDetached(["bash", "-c", cmd])
+    }
+
+    function generateColors(path) {
+        const absPath = path.replace("~", Quickshell.env("HOME"))
+        
+        const scriptPath = Directories.scriptsDir + "/generate_colors.sh"
+        const cmd = `bash "${scriptPath}" "${absPath}" "${Directories.generatedMaterialThemePath}"`
+        
+        console.log("WallpaperService: Generating colors from: " + absPath + " into: " + Directories.generatedMaterialThemePath)
+        console.log("WallpaperService: Using script:", scriptPath)
+        matugenProcess.command = ["bash", "-c", cmd]
+        matugenProcess.running = true
+    }
+
+    Process {
+        id: matugenProcess
+        
+        property string errorBuffer: ""
+        
+        stderr: SplitParser {
+            onRead: data => {
+                 matugenProcess.errorBuffer += data + "\n"
+                 console.error("WallpaperService: Matugen stderr:", data)
+            }
+        }
+
+        onExited: (code) => {
+            if (code !== 0) {
+                console.error("WallpaperService: Matugen failed with code", code)
+                console.error("WallpaperService: Matugen error output:\n", matugenProcess.errorBuffer)
+            } else {
+                console.log("WallpaperService: Colors generated successfully.")
+            }
+            matugenProcess.errorBuffer = ""
+        }
+    }
 
     function setWallpaper(path) {
         root.currentWallpaper = path

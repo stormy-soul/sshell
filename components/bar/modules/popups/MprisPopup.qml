@@ -79,6 +79,21 @@ PanelWindow {
         return MprisController.activeTrack.length || 1
     }
     
+    function formatTime(seconds) {
+        var totalLen = getTrackLength()
+        var showHours = totalLen >= 3600
+        
+        var h = Math.floor(seconds / 3600)
+        var m = Math.floor((seconds % 3600) / 60)
+        var s = Math.floor(seconds % 60)
+        
+        if (showHours) {
+             return h + ":" + (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s
+        } else {
+             return m + ":" + (s < 10 ? "0" : "") + s
+        }
+    }
+    
     Rectangle {
         id: background
         anchors.fill: parent
@@ -221,12 +236,7 @@ PanelWindow {
                         Layout.fillWidth: true
                         
                         Text {
-                            text: {
-                                var pos = root.getClampedPosition()
-                                var mins = Math.floor(pos / 60)
-                                var secs = Math.floor(pos % 60)
-                                return mins + ":" + (secs < 10 ? "0" : "") + secs
-                            }
+                            text: formatTime(root.getClampedPosition())
                             font.family: Appearance.font.family.main
                             font.pixelSize: Appearance.font.pixelSize.small
                             color: Appearance.colors.textSecondary
@@ -235,12 +245,7 @@ PanelWindow {
                         Item { Layout.fillWidth: true }
                         
                         Text {
-                            text: {
-                                var len = root.getTrackLength()
-                                var mins = Math.floor(len / 60)
-                                var secs = Math.floor(len % 60)
-                                return mins + ":" + (secs < 10 ? "0" : "") + secs
-                            }
+                            text: formatTime(root.getTrackLength())
                             font.family: Appearance.font.family.main
                             font.pixelSize: Appearance.font.pixelSize.small
                             color: Appearance.colors.textSecondary

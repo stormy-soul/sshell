@@ -2,3 +2,4 @@ module sshell
 singleton Appearance 1.0 Appearance.qml
 singleton Config 1.0 Config.qml
 singleton Directories 1.0 Directories.qml
+Settings 1.0 Settings.qml

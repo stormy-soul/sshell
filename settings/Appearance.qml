@@ -1,6 +1,7 @@
 pragma Singleton
 import QtQuick
 import Quickshell
+import Quickshell.Io
 
 Singleton {
     id: root
@@ -12,10 +13,12 @@ Singleton {
         readonly property int paddingLarge: 12
         readonly property int paddingExtraLarge: 16
         readonly property int paddingHellaLarge: 20
+        readonly property int paddingMassive: 24
         
         readonly property int cornerRadiusSmall: 6
         readonly property int cornerRadius: 10
         readonly property int cornerRadiusLarge: 14
+        readonly property int cornerRadiusHuge: 22
         
         readonly property int barHeight: 40
         readonly property int barMargin: 10
@@ -44,51 +47,94 @@ Singleton {
         readonly property int elevationMargin: 8
         readonly property int shadowRadius: 10
     }
+
+    property color m3Background: "#141313"
+    property color m3OnBackground: "#DEE2E6"
+    property color m3Surface: "#1C1B1B"
+    property color m3OnSurface: "#DEE2E6"
+    property color m3SurfaceVariant: "#49454F"
+    property color m3OnSurfaceVariant: "#CAC4D0"
+    property color m3Primary: "#D0BCFF"
+    property color m3OnPrimary: "#381E72"
+    property color m3PrimaryContainer: "#4F378B"
+    property color m3OnPrimaryContainer: "#EADDFF"
+    property color m3Secondary: "#CCC2DC"
+    property color m3OnSecondary: "#332D41"
+    property color m3SecondaryContainer: "#4A4458"
+    property color m3OnSecondaryContainer: "#E8DEF8"
+    property color m3Tertiary: "#EFB8C8"
+    property color m3OnTertiary: "#492532"
+    property color m3TertiaryContainer: "#633B48"
+    property color m3OnTertiaryContainer: "#FFD8E4"
+    property color m3Error: "#F2B8B5"
+    property color m3OnError: "#601410"
+    property color m3ErrorContainer: "#8C1D18"
+    property color m3OnErrorContainer: "#F9DEDC"
+    property color m3Outline: "#938F99"
+    property color m3OutlineVariant: "#49454F"
     
-    readonly property QtObject colors: QtObject {
-        readonly property color backgroundSolid: "#141313"
-        readonly property color background: Qt.rgba(backgroundSolid.r, backgroundSolid.g, backgroundSolid.b, 0.45)
-        readonly property color overlayBackground: Qt.rgba(background.r, background.g, background.b, 0.45)
-        readonly property color surface: Qt.rgba(background.r, background.g, background.b, 0.9)
-        readonly property color surfaceVariant: "#45475a"
-        readonly property color surfaceHover: "#3a3d4d"
+    property color m3SurfaceContainerHighest: "#36343B"
+    property color m3SurfaceContainerHigh: "#2B2930"
+    property color m3SurfaceContainer: "#211F26"
+    property color m3SurfaceContainerLow: "#1D1B20"
+    property color m3SurfaceContainerLowest: "#0F0D13"
+    property color m3SurfaceDim: "#141218"
+    property color m3SurfaceBright: "#3B383E"
+
+    property color m3InverseSurface: "#E6E1E5"
+    property color m3InverseOnSurface: "#313033"
+    property color m3InversePrimary: "#6750A4"
+    
+    property color m3Scrim: "#000000"
+    property color m3Shadow: "#000000"
+    property color m3SourceColor: "#6750A4"
+    
+    property bool darkmode: true
+    
+    property QtObject colors: QtObject {
+        property color backgroundSolid: m3Background
+        property color background: Qt.rgba(backgroundSolid.r, backgroundSolid.g, backgroundSolid.b, 0.45)
+        property color overlayBackground: Qt.rgba(backgroundSolid.r, backgroundSolid.g, backgroundSolid.b, 0.45)
+        property color surface: Qt.rgba(m3Surface.r, m3Surface.g, m3Surface.b, 0.9)
+        property color surfaceVariant: m3SurfaceVariant
+        property color surfaceHover: m3SurfaceContainerHigh
                 
-        readonly property color text: "#cdd6f4"
-        readonly property color textSecondary: "#a6adc8"
-        readonly property color textDisabled: "#6c7086"
+        property color text: m3OnSurface
+        property color textSecondary: m3OnSurfaceVariant
+        property color textDisabled: m3Outline
         
-        readonly property color accent: "#89b4fa"
-        readonly property color accentHover: '#698bc0'
-        readonly property color primary: "#89b4fa"
-        readonly property color colOnPrimary: '#1e1e20'
+        property color accent: m3Primary
+        property color accentHover: m3PrimaryContainer
+        property color primary: m3Primary
+        property color colOnPrimary: m3OnPrimary
         
-        readonly property color highlightBg: Qt.rgba(accent.r, accent.g, accent.b, 0.15)
-        readonly property color highlightBgHover: Qt.rgba(accent.r, accent.g, accent.b, 0.25)
-        readonly property color highlightBgActive: Qt.rgba(accent.r, accent.g, accent.b, 0.35)
+        property color highlightBg: Qt.rgba(accent.r, accent.g, accent.b, 0.15)
+        property color highlightBgHover: Qt.rgba(accent.r, accent.g, accent.b, 0.25)
+        property color highlightBgActive: Qt.rgba(accent.r, accent.g, accent.b, 0.35)
         
-        readonly property color iconShapeBg: Qt.rgba(accent.r, accent.g, accent.b, 0.2)
-        readonly property color iconShapeFg: accent
+        property color iconShapeBg: m3SecondaryContainer
+        property color iconShapeFg: m3OnSecondaryContainer
         
-        readonly property color border: "#585b70"
-        readonly property color borderLight: "#6c7086"
-        readonly property color outline: "#7f849c"
+        property color border: m3Outline
+        property color borderLight: m3OutlineVariant
+        property color outline: m3Outline
         
-        readonly property color errorCol: "#f38ba8"
-        readonly property color warningCol: "#f9e2af"
-        readonly property color successCol: "#a6e3a1"
-        readonly property color infoCol: "#89b4fa"
+        property color errorCol: m3Error
+        property color warningCol: "#f9e2af" 
+        property color successCol: "#a6e3a1"
+        property color infoCol: m3Secondary
         
-        readonly property color shadowCol: "#00000050"
-        readonly property color scrimCol: "#00000080"
+        property color shadowCol: "#00000050"
+        property color scrimCol: "#00000080"
     }
     
     readonly property QtObject font: QtObject {
         readonly property QtObject family: QtObject {
-            readonly property string main: nerd
-            readonly property string title: "Inter"
-            readonly property string monospace: "JetBrains Mono"
-            readonly property string iconMaterial: "Material Symbols Rounded"
-            readonly property string nerd: "CaskaydiaCove Nerd Font"
+            readonly property string main: Config.theme.mainFont
+            readonly property string title: Config.theme.titleFont
+            readonly property string monospace: Config.theme.monoFont
+            readonly property string iconMaterial: Config.theme.iconFont
+            readonly property string nerd: Config.theme.nerdFont
         }
         
         readonly property QtObject pixelSize: QtObject {
@@ -100,6 +146,7 @@ Singleton {
             readonly property int extraLarge: 18
             readonly property int huge: 20
             readonly property int massive: 24
+            readonly property int jupiter: 48
             readonly property int ton618Ahh: 64
         }
         
@@ -124,5 +171,72 @@ Singleton {
         
         readonly property var bezierEmphasized: [0.2, 0.0, 0, 1.0, 1, 1]
         readonly property var bezierStandard: [0.4, 0.0, 0.2, 1.0, 1, 1]
+    }
+
+    function applyColors(fileContent) {
+        if (!fileContent) return;
+        
+        try {
+            const json = JSON.parse(fileContent)
+            const colors = json.colors || json
+            
+            for (const key in colors) {
+                if (colors.hasOwnProperty(key)) {
+                    let colorValue = colors[key]
+                    if (typeof colorValue === 'object' && colorValue !== null) {
+                         colorValue = colorValue.default || colorValue.dark || colorValue.light || "#FF0000"
+                    }
+
+                    let camelCase = key.replace(/_([a-z])/g, (g) => g[1].toUpperCase())
+                    camelCase = camelCase.charAt(0).toUpperCase() + camelCase.slice(1)
+                    
+                    const m3Key = `m3${camelCase}`
+                    
+                    if (root.hasOwnProperty(m3Key)) {
+                        root[m3Key] = colorValue
+                    }
+                }
+            }
+            
+            if (json.is_dark_mode !== undefined) {
+                root.darkmode = json.is_dark_mode
+            }
+            console.log("Appearance: Applied colors from theme file.")
+            
+        } catch (e) {
+            console.error("Appearance: Failed to parse theme:", e)
+        }
+    }
+
+    FileView { 
+        id: themeFileView
+        path: Directories.generatedMaterialThemePath
+        watchChanges: true
+        
+        onLoaded: {
+            const fileContent = themeFileView.text
+            var txt = ""
+             if (typeof themeFileView.text === "function") {
+                txt = themeFileView.text();
+            } else {
+                txt = themeFileView.text;
+            }
+            root.applyColors(txt)
+        }
+
+        onFileChanged: {
+            reloadTimer.restart()
+        }
+    }
+    
+    Timer {
+        id: reloadTimer
+        interval: 100 
+        repeat: false
+        onTriggered: themeFileView.reload()
+    }
+    
+    Component.onCompleted: {
+        themeFileView.reload()
     }
 }

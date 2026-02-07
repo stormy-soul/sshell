@@ -7,7 +7,7 @@ import "../modules/popups"
 Rectangle {
     id: root
     implicitWidth: row.width + (Appearance.sizes.padding * 2)
-    implicitHeight: 30
+    implicitHeight: Config.bar.height - Appearance.sizes.padding
     color: hoverArea.containsMouse ? Appearance.colors.surfaceHover : "transparent"
     radius: Appearance.sizes.cornerRadius
 

@@ -53,6 +53,35 @@ Singleton {
         return !isSystem
     }
 
+    function isPlasmaPlayer(player) {
+        return player.identity.toLowerCase().indexOf("plasma") !== -1 || player.dbusName.toLowerCase().indexOf("plasma") !== -1
+    }
+
+    function findBestPlayer() {
+        var values = Mpris.players.values
+        var playing = []
+        
+        for (var i = 0; i < values.length; i++) {
+            var p = values[i]
+            if (isRealPlayer(p) && p.playbackState === MprisPlaybackState.Playing) {
+                playing.push(p)
+            }
+        }
+        
+        if (playing.length === 0) {
+             for (var i = 0; i < values.length; i++) {
+                if (isRealPlayer(values[i])) return values[i]
+            }
+            return null
+        }
+        
+        for (var i = 0; i < playing.length; i++) {
+            if (isPlasmaPlayer(playing[i])) return playing[i]
+        }
+        
+        return playing[0]
+    }
+
     Instantiator {
         model: Mpris.players
 
@@ -61,30 +90,17 @@ Singleton {
             target: modelData
 
             Component.onCompleted: {
-                if (root.trackedPlayer == null || modelData.isPlaying) {
-                    root.trackedPlayer = modelData
-                }
+                root.trackedPlayer = findBestPlayer()
             }
 
             Component.onDestruction: {
-                if (root.trackedPlayer == null || !root.trackedPlayer.isPlaying) {
-                    for (const player of Mpris.players.values) {
-                        if (player.playbackState === MprisPlaybackState.Playing) {
-                            root.trackedPlayer = player
-                            break
-                        }
-                    }
-
-                    if (trackedPlayer == null && Mpris.players.values.length != 0) {
-                        trackedPlayer = Mpris.players.values[0]
-                    }
+                if (root.trackedPlayer === modelData) {
+                    root.trackedPlayer = findBestPlayer()
                 }
             }
 
             function onPlaybackStateChanged() {
-                if (modelData.playbackState === MprisPlaybackState.Playing) {
-                    root.trackedPlayer = modelData
-                }
+                root.trackedPlayer = findBestPlayer()
             }
         }
     }

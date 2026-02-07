@@ -27,7 +27,8 @@ Singleton {
         sunrise: "--:--",
         sunset: "--:--",
         forecast: [],
-        isValid: false
+        isValid: false,
+        isDay: true
     })
     
     function refineData(jsonData) {
@@ -73,6 +74,33 @@ Singleton {
         } else {
             temp.sunrise = "--:--"
             temp.sunset = "--:--"
+        }
+
+        temp.isDay = true
+        if (temp.sunrise !== "--:--" && temp.sunset !== "--:--") {
+            var now = new Date()
+            var currentMins = now.getHours() * 60 + now.getMinutes()
+            
+            function parseTime(tStr) {
+                var parts = tStr.match(/(\d+):(\d+)\s*(AM|PM)?/i)
+                if (!parts) return 0
+                var h = parseInt(parts[1])
+                var m = parseInt(parts[2])
+                if (parts[3]) {
+                   if (parts[3].toUpperCase() === "PM" && h !== 12) h += 12
+                   if (parts[3].toUpperCase() === "AM" && h === 12) h = 0
+                }
+                return h * 60 + m
+            }
+            
+            var rise = parseTime(temp.sunrise)
+            var set = parseTime(temp.sunset)
+            
+            if (currentMins >= rise && currentMins < set) {
+                temp.isDay = true
+            } else {
+                temp.isDay = false
+            }
         }
         
         temp.forecast = []

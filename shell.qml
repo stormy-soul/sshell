@@ -12,16 +12,15 @@ import "./components/controlcenter"
 import "./components/launcher"
 import "./components/launcher"
 import "./components/notifications"
+import "./components/session"
 import "./components"
 import "./components/common" as Common
 
 ShellRoot {
     id: root
 
-    // Services
     property var osdMonitor: OSDMonitor 
 
-    // Bar windows
     Variants {
         model: Quickshell.screens
 
@@ -62,7 +61,6 @@ ShellRoot {
         }
     }
 
-    // Control Center
     LazyLoader {
         id: controlCenterLoader
         active: Config.ready && Config.controlCenter.enabled
@@ -101,7 +99,7 @@ ShellRoot {
             ControlCenter {
                 id: controlCenterItem
                 opacity: ShellState.masterVisible ? 1 : 0
-                focus: true // Receive keys
+                focus: true
                 
                 width: Config.controlCenter.width
                 height: parent.height - (Config.bar.height + Config.bar.margin)
@@ -116,6 +114,11 @@ ShellRoot {
                 anchors.leftMargin: Config.controlCenter.position === "left" ? (Config.bar.padding * 2) : 0
                 
                 Keys.onEscapePressed: ModuleLoader.controlCenterVisible = false
+                
+                onRequestSessionScreen: {
+                    ModuleLoader.controlCenterVisible = false
+                    sessionScreen.toggle()
+                }
             }
         }
     }
@@ -243,6 +246,17 @@ ShellRoot {
         screen: Quickshell.screens[0]
         shown: false
     }
+
+    Settings {
+        id: settingsWindow
+        screen: Quickshell.screens[0]
+        shown: false
+    }
+    
+    SessionScreen {
+        id: sessionScreen
+        screen: Quickshell.screens[0]
+    }
     
     GlobalShortcut {
         name: "launcherToggle"
@@ -318,5 +332,17 @@ ShellRoot {
         name: "backgroundToggle"
         description: "Toggle Wallpaper Visibility"
         onPressed: WallpaperService.toggleVisible()
+    }
+
+    GlobalShortcut {
+        name: "settingsToggle"
+        description: "Toggle Settings Window"
+        onPressed: settingsWindow.shown = !settingsWindow.shown
+    }
+    
+    GlobalShortcut {
+        name: "sessionToggle"
+        description: "Toggle session screen"
+        onPressed: sessionScreen.toggle()
     }
 }

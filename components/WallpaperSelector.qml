@@ -322,9 +322,9 @@ PanelWindow {
     function getExtensionIcon(ext) {
         switch(ext) {
             case "gif": return "movie"
+            case "png":
             case "jpg":
             case "jpeg": return "image"
-            case "png": return "palette"
             case "webp": return "public"
             default: return "folder"
         }

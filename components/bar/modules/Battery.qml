@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import "../../../settings"
 import "../../../services"
 import "../../common"
@@ -7,7 +8,7 @@ import "../modules/popups"
 Rectangle {
     id: batteryModule
     implicitWidth: row.implicitWidth
-    implicitHeight: 30
+    implicitHeight: Config.bar.height
     color: "transparent"
     
     property bool lowBatteryWarned: false
@@ -72,14 +73,14 @@ Rectangle {
         hoverEnabled: true
     }
     
-    Row {
+    RowLayout {
         id: row
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.centerIn: parent
         spacing: Appearance.sizes.padding
         
         FluentIcon {
             id: batIcon
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
             width: Appearance.font.pixelSize.huge
             height: Appearance.font.pixelSize.huge
             color: {
@@ -112,7 +113,7 @@ Rectangle {
             font.family: Appearance.font.family.main
             font.pixelSize: Appearance.font.pixelSize.normal
             color: Appearance.colors.text
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
         }
     }
     

@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 
 import "../../../settings"
 import "../../../services" as Services
@@ -8,7 +9,7 @@ import "../modules/popups"
 Rectangle {
     id: root
     
-    implicitHeight: 30
+    implicitHeight: Config.bar.height
     implicitWidth: row.implicitWidth
     color: "transparent"
     
@@ -36,7 +37,7 @@ Rectangle {
     
     readonly property var weatherIconMap: ({
         "113": "clear_day",
-        "116": "partly_cloudy",
+        "116": "partly_cloudy_day",
         "119": "cloud",
         "122": "cloud",
         "143": "foggy",
@@ -94,16 +95,16 @@ Rectangle {
         return "cloud"
     }
 
-    Row {
+    RowLayout {
         id: row
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.centerIn: parent
         spacing: Appearance.sizes.padding
         
         MaterialSymbol {
             text: getIcon(Services.Weather.data.iconCode)
             size: Appearance.font.pixelSize.large
             color: Appearance.colors.text
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
         }
         
         Text {
@@ -111,7 +112,7 @@ Rectangle {
             color: Appearance.colors.text
             font.family: Appearance.font.family.main
             font.pixelSize: Appearance.font.pixelSize.normal
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
         }
     }
     

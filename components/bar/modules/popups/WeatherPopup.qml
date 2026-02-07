@@ -4,8 +4,7 @@ import Quickshell
 import Quickshell.Wayland
 import "../../../../settings"
 import "../../../../services"
-import "../../../common"
-import QtMultimedia
+import "../../../../components"
 import Qt5Compat.GraphicalEffects
 
 PanelWindow {
@@ -13,6 +12,10 @@ PanelWindow {
     
     property string position: Config.bar.position || "bottom"
     property Item sourceItem: null
+
+    readonly property string debugCode: "" 
+    readonly property int debugIsDay: -1
+
     property real sourceCenter: {
         if (!sourceItem || sourceItem.width <= 0) return -1
         var mapped = sourceItem.mapToGlobal(sourceItem.width/2, 0)
@@ -47,7 +50,7 @@ PanelWindow {
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
     
     readonly property var weatherIconMap: ({
-        "113": "clear_day", "116": "partly_cloudy", "119": "cloudy", "122": "cloudy",
+        "113": "clear_day", "116": "partly_cloudy_day", "119": "cloudy", "122": "cloudy",
         "143": "foggy", "176": "rainy", "179": "rainy", "182": "rainy", "185": "rainy",
         "200": "thunderstorm", "227": "cloudy_snowing", "230": "snowing_heavy",
         "248": "foggy", "260": "foggy", "263": "rainy", "266": "rainy", "281": "rainy",
@@ -121,54 +124,39 @@ PanelWindow {
                 clip: true
 
                 Item {
-                    id: videoContainer
+                    id: weatherBgContainer
                     anchors.fill: parent
-                    visible: true
                     layer.enabled: true
                     layer.effect: OpacityMask {
-                        maskSource: LinearGradient {
-                            width: videoContainer.width
-                            height: videoContainer.height
-                            start: Qt.point(width, 0)
-                            end: Qt.point(0, height)
+                        maskSource: Rectangle {
+                            width: weatherBgContainer.width
+                            height: weatherBgContainer.height
+                            radius: Appearance.sizes.cornerRadius
                             gradient: Gradient {
                                 GradientStop { position: 0.0; color: "white" }
                                 GradientStop { position: 0.85; color: "transparent" }
                             }
-                            source: Rectangle {
-                                width: videoContainer.width
-                                height: videoContainer.height
-                                radius: Appearance.sizes.cornerRadius
-                                color: "black"
-                            }
                         }
                     }
 
-                    MediaPlayer {
-                        id: player
-                        source: root.shown ? "file://" + Directories.assetsPath + "/weather/" + getIcon(Weather.data.iconCode) + ".mp4" : ""
-                        audioOutput: AudioOutput { muted: true }
-                        videoOutput: videoOut
-                        autoPlay: false
-                        loops: MediaPlayer.Infinite
-                        
-                        onSourceChanged: {
-                            if (source != "") {
-                                play()
-                            }
-                        }
-                    }
-
-                    VideoOutput {
-                        id: videoOut
+                    WeatherBackground {
+                        id: proceduralBg
                         anchors.fill: parent
-                        fillMode: VideoOutput.PreserveAspectCrop
+                        
+                        function transformState() {
+                            var code = root.debugCode !== "" ? root.debugCode : Weather.data.iconCode
+                            var isDay = root.debugIsDay !== -1 ? (root.debugIsDay === 1) : Weather.data.isDay
+                            updateState(code, isDay)
+                        }
+                        
+                        Component.onCompleted: transformState()
                     }
                     
-                    FastBlur {
-                        anchors.fill: videoOut
-                        source: videoOut
-                        radius: 12
+                    Connections {
+                        target: Weather
+                        function onDataChanged() {
+                             proceduralBg.transformState()
+                        }
                     }
                 }
                 

@@ -5,21 +5,23 @@ import Quickshell
 QtObject {
     id: root
     
-    readonly property string projectRoot: Quickshell.env("PWD") || Quickshell.env("HOME") + "/Documents/Projects/sshell"
+    readonly property string projectRoot: Quickshell.env("PWD") || Quickshell.env("HOME") + "/.config/quickshell/sshell"
     readonly property string assetsPath: Quickshell.shellPath("assets")
     readonly property string iconsPath: assetsPath + "/material-design-icons/svg"
     readonly property string weatherIconsPath: assetsPath + "/weather-icons/production"
+    readonly property string scriptsDir: Quickshell.shellPath("scripts")
     
     readonly property string home: Quickshell.env("HOME")
     readonly property string configHome: Quickshell.env("XDG_CONFIG_HOME") || (home + "/.config")
     readonly property string dataHome: Quickshell.env("XDG_DATA_HOME") || (home + "/.local/share")
     readonly property string cacheHome: Quickshell.env("XDG_CACHE_HOME") || (home + "/.cache")
     readonly property string cliphistDecode: cacheHome + "/sshell/cliphist"
-    readonly property string state: dataHome + "/sshell/state"
+    readonly property string state: home + "/.local/state/quickshell/"
     
     readonly property string cacheDir: home + "/.cache/sshell"
     readonly property string thumbDir: cacheDir + "/thumbs"
     readonly property string configFile: cacheDir + "/wallpaper_config.json"
+    readonly property string generatedMaterialThemePath: state + "user/generated/colors.json"
 
     readonly property var appDirs: [
         "/usr/share/applications",
@@ -83,7 +85,6 @@ QtObject {
         // Ice pellets? Hail?
         else if (c === "77") iconName = "hail"
         
-        // Fallback checks
         if (iconName === "not-available") {
             console.log("WeatherIconDebug: Unmapped code " + c + ", returning empty to trigger fallback.")
             return ""

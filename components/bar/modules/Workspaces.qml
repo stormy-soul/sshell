@@ -148,7 +148,7 @@ Item {
                         var hans = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
                         return (id > 0 && id <= 10) ? hans[id] : id.toString()
                     }
-                    if (style === "dot") return ""
+                    if (style === "dot") return ""
                     return id.toString()
                 }
 
@@ -166,9 +166,27 @@ Item {
                         return Appearance.colors.textSecondary              
                     }
                     
-                    Behavior on color { ColorAnimation { duration: 150 } }
+                    Behavior on color { ColorAnimation { duration: Appearance.animation.duration } }
                 }
                 
+                Rectangle {
+                    anchors.centerIn: parent
+                    visible: Config.workspaces.style === "dot"
+                    
+                    width: 8
+                    height: 8
+                    radius: Appearance.sizes.cornerRadiusHuge
+                    
+                    color: {
+                        if (isActive) return Appearance.colors.colOnPrimary
+                        if (isOccupied) return Appearance.colors.text
+                        return Appearance.colors.textSecondary
+                    }
+                    
+                    Behavior on width { NumberAnimation { duration: Appearance.animation.duration; easing.type: Easing.OutBack } }
+                    Behavior on height { NumberAnimation { duration: Appearance.animation.duration; easing.type: Easing.OutBack } }
+                    Behavior on color { ColorAnimation { duration: Appearance.animation.duration } }
+                }
                 MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true

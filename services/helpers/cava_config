@@ -2,6 +2,7 @@
 framerate = 60
 bars = 6
 sensitivity = 100
+autosens = 1
 
 [input]
 method = pulse

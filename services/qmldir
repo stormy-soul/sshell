@@ -24,3 +24,4 @@ singleton ShellState 1.0 ShellState.qml
 singleton WallpaperService 1.0 WallpaperService.qml
 singleton MprisController 1.0 MprisController.qml
 singleton CavaService 1.0 CavaService.qml
+singleton ResourceMonitor 1.0 ResourceMonitor.qml

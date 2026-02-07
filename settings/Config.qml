@@ -83,6 +83,7 @@ Scope {
                 bar: {
                     enabled: true,
                     position: "top",
+                    style: "floating",
                     height: 40,
                     margin: 10,
                     padding: 5,
@@ -93,9 +94,8 @@ Scope {
                 controlCenter: { enabled: true, width: 400, position: "right" },
                 notifications: { enabled: true, position: "top-right", maxNotifications: 5, timeout: 5000 },
                 launcher: { enabled: true, width: 600, height: 500 },
-                launcher: { enabled: true, width: 600, height: 500 },
-                theme: { accentColor: "#a6e3a1", cornerRadius: 10, animationDuration: 200, useSystemTheme: true },
-                weather: { interval: 3600, unit: "metric", city: "", useUSCS: false, enableGPS: false },
+                theme: { icons: "filled", colorizeTerminal: true, darkmode: true, mainFont: "CaskaydiaCove Nerd Font", titleFont: "Inter", monoFont: "JetBrains Mono", iconFont: "Material Symbols Rounded", nerdFont: "CaskaydiaCove Nerd Font" },
+                weather: { interval: 3600, unit: "metric", city: "", useUSCS: false, enableGPS: false, hideLocation: false },
                 tray: { showNetworkName: false, showBluetoothName: false },
                 osd: { enabled: true, timeout: 1500, position: "top-center" },
                 background: { wallpaperPaths: ["~/Pictures/wallpapers"], visible: true }
@@ -181,9 +181,9 @@ Scope {
         property JsonObject bar: JsonObject {
             property bool enabled: true
             property string position: "top"
+            property string style: "floating"
             property int height: 40
             property int margin: 10
-            property string style: "floating"
             property int padding: 5
             property var left: [ { "module": "Workspaces", "enabled": true }, { "module": "Launcher", "enabled": true } ]
             property var center: [ { "module": "Clock", "enabled": true } ]
@@ -218,11 +218,14 @@ Scope {
         }
 
         property JsonObject theme: JsonObject {
-            property string accentColor: "#a6e3a1"
             property string icons: "filled"
-            property int cornerRadius: 10
-            property int animationDuration: 200
-            property bool useSystemTheme: true
+            property bool darkmode: true
+            property bool colorizeTerminal: true
+            property string mainFont: "CaskaydiaCove Nerd Font"
+            property string titleFont: "Inter"
+            property string monoFont: "JetBrains Mono"
+            property string iconFont: "Material Symbols Rounded"
+            property string nerdFont: "CaskaydiaCove Nerd Font"
         }
 
         property JsonObject weather: JsonObject {
@@ -232,8 +235,6 @@ Scope {
             property bool useUSCS: false
             property bool enableGPS: false
             property bool hideLocation: false
-            property string iconStyle: "fill"
-            property bool animated: true
         }
 
         property JsonObject tray: JsonObject {
@@ -257,6 +258,7 @@ Scope {
             property var ignore: []
             property bool barVisualizer: true
             property bool popupVisualizer: true
+            property int maxWidthOnBar: 750
         }
 
         property JsonObject clock: JsonObject {
@@ -270,7 +272,6 @@ Scope {
         property string position: configAdapter.bar?.position ?? "top"
         property int height: configAdapter.bar?.height ?? 40
         property int margin: configAdapter.bar?.margin ?? 10
-        property string style: configAdapter.bar?.style ?? "floating"
         property int padding: configAdapter.bar?.padding ?? 5
 
         property var left: configAdapter.bar?.left ?? [ { module: "Workspaces", enabled: true }, { module: "Launcher", enabled: true } ]

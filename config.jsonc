@@ -1,10 +1,10 @@
 {
     "bar": {
         "enabled": true,
-        "position": "top",
-        "height": 36,
+        "position": "top", //top/bottom
+        "style": "floating", //full/floating/islands/modules
+        "height": 38,
         "margin": 10,
-        "style": "islands", // floating/full/islands/pills
         "padding": 5,
         "left": [
             {
@@ -38,10 +38,6 @@
             {
                 "module": "Tray",
                 "enabled": true
-            },
-            {
-                "module": "Volume",
-                "enabled": false
             }
         ]
     },
@@ -53,18 +49,16 @@
             4,
             5
         ],
-        "style": "han", // arabic/roman/han/dot
-        "radius": "rounded" // circle/rounded/sharp
+        "style": "dot", // arabic/roman/han/dot
+        "radius": "circle" // circle/rounded/sharp
     },
     "weather": {
         "interval": 3600,
-        "unit": "metric",
+        "unit": "metric", // metric/imperial
         "city": "Anuradhapura, LK",
         "useUSCS": false,
         "enableGPS": false,
-        "hideLocation": true, // hides the location text in the popup
-        "iconStyle": "fill", // fill/line
-        "animated": true
+        "hideLocation": true // hides the location text in the popup
     },
     "tray": {
         "showNetworkName": true,
@@ -84,6 +78,7 @@
     "mpris": {
         "barVisualizer": false,
         "popupVisualizer": true,
+        "maxWidthOnBar": 666,
         "showArtist": false,
         "ignore": []
     },
@@ -110,10 +105,13 @@
         "height": 500
     },
     "theme": {
-        "accentColor": "#a6e3a1",
         "icons": "round", // filled/outlined/round/sharp/two-tone
-        "cornerRadius": 10,
-        "animationDuration": 200,
-        "useSystemTheme": true
+        "colorizeTerminal": true,
+        "darkmode": true,
+        "mainFont": "CaskaydiaCove Nerd Font",
+        "titleFont": "Inter",
+        "monoFont": "JetBrains Mono",
+        "iconFont": "Material Symbols Rounded",
+        "nerdFont": "CaskaydiaCove Nerd Font"
     }
 }

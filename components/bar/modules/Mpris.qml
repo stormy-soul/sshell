@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import "../../../settings"
 import "../../../services"
@@ -10,8 +11,8 @@ Rectangle {
     
     visible: MprisController.isPlaying && MprisController.activeTrack.title && MprisController.activeTrack.title !== "Unknown Title"
     
-    implicitWidth: contentRow.implicitWidth + Appearance.sizes.padding * 2
-    implicitHeight: 30
+    implicitWidth: MprisController.isPlaying ? (Math.min(contentRow.implicitWidth, (Config.mpris.maxWidthOnBar || 750))) : 0 // oooo spooky
+    implicitHeight: Config.bar.height
     color: "transparent"
     clip: true
     
@@ -37,9 +38,10 @@ Rectangle {
         }
     }
     
-    Row {
+    RowLayout {
         id: contentRow
         anchors.centerIn: parent
+        width: Math.min(implicitWidth, parent.width)
         spacing: Appearance.sizes.paddingSmall
         
         MaterialIcon {
@@ -48,12 +50,13 @@ Rectangle {
             width: Appearance.font.pixelSize.huge
             height: Appearance.font.pixelSize.huge
             color: Appearance.colors.accent
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
         }
         
         Rectangle {
             id: coverContainer
             visible: Config.mpris.barVisualizer
+            Layout.alignment: Qt.AlignVCenter
 
             width: Appearance.font.pixelSize.massive
             height: Appearance.font.pixelSize.massive
@@ -117,23 +120,26 @@ Rectangle {
         }
 
         Text {
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
             text: !Config.mpris.showArtist && Config.mpris.barVisualizer ? MprisController.activeTrack.title + " " : MprisController.activeTrack.title || "Unknown" 
             font.family: Appearance.font.family.main
             font.pixelSize: Appearance.font.pixelSize.normal
             color: Appearance.colors.text
             elide: Text.ElideRight
             maximumLineCount: 1
+            Layout.fillWidth: true
+            Layout.minimumWidth: 50
+            Layout.maximumWidth: root.implicitWidth
         }
         
         Text {
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
             visible: !!MprisController.activeTrack.artist && Config.mpris.showArtist
             text: "• " + MprisController.activeTrack.artist
             font.family: Appearance.font.family.main
             font.pixelSize: Appearance.font.pixelSize.normal
             color: Appearance.colors.textSecondary
-            width: Math.min(implicitWidth, 80)
+            Layout.maximumWidth: 80
             elide: Text.ElideRight
             maximumLineCount: 1
         }
