@@ -32,7 +32,8 @@ PanelWindow {
         { name: "General", icon: "settings", component: "pages/General.qml" },
         { name: "Bar", icon: "dock", component: "pages/Bar.qml" },
         { name: "Modules", icon: "view_module", component: "pages/Modules.qml" },
-        { name: "System", icon: "monitor", component: "pages/System.qml" }
+        { name: "System", icon: "monitor", component: "pages/System.qml" },
+        { name: "Keybinds", icon: "keyboard", component: "pages/Keybinds.qml" }
     ]
     
     HyprlandFocusGrab {

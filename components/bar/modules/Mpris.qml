@@ -9,9 +9,8 @@ import "../modules/popups"
 Rectangle {
     id: root
     
-    visible: MprisController.isPlaying && MprisController.activeTrack.title && MprisController.activeTrack.title !== "Unknown Title"
-    
-    implicitWidth: MprisController.isPlaying ? (Math.min(contentRow.implicitWidth, (Config.mpris.maxWidthOnBar || 750))) : 0 // oooo spooky
+    visible: Config.mpris.hideOnPause ? (MprisController.isPlaying && MprisController.activeTrack.title && MprisController.activeTrack.title !== "Unknown Title") : MprisController.activeTrack.title
+    implicitWidth: Config.mpris.hideOnPause ? (MprisController.isPlaying ? Math.min(contentRow.implicitWidth, (Config.mpris.maxWidthOnBar || 750)) : 0) : Math.min(contentRow.implicitWidth, (Config.mpris.maxWidthOnBar || 750))
     implicitHeight: Config.bar.height
     color: "transparent"
     clip: true
@@ -120,6 +119,7 @@ Rectangle {
         }
 
         Text {
+            id: title
             Layout.alignment: Qt.AlignVCenter
             text: !Config.mpris.showArtist && Config.mpris.barVisualizer ? MprisController.activeTrack.title + " " : MprisController.activeTrack.title || "Unknown" 
             font.family: Appearance.font.family.main
@@ -139,7 +139,7 @@ Rectangle {
             font.family: Appearance.font.family.main
             font.pixelSize: Appearance.font.pixelSize.normal
             color: Appearance.colors.textSecondary
-            Layout.maximumWidth: 80
+            Layout.maximumWidth: root.implicitWidth - title.implicitWidth
             elide: Text.ElideRight
             maximumLineCount: 1
         }

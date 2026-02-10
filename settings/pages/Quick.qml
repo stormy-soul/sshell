@@ -87,6 +87,22 @@ ContentPage {
                 }
             }
         }
+
+        ContentSubsection {
+            id: wallpaperMode
+            title: "Wallpaper Mode"
+            ConfigSelectionArray {
+                options: [
+                    { displayName: "Image", value: "image" },
+                    { displayName: "Solid Color", value: "solid" },
+                    { displayName: "Gradient", value: "gradient" },
+                    { displayName: "Shader", value: "shader" },
+                    { displayName: "Video", value: "video" }
+                ]
+                currentValue: Config.background.wallpaperMode
+                onSelected: (val) => Config.background.wallpaperMode = val
+            }
+        }
     }
 
     ContentSection {
@@ -135,6 +151,7 @@ ContentPage {
         ContentSubsection {
             title: "Bar Style"
             ConfigSelectionArray {
+                id: barStyleArray
                 options: [
                     { displayName: "Floating", value: "floating" },
                     { displayName: "Modules", value: "modules" },
@@ -151,7 +168,7 @@ ContentPage {
             RowLayout {
                 spacing: 20
                 Rectangle {
-                    Layout.preferredWidth: 300
+                    Layout.preferredWidth: barStyleArray.implicitWidth
                     Layout.preferredHeight: 30
                     color: Appearance.colors.surfaceVariant
                     radius: Appearance.sizes.cornerRadius
@@ -165,7 +182,7 @@ ContentPage {
             RowLayout {
                 spacing: 20
                 Rectangle {
-                    Layout.preferredWidth: 300
+                    Layout.preferredWidth: barStyleArray.implicitWidth
                     Layout.preferredHeight: 30
                     color: Appearance.colors.surfaceVariant
                     radius: Appearance.sizes.cornerRadius
@@ -179,7 +196,7 @@ ContentPage {
             RowLayout {
                 spacing: 20
                 Rectangle {
-                    Layout.preferredWidth: 300
+                    Layout.preferredWidth: barStyleArray.implicitWidth
                     Layout.preferredHeight: 30
                     color: Appearance.colors.surfaceVariant
                     radius: Appearance.sizes.cornerRadius

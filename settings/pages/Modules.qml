@@ -16,8 +16,7 @@ ContentPage {
         ContentSubsection {
             title: "Persistent Workspaces"
             Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredWidth: 100  
+                Layout.preferredWidth: styleArray.implicitWidth
                 Layout.preferredHeight: 30
                 color: Appearance.colors.surfaceVariant
                 radius: Appearance.sizes.cornerRadius
@@ -33,6 +32,7 @@ ContentPage {
         ContentSubsection {
             title: "Style"
             ConfigSelectionArray {
+                id: styleArray
                 options: [
                     { displayName: "Arabic", value: "arabic" },
                     { displayName: "Roman", value: "roman" },
@@ -108,6 +108,7 @@ ContentPage {
         ContentSubsection {
             title: "Unit"
             ConfigSelectionArray {
+                id: unitArray
                 options: [
                     { displayName: "Metric", value: "metric" },
                     { displayName: "Imperial", value: "imperial" }
@@ -120,7 +121,7 @@ ContentPage {
         ContentSubsection {
             title: "City"
             Rectangle {
-                Layout.preferredWidth: 200
+                Layout.preferredWidth: unitArray.implicitWidth
                 Layout.preferredHeight: 30
                 color: Appearance.colors.surfaceVariant
                 radius: Appearance.sizes.cornerRadius
@@ -219,6 +220,16 @@ ContentPage {
                 hasIcon: false
                 checked: Config.mpris.popupVisualizer
                 onClicked: Config.mpris.popupVisualizer = !Config.mpris.popupVisualizer
+            }
+        }
+
+        ContentSubsection {
+            ToggleButton {
+                title: "Hide On Paused"
+                subtitle: "Hides the module when the track is paused"
+                hasIcon: false
+                checked: Config.mpris.hideOnPause
+                onClicked: Config.mpris.hideOnPause = !Config.mpris.hideOnPause
             }
         }
 

@@ -45,10 +45,10 @@ Rectangle {
         }
         
         Rectangle {
-             Layout.fillWidth: true
-             height: 1
-             color: Appearance.colors.border
-             opacity: 0.5
+            Layout.fillWidth: true
+            height: 1
+            color: Appearance.colors.border
+            opacity: 0.5
         }
         
         ColumnLayout {

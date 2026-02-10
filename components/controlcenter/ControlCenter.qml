@@ -160,7 +160,7 @@ Rectangle {
                 Repeater {
                     model: [
                         { icon: root.editMode ? "check" : "edit", cmd: () => root.editMode = !root.editMode },
-                        { icon: "settings", cmd: "gnome-control-center" }, 
+                        { icon: "settings", cmd: () => ModuleLoader.toggleSettings() }, 
                         { icon: "sync", cmd: () => Quickshell.reload(true) },
                         { icon: "power_settings_new", cmd: () => root.requestSessionScreen() }
                     ]

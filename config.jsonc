@@ -73,11 +73,16 @@
         "wallpaperPaths": [
             "~/Pictures/wallpapers",
             "~/Pictures/gifs"
-        ]
+        ],
+        "copyAfter": true,
+        "copyAfterTo": "/usr/share/sddm/themes/silent/backgrounds/",
+        "copyAfterAs": "default.png",
+        "wallpaperMode": "image" // image/solid/gradient/shader/video
     },
     "mpris": {
         "barVisualizer": false,
         "popupVisualizer": true,
+        "hideOnPause": true,
         "maxWidthOnBar": 666,
         "showArtist": false,
         "ignore": []

@@ -23,6 +23,11 @@ QtObject {
         controlCenterVisible = !controlCenterVisible
     }
 
+    property bool settingsVisible: false
+    function toggleSettings() {
+        settingsVisible = !settingsVisible
+    }
+
 }
 
 

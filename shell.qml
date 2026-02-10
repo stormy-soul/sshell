@@ -250,7 +250,18 @@ ShellRoot {
     Settings {
         id: settingsWindow
         screen: Quickshell.screens[0]
-        shown: false
+        onShownChanged: {
+            if (ModuleLoader.settingsVisible !== shown) {
+                ModuleLoader.settingsVisible = shown
+            }
+        }
+    }
+    
+    Connections {
+        target: ModuleLoader
+        function onSettingsVisibleChanged() {
+            settingsWindow.shown = ModuleLoader.settingsVisible
+        }
     }
     
     SessionScreen {
@@ -337,7 +348,7 @@ ShellRoot {
     GlobalShortcut {
         name: "settingsToggle"
         description: "Toggle Settings Window"
-        onPressed: settingsWindow.shown = !settingsWindow.shown
+        onPressed: ModuleLoader.toggleSettings()
     }
     
     GlobalShortcut {

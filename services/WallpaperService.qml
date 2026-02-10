@@ -215,15 +215,15 @@ Singleton {
         updateAdapter()
         if (root.currentWallpaper !== "") {
             generateColors(root.currentWallpaper)
-            persistWallpaper(root.currentWallpaper)
+            if (Config.background.copyAfter) persistWallpaper(root.currentWallpaper)
         }
     }
     onBackgroundVisibleChanged: updateAdapter()
 
     function persistWallpaper(path) {
         const absPath = path.replace("~", Quickshell.env("HOME"))
-        const destDir = Quickshell.env("HOME") + "/.local/state/quickshell/wallpaper"
-        const destFile = destDir + "/current"
+        const destDir = Config.background.copyAfterTo
+        const destFile = destDir + Config.background.copyAfterAs
         
         const cmd = `mkdir -p "${destDir}" && cp -f "${absPath}" "${destFile}"`
         Quickshell.execDetached(["bash", "-c", cmd])

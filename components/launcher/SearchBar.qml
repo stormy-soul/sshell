@@ -82,4 +82,12 @@ Row {
             }
         }
     }
+    Connections {
+        target: LauncherSearch
+        function onQueryChanged() {
+            if (searchInput.text !== LauncherSearch.query) {
+                searchInput.text = LauncherSearch.query
+            }
+        }
+    }
 }

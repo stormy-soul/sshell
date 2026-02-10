@@ -31,7 +31,7 @@ ContentPage {
         ContentSubsection {
             ToggleButton {
                 title: "Colorize Terminal"
-                subtitle: "Use generated colors in the terminal"
+                subtitle: "Generate colors for the terminal"
                 hasIcon: false
                 checked: Config.theme.colorizeTerminal
                 onClicked: Config.theme.colorizeTerminal = !Config.theme.colorizeTerminal
@@ -143,6 +143,55 @@ ContentPage {
                         if (paths.length > 0) paths[0] = text
                         else paths.push(text)
                         Config.background.wallpaperPaths = paths
+                    }
+                }
+            }
+        }
+        
+        ToggleButton {
+            title: "Copy On Update"
+            subtitle: "Copy the current wallpaper to somewhere when it updates"
+            hasIcon: false
+            checked: Config.background.copyAfter
+            onClicked: Config.background.copyAfter = !Config.background.copyAfter
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            ContentSubsection {
+                title: "Copy To"
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 530
+                    Layout.preferredHeight: 30
+                    color: Appearance.colors.surfaceVariant
+                    radius: Appearance.sizes.cornerRadius
+                    StyledTextInput {
+                        anchors.fill: parent
+                        anchors.margins: 4
+                        text: Config.background.copyAfterTo || ""
+                        onTextEdited: {
+                            Config.background.copyAfterTo = text
+                        }
+                    }
+                }
+            }
+
+            ContentSubsection {
+                title: "As"
+                Rectangle {
+                    Layout.preferredWidth: 200
+                    Layout.preferredHeight: 30
+                    color: Appearance.colors.surfaceVariant
+                    radius: Appearance.sizes.cornerRadius
+                    StyledTextInput {
+                        anchors.fill: parent
+                        anchors.margins: 4
+                        text: Config.background.copyAfterAs || ""
+                        onTextEdited: {
+                            Config.background.copyAfterAs = text
+                        }
                     }
                 }
             }

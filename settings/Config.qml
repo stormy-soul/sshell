@@ -98,7 +98,7 @@ Scope {
                 weather: { interval: 3600, unit: "metric", city: "", useUSCS: false, enableGPS: false, hideLocation: false },
                 tray: { showNetworkName: false, showBluetoothName: false },
                 osd: { enabled: true, timeout: 1500, position: "top-center" },
-                background: { wallpaperPaths: ["~/Pictures/wallpapers"], visible: true }
+                background: { wallpaperPaths: ["~/Pictures/wallpapers"], copyAfter: true, copyAfterTo: "~/.local/state/quickshell/wallpaper/", copyAfterAs: "default.png", wallpaperMode: "image" }
             }
 
             function deepMerge(target, source) {
@@ -250,7 +250,10 @@ Scope {
 
         property JsonObject background: JsonObject {
             property var wallpaperPaths: []
-            property bool visible: true
+            property bool copyAfter: false
+            property var copyAfterTo: ""
+            property var copyAfterAs: ""
+            property string wallpaperMode: "image"
         }
 
         property JsonObject mpris: JsonObject {
@@ -258,6 +261,7 @@ Scope {
             property var ignore: []
             property bool barVisualizer: true
             property bool popupVisualizer: true
+            property bool hideOnPause: false
             property int maxWidthOnBar: 750
         }
 
