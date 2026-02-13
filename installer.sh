@@ -41,7 +41,7 @@ PACMAN_PKGS=(
 
 # AUR packages
 AUR_PKGS=(
-  quickshell-git
+  quickshell
 )
 
 # Fonts
