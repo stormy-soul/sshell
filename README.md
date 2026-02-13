@@ -48,7 +48,7 @@ _I might have missed some packages probably, so do let me know if you find any m
 ## Installation
 
 - Just `git clone https://github.com/stormy-soul/sshell` and `cd` into it
-- And then use `./installer.sh help` for the available options
+- And then use `sh installer.sh help` for the available options
 
 _Note: I'm not sure if everything will work fine out of the box for you, but it works on my pc_
 
