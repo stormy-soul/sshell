@@ -106,7 +106,7 @@ banner() {
   ▀▀▀▄   ▀▀▀▄  █   █  █▀▀▀▀    █      █   
  ▀▄▄▄▀  ▀▄▄▄▀  █   █  ▀█▄▄▀    ▀▄▄    ▀▄▄ 
 EOF
-  echo -e "${NC}${DIM} stormy's shell installer             v1.0${NC}"
+  echo -e "${NC}${DIM} stormy's shell installer             v1.1${NC}"
   echo ""
 }
 
