@@ -1,15 +1,15 @@
 <div align="center">
 <pre>
-               █             ▀▀█    ▀▀█
-  ▄▄▄    ▄▄▄   █ ▄▄    ▄▄▄     █      █
- █   ▀  █   ▀  █▀  █  █▀  █    █      █
-  ▀▀▀▄   ▀▀▀▄  █   █  █▀▀▀▀    █      █
- ▀▄▄▄▀  ▀▄▄▄▀  █   █  ▀█▄▄▀    ▀▄▄    ▀▄▄
-stormy's quickshell                  v1.0
+              █             ▀▀█    ▀▀█
+ ▄▄▄    ▄▄▄   █ ▄▄    ▄▄▄     █      █
+█   ▀  █   ▀  █▀  █  █▀  █    █      █
+ ▀▀▀▄   ▀▀▀▄  █   █  █▀▀▀▀    █      █
+▀▄▄▄▀  ▀▄▄▄▀  █   █  ▀█▄▄▀    ▀▄▄    ▀▄▄
+stormy's quickshell                 v1.1
 </pre>
 </div>
 
-sshell is a shell made with [Quickshell](https://quickshell.org/) that was heavily inspired by the well known [illogical-impulse](github.com/end-4/dots-hyprland) shell by end-4. It's still a WIP so expect bugs and stuff. Neither is it perfect, this is just something i made for myself as a daily driver.
+sshell is a shell made with [Quickshell](https://quickshell.org/) that was heavily inspired by the well known [illogical-impulse](github.com/end-4/dots-hyprland) shell by end-4. It's not perfect soo expect bugs and stuff. This is just something i made for myself as a daily driver.
 
 ## Requirements
 
