@@ -14,6 +14,122 @@ Rectangle {
     property real timeNormalized: 0.0
     property string currentPeriod: ""
 
+    property bool timelapseActive: false
+    property string _savedMode: ""
+    property real _savedTimeOverride: -1.0
+    property string _savedWeatherOverride: ""
+    property string _timelapsePhase: "idle" // "idle", "transition-in", "cycling", "transition-out"
+    property real _transitionTarget: 0.0
+    property real _realTimeTarget: 0.0
+
+    readonly property var _weatherOptions: ["clear", "cloudy", "fog", "rain", "snow", "storm"]
+
+    function startTimelapse() {
+        if (timelapseActive) return
+        timelapseActive = true
+
+        _savedMode = Config.background.wallpaperMode
+        _savedTimeOverride = debugTimeOverride
+        _savedWeatherOverride = debugWeatherOverride
+
+        timelapseDelayTimer.restart()
+    }
+
+    function stopTimelapse() {
+        timelapseTimer.stop()
+        timelapseDelayTimer.stop()
+        _timelapsePhase = "idle"
+
+        debugTimeOverride = _savedTimeOverride
+        debugWeatherOverride = _savedWeatherOverride
+
+        if (_savedMode !== "shader") {
+            Config.background.wallpaperMode = _savedMode
+        } else {
+            updateTime()
+        }
+
+        timelapseActive = false
+    }
+
+    Timer {
+        id: timelapseDelayTimer
+        interval: 3000
+        repeat: false
+        onTriggered: {
+            if (Config.background.wallpaperMode !== "shader") {
+                Config.background.wallpaperMode = "shader"
+            }
+
+            var idx = Math.floor(Math.random() * root._weatherOptions.length)
+            root.debugWeatherOverride = root._weatherOptions[idx]
+
+            // Start transitioning from current time toward midnight
+            root.debugTimeOverride = root.timeNormalized
+            root._transitionTarget = 0.0
+            root._timelapsePhase = "transition-in"
+            timelapseTimer.restart()
+        }
+    }
+
+    Timer {
+        id: timelapseTimer
+        interval: 30
+        repeat: true
+        onTriggered: {
+            if (root._timelapsePhase === "transition-in") {
+                var current = root.debugTimeOverride
+                current += 0.008
+                if (current >= 1.0) {
+                    current = 0.0
+                    root._timelapsePhase = "cycling"
+                }
+                root.debugTimeOverride = current
+
+            } else if (root._timelapsePhase === "cycling") {
+                root.debugTimeOverride += 0.001
+                if (root.debugTimeOverride >= 1.0) {
+                    // Cycle done, transition out to real time
+                    root.debugTimeOverride = 0.0
+                    root.debugWeatherOverride = root._savedWeatherOverride
+
+                    var d = Clock.now
+                    var mins = d.getHours() * 60 + d.getMinutes()
+                    root._realTimeTarget = mins / 1440.0
+                    root._timelapsePhase = "transition-out"
+                }
+
+            } else if (root._timelapsePhase === "transition-out") {
+                var current = root.debugTimeOverride
+                var target = root._realTimeTarget
+                var diff = target - current
+
+                if (diff > 0.5) diff -= 1.0
+                if (diff < -0.5) diff += 1.0
+
+                if (Math.abs(diff) < 0.005) {
+                    // Close enough, finish
+                    root.debugTimeOverride = -1.0
+                    root.updateTime()
+                    root._timelapsePhase = "idle"
+                    root.timelapseActive = false
+
+                    if (root._savedMode !== "shader") {
+                        Config.background.wallpaperMode = root._savedMode
+                    }
+
+                    timelapseTimer.stop()
+                } else {
+                    root.debugTimeOverride = current + diff * 0.08
+                    if (root.debugTimeOverride < 0) root.debugTimeOverride += 1.0
+                    if (root.debugTimeOverride >= 1.0) root.debugTimeOverride -= 1.0
+                }
+            }
+
+            root.updateTime()
+        }
+    }
+
     readonly property string weatherCondition: {
         if (debugWeatherOverride !== "") return debugWeatherOverride
         var c = String(Weather.data.iconCode || "113")

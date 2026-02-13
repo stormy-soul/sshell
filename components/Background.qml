@@ -115,5 +115,31 @@ PanelWindow {
                 }
             })
         }
+        function onTimelapseRequested() {
+            if (shaderLoader.item) {
+                shaderLoader.item.startTimelapse()
+            } else {
+                // Force shader mode on, then start after it loads
+                Config.background.wallpaperMode = "shader"
+            }
+        }
+    }
+
+    // Bind ProceduralSky's timelapseActive back to WallpaperService
+    Binding {
+        target: WallpaperService
+        property: "timelapseActive"
+        value: shaderLoader.item ? shaderLoader.item.timelapseActive : false
+        when: shaderLoader.active
+    }
+
+    // When shader loads mid-timelapse request, start it
+    Connections {
+        target: shaderLoader
+        function onLoaded() {
+            if (WallpaperService.timelapseActive && shaderLoader.item && !shaderLoader.item.timelapseActive) {
+                shaderLoader.item.startTimelapse()
+            }
+        }
     }
 }

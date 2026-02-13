@@ -20,6 +20,8 @@ Singleton {
     
     signal error(string message)
     signal captureBackground(string destPath)
+    signal timelapseRequested()
+    property bool timelapseActive: false
 
     function init() {
         Quickshell.execDetached(["mkdir", "-p", thumbDir])

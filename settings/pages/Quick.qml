@@ -80,28 +80,56 @@ ContentPage {
                             onClicked: WallpaperService.toggleVisible()
                         }
                     }
-                    Rectangle {
-                        Layout.preferredWidth: 120
-                        Layout.preferredHeight: 88
-                        color: shuffleHover.containsMouse ? Appearance.colors.surfaceHover : Appearance.colors.surfaceVariant
-                        radius: Appearance.sizes.cornerRadius
-                        
-                        Behavior on color { ColorAnimation { duration: Appearance.animation.duration } }
-                        
-                        MaterialIcon {
-                            icon: "shuffle"
-                            color: Appearance.colors.textSecondary
-                            width: 40
-                            height: 40
-                            anchors.centerIn: parent
+                    Row {
+                        spacing: 4
+                        Layout.fillWidth: true
+                        Rectangle {
+                            width: 58
+                            height: 88
+                            color: shuffleHover.containsMouse ? Appearance.colors.surfaceHover : Appearance.colors.surfaceVariant
+                            radius: Appearance.sizes.cornerRadius
+                            
+                            Behavior on color { ColorAnimation { duration: Appearance.animation.duration } }
+                            
+                            MaterialIcon {
+                                icon: "shuffle"
+                                color: Appearance.colors.textSecondary
+                                width: 36
+                                height: 36
+                                anchors.centerIn: parent
+                            }
+                            
+                            MouseArea {
+                                id: shuffleHover
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: WallpaperService.randomWallpaper()
+                            }
                         }
-                        
-                        MouseArea {
-                            id: shuffleHover
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: WallpaperService.randomWallpaper()
+                        Rectangle {
+                            width: 58
+                            height: 88
+                            color: WallpaperService.timelapseActive ? Appearance.colors.accent : (timelapseHover.containsMouse ? Appearance.colors.surfaceHover : Appearance.colors.surfaceVariant)
+                            radius: Appearance.sizes.cornerRadius
+                            
+                            Behavior on color { ColorAnimation { duration: Appearance.animation.duration } }
+                            
+                            MaterialIcon {
+                                icon: "timelapse"
+                                color: WallpaperService.timelapseActive ? Appearance.colors.colOnPrimary : Appearance.colors.textSecondary
+                                width: 36
+                                height: 36
+                                anchors.centerIn: parent
+                            }
+                            
+                            MouseArea {
+                                id: timelapseHover
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: WallpaperService.timelapseRequested()
+                            }
                         }
                     }
                 }
