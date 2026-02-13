@@ -1,0 +1,7 @@
+source = ~/.config/hypr/monitors.conf      # monitor setup 
+source = ~/.config/hypr/autostart.conf     # auto execs
+source = ~/.cache/wal/colors-hyprland.conf # pywal16
+source = ~/.config/hypr/variables.conf     # environment vars
+source = ~/.config/hypr/rules.conf         # window & layer rules
+source = ~/.config/hypr/keybinds.conf      # keybinds
+source = ~/.config/hypr/general.conf       # general rules

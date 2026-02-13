@@ -42,10 +42,10 @@ ShellRoot {
             }
              
             margins {
-                top: Config.bar.position === "top" ? Config.bar.margin : 0
-                bottom: Config.bar.position === "bottom" ? Config.bar.margin : 0
-                left: Config.bar.margin
-                right: Config.bar.margin
+                top: Config.bar.style === "full" ? 0 : (Config.bar.position === "top" ? Config.bar.margin : 0)
+                bottom: Config.bar.style === "full" ? 0 : (Config.bar.position === "bottom" ? Config.bar.margin : 0)
+                left: Config.bar.style === "full" ? 0 : Config.bar.margin
+                right: Config.bar.style === "full" ? 0 : Config.bar.margin
             }
 
             Bar {

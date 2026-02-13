@@ -43,41 +43,55 @@ DetailWindow {
     
     Process {
         id: listProc
-        command: ["nmcli", "-t", "-f", "SSID,SIGNAL,SECURITY,ACTIVE", "device", "wifi", "list"]
+        command: ["bash", "-c", "nmcli -t -f SSID,SIGNAL,SECURITY,ACTIVE device wifi list | sed 's/\\\\:/\\x00/g'"]
+        
+        property string outputBuffer: ""
+        
         stdout: SplitParser {
             onRead: data => {
-               var lines = data.split("\n")
-               var uniqueSsids = {}
-               var list = []
-               
-               for (var i=0; i<lines.length; i++) {
-                   if (!lines[i]) continue
-            
-                   var parts = lines[i].split(":")
-                   var active = parts.pop() === "yes"
-                   var security = parts.pop()
-                   var signal = parseInt(parts.pop())
-                   var ssid = parts.join(":")
-                   
-                   if (ssid && !uniqueSsids[ssid]) {
-                       uniqueSsids[ssid] = true
-                       list.push({ ssid: ssid, signal: signal, security: security, active: active })
-                   }
-               }
-               
-               list.sort((a,b) => {
-                   if (a.active) return -1
-                   if (b.active) return 1
-                   return b.signal - a.signal
-               })
-               
-               networksModel.clear()
-               for (var i=0; i<list.length; i++) {
-                   networksModel.append(list[i])
-               }
-               
-               root.scanning = false
+                listProc.outputBuffer += data + "\n"
             }
+        }
+        
+        onExited: (exitCode) => {
+            var lines = listProc.outputBuffer.split("\n")
+            var uniqueSsids = {}
+            var list = []
+            
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim()
+                if (!line) continue
+                
+                var parts = line.split(":")
+                if (parts.length < 4) continue
+
+                var active = parts[parts.length - 1] === "yes"
+                var security = parts[parts.length - 2]
+                var signal = parseInt(parts[parts.length - 3])
+                // SSID is everything before the last 3 fields, restore escaped colons
+                var ssid = parts.slice(0, parts.length - 3).join(":").replace(/\x00/g, ":")
+                
+                if (isNaN(signal)) signal = 0
+                
+                if (ssid && !uniqueSsids[ssid]) {
+                    uniqueSsids[ssid] = true
+                    list.push({ ssid: ssid, signal: signal, security: security, active: active })
+                }
+            }
+            
+            list.sort((a, b) => {
+                if (a.active) return -1
+                if (b.active) return 1
+                return b.signal - a.signal
+            })
+            
+            networksModel.clear()
+            for (var j = 0; j < list.length; j++) {
+                networksModel.append(list[j])
+            }
+            
+            listProc.outputBuffer = ""
+            root.scanning = false
         }
     }
 

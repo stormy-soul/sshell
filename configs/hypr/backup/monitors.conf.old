@@ -1,0 +1,4 @@
+# See https://wiki.hyprland.org/Configuring/Monitors/
+
+# monitor,resolution,anchor,scale
+monitor=eDP-1,1920x1080@60,auto,1

@@ -7,4 +7,5 @@ QtObject {
     
     readonly property var workspaces: Hyprland.workspaces
     readonly property var activeWindow: Hyprland.focusedMonitor.activeWindow
+    readonly property bool isFullscreen: activeWindow ? activeWindow.fullscreen : false
 }

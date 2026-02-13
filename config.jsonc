@@ -77,7 +77,7 @@
         "copyAfter": true,
         "copyAfterTo": "/usr/share/sddm/themes/silent/backgrounds/",
         "copyAfterAs": "default.png",
-        "wallpaperMode": "image" // image/solid/gradient/shader/video
+        "wallpaperMode": "image" // image/shader
     },
     "mpris": {
         "barVisualizer": false,

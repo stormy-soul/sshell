@@ -6,14 +6,15 @@ Item {
     anchors.fill: parent
     
     property string condition: "clear"
-    property string weatherCode: "" 
+    property string weatherCode: ""
+    property bool paused: false
     
     visible: condition === "rain" || condition === "snow" || condition === "storm"
 
     ParticleSystem {
         id: particleSystem
         anchors.fill: parent
-        running: root.visible
+        running: root.visible && !root.paused
     }
 
     readonly property bool isHeavy: {
@@ -40,7 +41,7 @@ Item {
         group: "rain"
         enabled: condition === "rain" || condition === "storm"
         emitRate: (condition === "storm" || root.isHeavy) ? 400 : 150
-        lifeSpan: 600
+        lifeSpan: 1200
         size: root.isHail ? 6 : 2
         sizeVariation: root.isHail ? 3 : 1
         endSize: 2
@@ -69,8 +70,8 @@ Item {
         system: particleSystem
         group: "snow"
         enabled: condition === "snow"
-        emitRate: 40 
-        lifeSpan: 4000
+        emitRate: 60
+        lifeSpan: 6000
         size: 5
         sizeVariation: 2
         velocity: AngleDirection {

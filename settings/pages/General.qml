@@ -128,6 +128,19 @@ ContentPage {
         space: root.gap
         
         ContentSubsection {
+            id: wallpaperMode
+            title: "Wallpaper Mode"
+            ConfigSelectionArray {
+                options: [
+                    { displayName: "Image", value: "image" },
+                    { displayName: "Dynamic", value: "shader" }
+                ]
+                currentValue: Config.background.wallpaperMode
+                onSelected: (val) => Config.background.wallpaperMode = val
+            }
+        }
+
+        ContentSubsection {
             title: "Wallpaper Paths"
             Rectangle {
                 Layout.fillWidth: true

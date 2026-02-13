@@ -27,6 +27,9 @@ Scope {
 
     property FileView configFile: FileView {
         path: root.filePath
+        watchChanges: true
+
+        property bool hasAppliedOnce: false
 
         function getFileText() {
             try {
@@ -63,8 +66,6 @@ Scope {
                 } catch (e) {
                     console.warn("applyToAdapter(): couldn't probe/create", key, ":", e)
                 }
-
-
 
                 try {
                     applyToAdapter(adapterObj[key], val)
@@ -125,6 +126,12 @@ Scope {
             }
 
             if (!fileText || fileText.length === 0) {
+                // If we haven't applied once yet, retry — text might not be ready
+                if (!hasAppliedOnce) {
+                    console.warn("Config text empty on first attempt (from " + source + "), scheduling retry...")
+                    configRetryTimer.start()
+                    return
+                }
                 console.warn("Config file appears empty (or couldn't be read). Applying defaults.")
                 root.parsedConfig = {}
                 try {
@@ -150,12 +157,15 @@ Scope {
                     console.warn("Failed to populate JsonAdapter via property assignment:", e)
                 }
 
+                hasAppliedOnce = true
                 root.ready = true
                 console.log("Config parsed successfully (from " + source + ")")
             } catch (e) {
                 console.error("Failed to parse config (from " + source + "):", e)
-                root.parsedConfig = {}
-                try { configAdapter.data = JSON.parse(JSON.stringify(defaults)) } catch(e){}
+                if (!hasAppliedOnce) {
+                    root.parsedConfig = {}
+                    try { configAdapter.data = JSON.parse(JSON.stringify(defaults)) } catch(e){}
+                }
                 root.ready = true
             }
         }
@@ -165,13 +175,25 @@ Scope {
 
         onLoadFailed: function(error) {
             console.warn("FileView failed to load config:", error)
-            root.parsedConfig = {}
-            try { configAdapter.data = {} } catch(e) {}
+            if (!hasAppliedOnce) {
+                root.parsedConfig = {}
+                try { configAdapter.data = {} } catch(e) {}
+            }
             root.ready = true
         }
 
         Component.onCompleted: {
             console.log("FileView component completed; filePath ->", root.filePath)
+        }
+    }
+
+    Timer {
+        id: configRetryTimer
+        interval: 150
+        repeat: false
+        onTriggered: {
+            console.log("Config retry timer fired, re-reading config...")
+            configFile.reload()
         }
     }
 
@@ -253,7 +275,7 @@ Scope {
             property bool copyAfter: false
             property var copyAfterTo: ""
             property var copyAfterAs: ""
-            property string wallpaperMode: "image"
+            property string wallpaperMode: ""
         }
 
         property JsonObject mpris: JsonObject {

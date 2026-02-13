@@ -5,10 +5,14 @@ import Quickshell.Services.SystemTray
 
 Rectangle {
     id: root
-    implicitWidth: 30
+    
+    readonly property bool hasTrayItems: SystemTray.items.values.length > 0
+    
+    implicitWidth: (isTrayEnabled && hasTrayItems) ? 30 : 0
     implicitHeight: Config.bar.height - Appearance.sizes.padding
     color: "transparent"
     radius: Appearance.sizes.cornerRadiusSmall
+    clip: true
     
     property bool isTrayEnabled: {
         var rightModules = Config.bar.right;
@@ -20,7 +24,17 @@ Rectangle {
         return false;
     }
     
-    visible: isTrayEnabled && SystemTray.items.values.length > 0
+    visible: isTrayEnabled && hasTrayItems
+    
+    Behavior on implicitWidth {
+        NumberAnimation { duration: Appearance.animation.duration; easing.type: Easing.OutCubic }
+    }
+    
+    onHasTrayItemsChanged: {
+        if (!hasTrayItems && trayPopupLoader.item) {
+            trayPopupLoader.item.shown = false
+        }
+    }
     
     property real globalCenterX: 0
     

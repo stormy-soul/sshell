@@ -31,9 +31,10 @@ Scope {
         hideTimer.stop()
     }
     
-    Component.onCompleted: {
-        Qt.callLater(function() {
-            show("check_circle", null, "", "Loaded")
-        })
+    Connections {
+        target: Quickshell
+        function onReloadCompleted() {
+            show("check_circle", null, "", "Reloaded")
+        }
     }
 }

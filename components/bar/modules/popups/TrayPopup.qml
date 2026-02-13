@@ -30,7 +30,16 @@ PanelWindow {
     implicitHeight: trayContent.height + (Appearance.sizes.padding * 2)
     
     property bool shown: false
-    visible: shown
+    visible: shown && SystemTray.items.values.length > 0
+    
+    Connections {
+        target: SystemTray.items
+        function onValuesChanged() {
+            if (SystemTray.items.values.length === 0) {
+                root.shown = false
+            }
+        }
+    }
     mask: Region {
         item: ShellState.masterVisible ? background : null
     } 

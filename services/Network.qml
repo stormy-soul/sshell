@@ -30,41 +30,50 @@ Singleton {
     Process {
         id: detailsProc
         
-        command: ["bash", "-c", "nmcli -t -f TYPE,DEVICE,STATE,CONNECTION device | grep '^ethernet.*connected' | head -1; nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi | grep '^yes' | head -1"]
+        command: ["bash", "-c", "nmcli -t -f TYPE,DEVICE,STATE,CONNECTION device | grep '^ethernet.*connected' | head -1; nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi | grep '^yes' | head -1 | sed 's/\\\\:/\\x00/g'"]
+        
+        property string outputBuffer: ""
         
         stdout: SplitParser {
             onRead: data => {
-                var lines = data.split("\n")
-                root.ethernetConnected = false
-                
-                for (var i=0; i<lines.length; i++) {
-                    var line = lines[i]
-                    if (!line) continue
-                    
-                    if (line.startsWith("ethernet")) {
-                         var parts = line.split(":")
-                         if (parts[2] === "connected") {
-                             root.ethernetConnected = true
-                             root.ethernetDevice = parts[1]
-                         }
-                    } else {
-                         var parts = line.split(":")
-                         if (parts.length >= 3 && parts[0] === "yes") {
-                            root.wifiStatus = "connected"
-                            root.ssid = parts[1]
-                            root.signalStrength = parseInt(parts[2]) || 0
-                         }
-                    }
-                }
+                detailsProc.outputBuffer += data + "\n"
             }
         }
         
         onExited: (exitCode, exitStatus) => {
-           if (exitCode !== 0 || root.ssid === "") {
-               checkRadio.running = true
-           } else {
-               root.wifiEnabled = true
-           }
+            root.ethernetConnected = false
+            root.ethernetDevice = ""
+            var foundWifi = false
+            
+            var lines = detailsProc.outputBuffer.split("\n")
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim()
+                if (!line) continue
+                
+                if (line.startsWith("ethernet")) {
+                    var parts = line.split(":")
+                    if (parts[2] === "connected") {
+                        root.ethernetConnected = true
+                        root.ethernetDevice = parts[1]
+                    }
+                } else {
+                    var wparts = line.split(":")
+                    if (wparts.length >= 3 && wparts[0] === "yes") {
+                        root.wifiStatus = "connected"
+                        root.signalStrength = parseInt(wparts[wparts.length - 1]) || 0
+                        root.ssid = wparts.slice(1, wparts.length - 1).join(":").replace(/\x00/g, ":")
+                        foundWifi = true
+                    }
+                }
+            }
+            
+            detailsProc.outputBuffer = ""
+            
+            if (exitCode !== 0 || !foundWifi) {
+                checkRadio.running = true
+            } else {
+                root.wifiEnabled = true
+            }
         }
     }
     

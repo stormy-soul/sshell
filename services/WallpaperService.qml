@@ -19,6 +19,7 @@ Singleton {
     readonly property string configFile: Directories.configFile
     
     signal error(string message)
+    signal captureBackground(string destPath)
 
     function init() {
         Quickshell.execDetached(["mkdir", "-p", thumbDir])
@@ -221,11 +222,18 @@ Singleton {
     onBackgroundVisibleChanged: updateAdapter()
 
     function persistWallpaper(path) {
-        const absPath = path.replace("~", Quickshell.env("HOME"))
-        const destDir = Config.background.copyAfterTo
-        const destFile = destDir + Config.background.copyAfterAs
+        if (Config.background.wallpaperMode === "shader") {
+            var destDir = (Config.background.copyAfterTo || "").replace("~", Quickshell.env("HOME"))
+            var destFile = destDir + (Config.background.copyAfterAs || "default.png")
+            Quickshell.execDetached(["bash", "-c", `mkdir -p "${destDir}"`])
+            root.captureBackground(destFile)
+            return
+        }
+        var absPath = path.replace("~", Quickshell.env("HOME"))
+        var destDir2 = (Config.background.copyAfterTo || "").replace("~", Quickshell.env("HOME"))
+        var destFile2 = destDir2 + (Config.background.copyAfterAs || "default.png")
         
-        const cmd = `mkdir -p "${destDir}" && cp -f "${absPath}" "${destFile}"`
+        var cmd = `mkdir -p "${destDir2}" && cp -f "${absPath}" "${destFile2}"`
         Quickshell.execDetached(["bash", "-c", cmd])
     }
 
@@ -265,11 +273,28 @@ Singleton {
     }
 
     function setWallpaper(path) {
+        if (Config.background.wallpaperMode === "shader") {
+            Config.background.wallpaperMode = "image"
+        }
         root.currentWallpaper = path
     }
     
     function toggleVisible() {
         root.backgroundVisible = !root.backgroundVisible
+    }
+    
+    function randomWallpaper() {
+        if (root.wallpapers.count === 0) return
+        var idx = Math.floor(Math.random() * root.wallpapers.count)
+        if (root.wallpapers.count > 1) {
+            var current = root.currentWallpaper
+            var attempts = 0
+            while (root.wallpapers.get(idx).path === current && attempts < 10) {
+                idx = Math.floor(Math.random() * root.wallpapers.count)
+                attempts++
+            }
+        }
+        setWallpaper(root.wallpapers.get(idx).path)
     }
 
     function restore() {

@@ -59,22 +59,34 @@ ContentPage {
                     Rectangle {
                         Layout.preferredWidth: 120
                         Layout.preferredHeight: 88
-                        color: Appearance.colors.surfaceVariant
+                        color: !WallpaperService.backgroundVisible ? Appearance.colors.accent : (hideHover.containsMouse ? Appearance.colors.surfaceHover : Appearance.colors.surfaceVariant)
                         radius: Appearance.sizes.cornerRadius
                         
+                        Behavior on color { ColorAnimation { duration: Appearance.animation.duration } }
+                        
                         MaterialIcon {
-                            icon: "hide_image"
-                            color: Appearance.colors.textSecondary
+                            icon: WallpaperService.backgroundVisible ? "hide_image" : "image"
+                            color: !WallpaperService.backgroundVisible ? Appearance.colors.colOnPrimary : Appearance.colors.textSecondary
                             width: 40
                             height: 40
                             anchors.centerIn: parent
+                        }
+                        
+                        MouseArea {
+                            id: hideHover
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: WallpaperService.toggleVisible()
                         }
                     }
                     Rectangle {
                         Layout.preferredWidth: 120
                         Layout.preferredHeight: 88
-                        color: Appearance.colors.surfaceVariant
+                        color: shuffleHover.containsMouse ? Appearance.colors.surfaceHover : Appearance.colors.surfaceVariant
                         radius: Appearance.sizes.cornerRadius
+                        
+                        Behavior on color { ColorAnimation { duration: Appearance.animation.duration } }
                         
                         MaterialIcon {
                             icon: "shuffle"
@@ -82,6 +94,14 @@ ContentPage {
                             width: 40
                             height: 40
                             anchors.centerIn: parent
+                        }
+                        
+                        MouseArea {
+                            id: shuffleHover
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: WallpaperService.randomWallpaper()
                         }
                     }
                 }
@@ -94,10 +114,7 @@ ContentPage {
             ConfigSelectionArray {
                 options: [
                     { displayName: "Image", value: "image" },
-                    { displayName: "Solid Color", value: "solid" },
-                    { displayName: "Gradient", value: "gradient" },
-                    { displayName: "Shader", value: "shader" },
-                    { displayName: "Video", value: "video" }
+                    { displayName: "Dynamic", value: "shader" }
                 ]
                 currentValue: Config.background.wallpaperMode
                 onSelected: (val) => Config.background.wallpaperMode = val
