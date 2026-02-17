@@ -43,7 +43,7 @@ And optionally,
 - ttf-twemoji
 - inter-font
 
-_I might have missed some packages probably, so do let me know if you find any missing ones_
+_I might have missed some packages probably, so you might have to manually install any missing ones_
 
 ## Installation
 
